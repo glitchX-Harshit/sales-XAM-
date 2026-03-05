@@ -11,6 +11,52 @@
     background: #fcf9ee;
 }
 
+/* ── SCRIBBLE OVERLAY ── */
+.scrib-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.scrib-svg {
+    position: absolute;
+    inset: 0;
+    width: 55%;
+    /* Left text area only */
+    height: 100%;
+    top: 8vh;
+}
+
+/* Annotation labels — handwritten feel */
+.scrib-label {
+    position: absolute;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.4);
+    font-family: 'Caveat', 'Segoe UI', cursive;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    white-space: nowrap;
+    transform: rotate(-3deg);
+}
+
+.scrib-label-cta {
+    bottom: 28%;
+    left: 7%;
+    transform: rotate(-5deg);
+    color: rgba(0, 0, 0, 0.45);
+}
+
+.scrib-label-stat {
+    bottom: 26%;
+    right: 48%;
+    transform: rotate(4deg);
+    color: #ff5e00;
+}
+
+
+
 /* ── BACKGROUND ── */
 .hero-bg {
     position: absolute;

@@ -1,313 +1,354 @@
 /* ================================================================
-   PRICING — Premium Two-Card Layout
+   PRICING — 3-Column Redesign + Scribble Annotations
 ================================================================= */
 .pricing-section {
     background: var(--color-bg);
     padding: 12vh 0;
+    position: relative;
+    overflow: hidden;
 }
 
-.pricing-header {
-    margin-bottom: 6rem;
-    max-width: 680px;
+/* ── Scribble overlay ── */
+.pr-scrib-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
 }
 
-.pricing-eyebrow {
-    font-size: 0.78rem;
+.pr-scrib-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.pr-scrib-label {
+    position: absolute;
+    font-family: 'Caveat', cursive;
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.32);
+    pointer-events: none;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+    opacity: 0;
+}
+
+/* ── Header ── */
+.pr-header {
+    margin-bottom: 5rem;
+    max-width: 600px;
+    position: relative;
+    z-index: 3;
+}
+
+.pr-eyebrow {
+    font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.18em;
     color: #ff5e00;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem;
 }
 
-.pricing-title {
-    font-size: clamp(3rem, 6vw, 5.5rem);
+.pr-title {
+    font-size: clamp(2.8rem, 5.5vw, 5rem);
     font-weight: 800;
     line-height: 1.05;
     letter-spacing: -0.03em;
     color: var(--color-black);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem;
 }
 
-.pricing-title .font-serif {
+.pr-italic {
     font-style: italic;
-    color: rgba(0, 0, 0, 0.25);
+    color: rgba(0, 0, 0, 0.22);
 }
 
-.pricing-desc {
-    font-size: 1.1rem;
+.pr-desc {
+    font-size: 1rem;
     color: #999;
     font-weight: 500;
 }
 
-/* ── Grid ── */
-.pricing-grid {
+/* ── 3-column cards ── */
+.pr-cards {
     display: grid;
-    grid-template-columns: 1fr 1.15fr;
+    grid-template-columns: 1fr 1.2fr 1fr;
     gap: 1.5rem;
     align-items: start;
-    max-width: 900px;
-}
-
-/* ── Shared card shell ── */
-.pricing-card {
-    border-radius: 32px;
     position: relative;
-    will-change: transform;
-    overflow: hidden;
+    z-index: 3;
 }
 
-/* ── Starter card ── */
-.pricing-starter {
+/* ── Shared card ── */
+.pricing-card {
+    border-radius: 28px;
+    padding: 2.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    will-change: transform;
+}
+
+/* ── Starter ── */
+.pr-starter {
     background: #fff;
     border: 1px solid rgba(0, 0, 0, 0.07);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
 }
 
-/* ── Pro card ── */
-.pricing-pro {
+/* ── Pro ── */
+.pr-pro {
     background: #0f0f0f;
     border: 1px solid rgba(255, 255, 255, 0.06);
-    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.18);
+    position: relative;
+    overflow: hidden;
 }
 
-.pricing-pro .pricing-tier,
-.pricing-pro .pricing-amount,
-.pricing-pro .pricing-features-list li {
-    color: #fff;
+/* ── Enterprise ── */
+.pr-enterprise {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px dashed rgba(0, 0, 0, 0.12);
 }
 
-.pricing-pro .pa-curr {
-    color: #fff;
-}
-
-.pricing-pro .pricing-features-list li svg {
-    color: #27c93f;
-}
-
-/* Featured badge */
-.pricing-featured-badge {
+/* Badge */
+.pr-pro-badge {
     position: absolute;
     top: -1px;
-    right: 2.5rem;
+    right: 2rem;
     background: #ff5e00;
     color: #fff;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 800;
-    text-transform: uppercase;
     letter-spacing: 0.1em;
-    padding: 0.4rem 1.2rem;
+    text-transform: uppercase;
+    padding: 0.35rem 1rem;
     border-radius: 0 0 12px 12px;
-}
-
-/* ── Card inner ── */
-.pricing-card-inner {
-    padding: 2.8rem;
-}
-
-/* ── Icon ── */
-.pricing-icon-wrap {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: rgba(255, 94, 0, 0.1);
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 2rem;
+    gap: 5px;
 }
 
-.pricing-icon-dark {
-    background: rgba(255, 255, 255, 0.08);
-}
-
-/* ── Tier label ── */
-.pricing-tier {
-    font-size: 0.78rem;
-    font-weight: 700;
+/* Card tag */
+.pr-card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #bbb;
-    margin-bottom: 1.2rem;
+    color: rgba(0, 0, 0, 0.35);
 }
 
-/* ── Price ── */
-.pricing-amount {
+.pr-card-tag-dark {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* Price */
+.pr-price-row {
     display: flex;
     align-items: baseline;
-    gap: 3px;
-    margin-bottom: 0.8rem;
+    gap: 2px;
 }
 
-.pa-curr {
-    font-size: 1.6rem;
+.pr-curr {
+    font-size: 1.4rem;
     font-weight: 700;
     color: var(--color-black);
 }
 
-.pa-num {
-    font-size: clamp(2.8rem, 5vw, 3.8rem);
+.pr-pro .pr-curr {
+    color: #fff;
+}
+
+.pr-num {
+    font-size: clamp(3rem, 5vw, 4rem);
     font-weight: 800;
     letter-spacing: -0.04em;
     line-height: 1;
     color: var(--color-black);
 }
 
-.pa-per {
-    font-size: 0.9rem;
+.pr-pro .pr-num {
+    color: #fff;
+}
+
+.pr-num-custom {
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.pr-per {
+    font-size: 0.85rem;
     color: #aaa;
     font-weight: 500;
     padding-left: 4px;
 }
 
-/* ── Tagline ── */
-.pricing-tagline {
-    font-size: 0.95rem;
+/* Tagline */
+.pr-tagline {
+    font-size: 0.9rem;
     color: #888;
-    margin-bottom: 2rem;
     line-height: 1.5;
+    margin: 0;
 }
 
-/* ── Buttons ── */
-.pricing-btn-outline {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 0.9rem 1.5rem;
-    border-radius: 100px;
-    border: 1.5px solid rgba(0, 0, 0, 0.15);
-    background: transparent;
-    color: var(--color-black);
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-bottom: 2.5rem;
+.pr-tagline-dark {
+    color: rgba(255, 255, 255, 0.4);
 }
 
-.pricing-btn-outline:hover {
-    border-color: var(--color-black);
-    background: var(--color-black);
-    color: #fff;
-}
-
-.pricing-btn-primary {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 0.9rem 1.5rem;
-    border-radius: 100px;
-    border: none;
-    background: #ff5e00;
-    color: #fff;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-bottom: 2.5rem;
-    box-shadow: 0 0 30px rgba(255, 94, 0, 0.35);
-}
-
-.pricing-btn-primary:hover {
-    background: #e04e00;
-    box-shadow: 0 0 40px rgba(255, 94, 0, 0.5);
-    transform: translateY(-2px);
-}
-
-/* ── Divider ── */
-.pricing-divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #ccc;
-    margin-bottom: 1.5rem;
-}
-
-.pricing-divider.dark {
-    color: rgba(255, 255, 255, 0.2);
-}
-
-.pricing-divider::before,
-.pricing-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(0, 0, 0, 0.07);
-}
-
-.pricing-divider.dark::before,
-.pricing-divider.dark::after {
-    background: rgba(255, 255, 255, 0.06);
-}
-
-/* ── Feature list ── */
-.pricing-features-list {
+/* Features */
+.pr-features {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.9rem;
+    gap: 0.75rem;
+    flex: 1;
 }
 
-.pricing-features-list li {
+.pr-features li {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 500;
     color: var(--color-black);
 }
 
-.pricing-features-list li svg {
+.pr-features li svg {
     color: #27c93f;
     flex-shrink: 0;
 }
 
-.pricing-features-list li.dimmed {
-    color: #bbb;
+.pr-features-dark li {
+    color: rgba(255, 255, 255, 0.75);
 }
 
-.pricing-features-list li.dimmed svg {
+.pr-features-dark li svg {
+    color: #27c93f;
+}
+
+.pr-feat-locked {
+    color: #ccc !important;
+    font-style: italic;
+}
+
+.pr-lock {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    align-items: center;
+    justify-content: center;
+    font-style: normal;
     color: #ddd;
+    font-size: 0.9rem;
 }
 
-/* ── Physics canvas ── */
-.pricing-physics-container {
-    margin-top: 1.5rem;
+/* Buttons */
+.pr-btn-outline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     width: 100%;
-    height: 110px;
+    padding: 0.75rem 1.2rem;
+    border-radius: 100px;
+    border: 1.5px solid rgba(0, 0, 0, 0.15);
+    background: transparent;
+    color: var(--color-black);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: auto;
+}
+
+.pr-btn-outline:hover {
+    background: var(--color-black);
+    border-color: var(--color-black);
+    color: #fff;
+}
+
+.pr-btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    border-radius: 100px;
+    border: none;
+    background: #ff5e00;
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 0 28px rgba(255, 94, 0, 0.4);
+}
+
+.pr-btn-primary:hover {
+    background: #e04e00;
+    box-shadow: 0 0 40px rgba(255, 94, 0, 0.55);
+    transform: translateY(-2px);
+}
+
+.pr-btn-ghost {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.75rem 1.2rem;
+    border-radius: 100px;
+    border: 1.5px dashed rgba(0, 0, 0, 0.2);
+    background: transparent;
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: auto;
+}
+
+.pr-btn-ghost:hover {
+    border-color: var(--color-black);
+    color: var(--color-black);
+}
+
+/* Physics box */
+.pr-physics-box {
+    width: 100%;
+    height: 100px;
     border-radius: 14px;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.pricing-physics-canvas {
+.pr-physics-canvas {
     width: 100%;
     height: 100%;
     display: block;
 }
 
-/* ── Footer note ── */
-.pricing-footer-note {
-    margin-top: 3rem;
-    font-size: 0.9rem;
+/* Footnote */
+.pr-footnote {
+    margin-top: 2.5rem;
+    font-size: 0.88rem;
     color: #aaa;
     font-weight: 500;
+    position: relative;
+    z-index: 3;
 }
 
 /* ── Responsive ── */
-@media (max-width: 768px) {
-    .pricing-grid {
+@media (max-width: 900px) {
+    .pr-cards {
         grid-template-columns: 1fr;
         max-width: 480px;
     }

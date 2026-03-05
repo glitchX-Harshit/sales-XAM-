@@ -78,6 +78,46 @@ const ObjectionHandling = () => {
             <div className="obj-interactive-area">
                 <div className="obj-bg-glow"></div>
 
+                {/* ── Scribble SVG overlay ── */}
+                <svg className="obj-scrib-svg" viewBox="0 0 700 520" fill="none" aria-hidden="true">
+                    {/* Wavy underline near top card */}
+                    <path d="M 160 95 C 210 89 290 100 370 93 C 430 88 490 98 540 92"
+                        stroke="#ff5e00" strokeWidth="2.2" strokeLinecap="round" />
+
+                    {/* Curved arrow pointing → second card */}
+                    <path d="M 620 195 C 648 210 660 235 645 258"
+                        stroke="#111" strokeWidth="1.8" strokeLinecap="round" />
+                    <path d="M 645 258 L 633 248 M 645 258 L 655 250"
+                        stroke="#111" strokeWidth="1.8" strokeLinecap="round" />
+
+                    {/* Dashed circle around last card */}
+                    <ellipse cx="350" cy="420" rx="200" ry="38"
+                        stroke="#ff3d71" strokeWidth="1.6"
+                        strokeDasharray="7 5" fill="none"
+                        style={{ transform: 'rotate(-1.5deg)', transformOrigin: '350px 420px' }} />
+
+                    {/* Small tick arrow near first label */}
+                    <path d="M 148 68 C 140 55 148 42 160 38"
+                        stroke="rgba(0,0,0,0.25)" strokeWidth="1.5" strokeLinecap="round" />
+                    <path d="M 160 38 L 150 42 M 160 38 L 162 50"
+                        stroke="rgba(0,0,0,0.25)" strokeWidth="1.5" strokeLinecap="round" />
+
+                    {/* Squiggle accent between card 2 and 3 */}
+                    <path d="M 160 330 C 190 323 220 335 250 327 C 280 319 310 332 340 325"
+                        stroke="rgba(0,0,0,0.12)" strokeWidth="1.4" strokeLinecap="round" />
+                </svg>
+
+                {/* Annotation labels */}
+                <span className="obj-scrib-label" style={{ top: '10%', left: '19%', transform: 'rotate(-4deg)' }}>
+                    nx.ai hears this ↓
+                </span>
+                <span className="obj-scrib-label" style={{ top: '38%', right: '4%', transform: 'rotate(3deg)', color: '#ff5e00' }}>
+                    instantly ↙
+                </span>
+                <span className="obj-scrib-label" style={{ bottom: '14%', left: '24%', transform: 'rotate(-2deg)', color: '#ff3d71' }}>
+                    the hardest one →
+                </span>
+
                 <div className="obj-cards-container">
                     <div className="obj-card warning">
                         <div className="obj-card-header">
@@ -101,6 +141,7 @@ const ObjectionHandling = () => {
                     </div>
                 </div>
             </div>
+
         </section>
     );
 };

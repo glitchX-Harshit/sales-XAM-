@@ -61,10 +61,9 @@ const ScratchSection = () => {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Draw a dim instruction hint
-            ctx.font = '600 0.85rem Plus Jakarta Sans, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillStyle = 'rgba(255,255,255,0.1)';
-            ctx.font = 'bold 14px Plus Jakarta Sans, sans-serif';
+            ctx.fillStyle = 'rgba(0,0,0,0.15)';
+            ctx.font = 'bold 13px Plus Jakarta Sans, sans-serif';
             ctx.fillText('MOVE YOUR CURSOR TO REVEAL', canvas.width / 2, canvas.height / 2);
         };
 
@@ -111,7 +110,69 @@ const ScratchSection = () => {
                         {line.text}
                     </div>
                 ))}
+
+                {/* ── Scribble annotations inside scratch canvas ── */}
+                <svg
+                    className="hiw-scrib-svg"
+                    viewBox="0 0 1200 700"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                >
+                    {/* Wavy underline under first reveal line (top ~12%) */}
+                    <path
+                        d="M 80 95 C 130 89 200 100 280 92 C 360 85 440 98 510 90"
+                        stroke="#ff5e00" strokeWidth="2.5" strokeLinecap="round" fill="none"
+                    />
+
+                    {/* Curved arrow from "22%" label area → right stat */}
+                    <path
+                        d="M 920 200 C 950 185 975 165 960 148"
+                        stroke="#111" strokeWidth="2" strokeLinecap="round" fill="none"
+                    />
+                    <path
+                        d="M 960 148 L 948 154 M 960 148 L 966 160"
+                        stroke="#111" strokeWidth="2" strokeLinecap="round" fill="none"
+                    />
+
+                    {/* Dashed circle emphasis around mid text area */}
+                    <ellipse
+                        cx="300" cy="440"
+                        rx="120" ry="30"
+                        stroke="#ff5e00" strokeWidth="1.8"
+                        strokeDasharray="6 5" fill="none"
+                        style={{ transform: 'rotate(-3deg)', transformOrigin: '300px 440px' }}
+                    />
+
+                    {/* Long curvy arrow from top-right to bottom-left quote */}
+                    <path
+                        d="M 1050 120 C 1080 200 1060 350 980 560"
+                        stroke="rgba(0,0,0,0.2)" strokeWidth="1.5" strokeLinecap="round" fill="none"
+                    />
+                    <path
+                        d="M 980 560 L 967 550 M 980 560 L 990 550"
+                        stroke="rgba(0,0,0,0.2)" strokeWidth="1.5" strokeLinecap="round" fill="none"
+                    />
+
+                    {/* Squiggle accent near bottom text */}
+                    <path
+                        d="M 60 555 C 90 547 120 563 150 555 C 180 547 210 560 240 553"
+                        stroke="rgba(0,0,0,0.15)" strokeWidth="1.5" strokeLinecap="round" fill="none"
+                    />
+                </svg>
+
+                {/* Annotation labels */}
+                <span className="hiw-scrib-label" style={{ top: '6%', left: '4%', transform: 'rotate(-4deg)' }}>
+                    ← the truth
+                </span>
+                <span className="hiw-scrib-label" style={{ top: '56%', left: '22%', transform: 'rotate(2deg)', color: '#ff5e00' }}>
+                    this one hits ↗
+                </span>
+                <span className="hiw-scrib-label" style={{ top: '18%', right: '6%', transform: 'rotate(-3deg)' }}>
+                    real stat ↓
+                </span>
             </div>
+
             {/* The black canvas mask on top */}
             <canvas ref={canvasRef} className="hiw-scratch-canvas" />
         </div>
