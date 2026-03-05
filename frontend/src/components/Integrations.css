@@ -2,6 +2,30 @@
     background: var(--color-bg);
     padding: 12vh 0;
     overflow: hidden;
+    position: relative;
+}
+
+/* ── SVG Snake Background ── */
+.int-svg-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.int-snake-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Ensure content sits above the SVG */
+.int-section .container {
+    position: relative;
+    z-index: 1;
 }
 
 .int-layout {
