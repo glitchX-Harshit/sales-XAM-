@@ -1,0 +1,105 @@
+.testi-section {
+    padding: 15vh 0;
+    background-color: var(--color-black);
+    color: var(--color-white);
+    overflow: hidden;
+}
+
+.testi-header {
+    text-align: center;
+    margin-bottom: 5rem;
+}
+
+.testi-title {
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+}
+
+.testi-title .font-serif {
+    color: #ffbd2e;
+    /* Gold color for 'Love' / value */
+    font-style: italic;
+}
+
+.testi-desc {
+    font-size: 1.25rem;
+    color: #a0a0a0;
+}
+
+.testi-marquee-container {
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
+    /* Add fading edges */
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.testi-track {
+    display: flex;
+    gap: 2rem;
+    width: max-content;
+    padding: 1rem 0;
+}
+
+.testi-card {
+    width: 400px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2.5rem;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.testi-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.testi-stars {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.testi-text {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    flex-grow: 1;
+}
+
+.testi-author {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.testi-avatar {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #ffbd2e, #ff5e00);
+    border-radius: 50%;
+}
+
+.testi-name {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.testi-role {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+@media (max-width: 768px) {
+    .testi-card {
+        width: 300px;
+        padding: 1.5rem;
+    }
+}

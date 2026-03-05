@@ -1,0 +1,192 @@
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+    min-height: 90vh;
+    text-align: center;
+    overflow: hidden;
+    padding-top: 15vh;
+}
+
+.hero-content-wrapper {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 900px;
+    width: 100%;
+}
+
+.hero-title {
+    font-size: clamp(4rem, 8vw, 7.5rem);
+    margin-bottom: 2rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.hero-serif {
+    font-weight: 400;
+    color: #7d7d7d;
+    /* Lighter color for the serif part */
+}
+
+.hero-sans {
+    font-family: 'Playfair Display', serif;
+    /* Or sans if preferred, using serif to match exactly image */
+    font-weight: 500;
+    color: var(--color-black);
+}
+
+.hero-subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    font-weight: 500;
+    color: var(--color-text);
+    margin-bottom: 2.5rem;
+    line-height: 1.5;
+}
+
+.hero-cta {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.hero-main-btn {
+    padding: 1rem 2rem;
+    font-size: 1.05rem;
+    border-radius: 12px;
+    background-color: #ebd9ff;
+    /* Wispr Flow light purple */
+    border: 1.5px solid var(--color-black);
+    color: var(--color-black);
+    box-shadow: 0 4px 15px rgba(235, 217, 255, 0.4);
+    transition: all 0.2s ease;
+}
+
+.hero-main-btn:hover {
+    background-color: #d1b3ff;
+    transform: translateY(-2px);
+}
+
+.hero-disclaimer {
+    font-size: 0.85rem;
+    color: #7d7d7d;
+    font-weight: 400;
+}
+
+/* Background Wavy Decorators */
+.wavy-bg-decorator {
+    position: absolute;
+    z-index: 1;
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.top-left {
+    top: 10%;
+    left: -5%;
+    width: 400px;
+    height: 400px;
+}
+
+.wavy-text-content {
+    font-size: 14px;
+    fill: #888;
+    letter-spacing: 2px;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+}
+
+/* Bottom elements */
+.bottom-decorator {
+    margin-top: 10vh;
+    position: relative;
+    width: 100vw;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.bottom-wavy-track {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    max-width: none;
+}
+
+.bottom-wavy-track .wavy-text-content {
+    font-size: 24px;
+    font-weight: 500;
+    fill: var(--color-black);
+    letter-spacing: 0;
+    text-transform: none;
+    background: var(--color-black);
+    color: white;
+}
+
+.voice-pill {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--color-bg);
+    border: 2px solid var(--color-black);
+    border-radius: 50px;
+    padding: 10px 20px;
+    z-index: 5;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.recording-bars {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    height: 24px;
+}
+
+.recording-bars span {
+    display: block;
+    width: 3px;
+    background: var(--color-black);
+    border-radius: 50px;
+    animation: equalize 1s infinite ease-in-out alternate;
+}
+
+.recording-bars span:nth-child(even) {
+    animation-delay: 0.2s;
+}
+
+.recording-bars span:nth-child(3n) {
+    animation-delay: 0.4s;
+}
+
+.recording-bars span:nth-child(4n) {
+    animation-delay: 0.6s;
+}
+
+.recording-bars span:nth-child(5n) {
+    animation-delay: 0.8s;
+}
+
+@keyframes equalize {
+    0% {
+        height: 4px;
+    }
+
+    100% {
+        height: 24px;
+    }
+}

@@ -1,0 +1,174 @@
+.hiw-section {
+    padding: 10vh 0;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.hiw-content {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    width: 100%;
+}
+
+.hiw-text {
+    flex: 1.2;
+    position: relative;
+    z-index: 2;
+}
+
+.hiw-eyebrow {
+    display: inline-block;
+    background-color: var(--color-black);
+    color: var(--color-white);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2rem;
+}
+
+.hiw-title {
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    color: var(--color-black);
+    line-height: 1.1;
+    margin-bottom: 2rem;
+}
+
+.hiw-title .font-serif {
+    color: var(--color-primary);
+    /* Use that subtle purple or orange here */
+}
+
+.hiw-desc {
+    font-size: 1.25rem;
+    color: var(--color-gray);
+    line-height: 1.6;
+    max-width: 500px;
+}
+
+/* Visuals Side */
+.hiw-visuals {
+    flex: 1;
+    position: relative;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hiw-voice-visualizer {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--color-white);
+    padding: 2rem 3rem;
+    border-radius: 100px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 2;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.hiw-bar {
+    width: 6px;
+    height: 20px;
+    background-color: #ff5e00;
+    /* vibrant orange voice wave */
+    border-radius: 10px;
+}
+
+.hiw-floating-img {
+    position: absolute;
+}
+
+.hiw-floating-img.img-1 {
+    top: 10%;
+    left: -10%;
+}
+
+.hiw-floating-img.img-2 {
+    bottom: 10%;
+    right: 0%;
+}
+
+/* Mockups inside floaters */
+.mockup-card {
+    background: var(--color-white);
+    padding: 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    width: 250px;
+}
+
+.recording-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #ff5f56;
+    margin-bottom: 1rem;
+}
+
+.recording-indicator .dot {
+    width: 8px;
+    height: 8px;
+    background: #ff5f56;
+    border-radius: 50%;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+.mockup-text-small {
+    font-size: 0.8rem;
+    color: var(--color-gray);
+    margin-bottom: 0.5rem;
+}
+
+.mockup-text-small.blur {
+    filter: blur(2px);
+    opacity: 0.5;
+}
+
+.mockup-text-large {
+    font-size: 1rem;
+    color: var(--color-black);
+    font-weight: 500;
+}
+
+.hiw-orb {
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, #ebd9ff 0%, #ff5e00 100%);
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.4;
+    z-index: 0;
+}
+
+@media (max-width: 900px) {
+    .hiw-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hiw-desc {
+        margin: 0 auto;
+    }
+}

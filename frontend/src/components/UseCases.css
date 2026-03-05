@@ -1,0 +1,216 @@
+.use-cases-scroll-wrapper {
+    background-color: var(--color-bg);
+}
+
+.use-cases-section {
+    background-color: var(--color-bg);
+    padding: 0;
+    width: 100%;
+}
+
+.use-cases-container {
+    background-color: var(--color-black);
+    color: var(--color-white);
+    border-radius: 60px 60px 0 0;
+    /* Huge rounded top corners */
+    display: flex;
+    min-height: 90vh;
+    padding: 8rem 5%;
+    gap: 4rem;
+    overflow: hidden;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+/* Left Column */
+.use-cases-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.use-cases-title {
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    color: var(--color-white);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.use-cases-title .serif-italic {
+    font-weight: 400;
+}
+
+.use-cases-title .highlight {
+    color: #ebd9ff;
+}
+
+.persona-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 3rem;
+    max-width: 400px;
+}
+
+.persona-pill {
+    background: transparent;
+    color: var(--color-white);
+    border: 1.5px solid rgba(255, 255, 255, 0.8);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.persona-pill:hover {
+    border-color: var(--color-white);
+}
+
+.persona-pill.active {
+    background: #ebd9ff;
+    /* Wispr Flow primary purple */
+    color: var(--color-black);
+    border-color: #ebd9ff;
+}
+
+/* Right Column */
+.use-cases-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 1rem;
+}
+
+.use-cases-illustration {
+    height: 350px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+/* Very basic CSS illustration for the developer placeholder */
+.placeholder-person {
+    position: relative;
+    width: 200px;
+    height: 250px;
+}
+
+.placeholder-person .head {
+    width: 80px;
+    height: 90px;
+    background: #ff5f56;
+    /* Accent color matching reference vibe */
+    border-radius: 40px 40px 20px 20px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 3px solid #1a1a1a;
+}
+
+.placeholder-person .body {
+    width: 160px;
+    height: 150px;
+    background: #ffbd2e;
+    /* Yellow shirt */
+    border-radius: 60px 60px 0 0;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 3px solid #1a1a1a;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.placeholder-person .laptop {
+    width: 180px;
+    height: 110px;
+    background: #e6d5ff;
+    /* purple laptop */
+    border-radius: 10px;
+    border: 3px solid #1a1a1a;
+    position: relative;
+    margin-bottom: -10px;
+}
+
+.placeholder-person .screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 4px solid #1a1a1a;
+}
+
+.use-cases-content {
+    max-width: 500px;
+}
+
+.content-title {
+    font-size: 2.5rem;
+    color: var(--color-white);
+    margin-bottom: 1rem;
+    font-weight: 400;
+}
+
+.content-title .highlight {
+    color: #ebd9ff;
+}
+
+.content-desc {
+    font-size: 1.1rem;
+    color: var(--color-white);
+    line-height: 1.6;
+    font-weight: 500;
+    margin-bottom: 2rem;
+}
+
+.content-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.btn-outline-dark {
+    background: transparent;
+    color: var(--color-white);
+    border: 1.5px solid var(--color-white);
+    border-radius: 12px;
+}
+
+.btn-outline-dark:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.content-btn {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+    .use-cases-container {
+        flex-direction: column;
+        padding: 3rem 2rem;
+    }
+
+    .use-cases-right {
+        align-items: center;
+        text-align: center;
+    }
+
+    .content-actions {
+        justify-content: center;
+    }
+}
