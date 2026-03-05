@@ -1,105 +1,124 @@
 .int-section {
-    padding: 15vh 0;
-    min-height: 80vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    background: var(--color-bg);
+    padding: 12vh 0;
+    overflow: hidden;
 }
 
-.int-title-wrapper {
-    max-width: 700px;
-    margin: 0 auto 5rem;
+.int-layout {
+    display: flex;
+    align-items: center;
+    gap: 6rem;
+}
+
+.int-text {
+    flex: 1;
+    max-width: 500px;
+}
+
+.int-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #ff5e00;
+    margin-bottom: 2rem;
 }
 
 .int-title {
-    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
     color: var(--color-black);
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.08em;
+    margin-bottom: 2rem;
+}
+
+.int-header-line {
+    display: block;
+    overflow: hidden;
+}
+
+.int-header-line .font-serif em {
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.3);
 }
 
 .int-desc {
-    font-size: 1.25rem;
-    color: var(--color-gray);
-    line-height: 1.6;
+    font-size: 1.1rem;
+    color: #888;
+    line-height: 1.7;
 }
 
-.int-visual-area {
+/* App cloud */
+.int-apps-cloud {
+    flex: 1.2;
     position: relative;
-    width: 100%;
-    max-width: 900px;
-    padding: 4rem 2rem;
-}
-
-.int-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 2rem;
+    gap: 1rem;
     justify-content: center;
     align-items: center;
-    position: relative;
-    z-index: 1;
+    padding: 4rem;
 }
 
-.int-pill {
+.int-central-hub {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--color-black);
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 800;
+    padding: 1.2rem 2rem;
+    border-radius: 100px;
+    z-index: 2;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.int-app-pill {
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: var(--color-white);
-    padding: 1rem 1.5rem;
-    border-radius: 50px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
+    gap: 10px;
+    padding: 0.9rem 1.6rem;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 100px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-black);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: default;
     will-change: transform;
 }
 
-.int-pill:hover {
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+.int-app-pill:hover {
+    transform: scale(1.06) translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 
-.int-icon {
-    color: var(--int-color);
-    display: flex;
+.int-app-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--app-color);
+    flex-shrink: 0;
 }
 
-.int-name {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: var(--color-black);
-}
-
-.int-pill.central {
-    background: var(--color-black);
-    color: var(--color-white);
-    padding: 1.2rem 2.5rem;
-    font-size: 1.5rem;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-    transform: scale(1.1);
-    margin: 0 1rem;
-}
-
-.int-pill.central:hover {
-    transform: scale(1.15) translateY(-5px);
-}
-
-@media (max-width: 768px) {
-    .int-grid {
-        gap: 1rem;
+@media (max-width: 1000px) {
+    .int-layout {
+        flex-direction: column;
     }
 
-    .int-pill {
-        padding: 0.8rem 1.2rem;
+    .int-text {
+        max-width: 100%;
     }
 
-    .int-pill.central {
-        width: 100%;
-        justify-content: center;
-        order: -1;
-        margin-bottom: 2rem;
+    .int-apps-cloud {
+        padding: 2rem;
     }
 }

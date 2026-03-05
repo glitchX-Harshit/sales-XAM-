@@ -6,23 +6,30 @@ const Navbar = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
+            setScrolled(window.scrollY > 50);
         };
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     return (
         <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
             <div className="navbar-container">
-                <div className="logo text-orange interactive">NX.AI</div>
-                <div className="nav-links">
-                    <a href="#features" className="interactive">Features</a>
-                    <a href="#demo" className="interactive">Demo</a>
-                    <a href="#pricing" className="interactive">Pricing</a>
+                <div className="logo interactive">
+                    <span className="logo-dot"></span>
+                    nx.ai
                 </div>
+
+                <div className="nav-links">
+                    <a href="#features" className="nav-link interactive">Features</a>
+                    <a href="#how-it-works" className="nav-link interactive">How it works</a>
+                    <a href="#integrations" className="nav-link interactive">Integrations</a>
+                    <a href="#pricing" className="nav-link interactive">Pricing</a>
+                </div>
+
                 <div className="nav-actions">
-                    <button className="btn btn-primary btn-sm interactive">Get nx.ai</button>
+                    <a href="#" className="nav-login-link interactive">Sign in</a>
+                    <button className="nav-cta-btn interactive">Get nx.ai →</button>
                 </div>
             </div>
         </nav>

@@ -35,9 +35,7 @@ function App() {
       <Cursor />
 
       <main>
-        <div style={{ padding: '2rem' }}>
-          <Navbar />
-        </div>
+        <Navbar />
 
         {/* 1. Hero Section */}
         <Hero />

@@ -1,105 +1,222 @@
 .testi-section {
-    padding: 15vh 0;
-    background-color: var(--color-black);
-    color: var(--color-white);
+    background: #0a0a0a;
+    color: #fff;
+    padding: 12vh 0 0;
     overflow: hidden;
 }
 
 .testi-header {
-    text-align: center;
     margin-bottom: 5rem;
 }
 
+.testi-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #ffbd2e;
+    margin-bottom: 1.5rem;
+}
+
 .testi-title {
-    font-size: clamp(3rem, 5vw, 4.5rem);
-    line-height: 1.1;
+    font-size: clamp(2.8rem, 5.5vw, 5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: #fff;
     margin-bottom: 1rem;
 }
 
-.testi-title .font-serif {
-    color: #ffbd2e;
-    /* Gold color for 'Love' / value */
+.testi-title .font-serif em {
     font-style: italic;
+    color: #ffbd2e;
 }
 
-.testi-desc {
-    font-size: 1.25rem;
-    color: #a0a0a0;
+.testi-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
 }
 
-.testi-marquee-container {
-    width: 100vw;
+/* ── Parallax Grid ── */
+.testi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 8rem;
+    align-items: start;
+}
+
+.testi-parallax-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 24px;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    will-change: transform;
+    transition: background 0.3s, border-color 0.3s;
+    cursor: default;
+}
+
+.testi-parallax-card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Offset even/odd cards to create stagger baseline */
+.testi-parallax-card:nth-child(2) {
+    margin-top: 4rem;
+}
+
+.testi-parallax-card:nth-child(4) {
+    margin-top: -2rem;
+}
+
+.testi-parallax-card:nth-child(6) {
+    margin-top: 3rem;
+}
+
+.tpc-emoji {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.tpc-stars {
+    display: flex;
+    gap: 3px;
+}
+
+.tpc-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.65);
+    flex: 1;
+    margin: 0;
+}
+
+.tpc-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tpc-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.tpc-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.tpc-role {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.3);
+    font-weight: 600;
+}
+
+/* ── Infinite Marquee Bands ── */
+.testi-marquee-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background: #000;
+    padding: 5rem 0;
+}
+
+.testi-row-overflow {
     overflow: hidden;
-    position: relative;
-    /* Add fading edges */
-    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
 
 .testi-track {
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem;
     width: max-content;
-    padding: 1rem 0;
+    will-change: transform;
 }
 
-.testi-card {
-    width: 400px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 2.5rem;
-    border-radius: 24px;
+/* Mini marquee cards */
+.testi-mini-card {
+    width: 360px;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 18px;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.3s ease, background 0.3s ease;
+    gap: 0.8rem;
 }
 
-.testi-card:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.08);
+.testi-mini-card.dark {
+    background: rgba(255, 94, 0, 0.06);
+    border-color: rgba(255, 94, 0, 0.12);
 }
 
-.testi-stars {
+.tmc-stars {
     display: flex;
-    gap: 4px;
-    margin-bottom: 1.5rem;
+    gap: 3px;
 }
 
-.testi-text {
-    font-size: 1.3rem;
-    line-height: 1.6;
-    font-weight: 500;
-    margin-bottom: 2rem;
-    flex-grow: 1;
-}
-
-.testi-author {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.testi-avatar {
-    width: 45px;
-    height: 45px;
-    background: linear-gradient(135deg, #ffbd2e, #ff5e00);
-    border-radius: 50%;
-}
-
-.testi-name {
-    font-weight: 700;
-    font-size: 1.05rem;
-}
-
-.testi-role {
+.testi-mini-card p {
     font-size: 0.9rem;
-    color: #888;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.6;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-@media (max-width: 768px) {
-    .testi-card {
-        width: 300px;
-        padding: 1.5rem;
+.testi-mini-card span {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.25);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+@media (max-width: 1024px) {
+    .testi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .testi-parallax-card:nth-child(2) {
+        margin-top: 2rem;
+    }
+
+    .testi-parallax-card:nth-child(4) {
+        margin-top: 0;
+    }
+
+    .testi-parallax-card:nth-child(6) {
+        margin-top: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .testi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .testi-parallax-card {
+        margin-top: 0 !important;
     }
 }
