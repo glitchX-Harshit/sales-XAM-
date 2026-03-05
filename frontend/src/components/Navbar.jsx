@@ -1,36 +1,69 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import gsap from 'gsap';
 import './Navbar.css';
+
+const LINKS = [
+    { label: 'Features', href: '#features' },
+    { label: 'How it works', href: '#how-it-works' },
+    { label: 'Integrations', href: '#integrations' },
+    { label: 'Pricing', href: '#pricing' },
+];
 
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
+    const navRef = useRef(null);
 
+    /* Scroll state */
     useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
+        const onScroll = () => setScrolled(window.scrollY > 60);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
+    /* Entrance slide-down after loader */
+    useEffect(() => {
+        gsap.fromTo(navRef.current,
+            { y: -24, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.2 }
+        );
     }, []);
 
     return (
-        <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-            <div className="navbar-container">
-                <div className="logo interactive">
-                    <span className="logo-dot"></span>
-                    nx.ai
+        <nav className={`nb ${scrolled ? 'nb-scrolled' : ''}`} ref={navRef}>
+            <div className="nb-inner">
+
+                {/* Logo */}
+                <a href="#" className="nb-logo interactive">
+                    <span className="nb-logo-mark">
+                        <span className="nb-logo-pulse"></span>
+                    </span>
+                    <span className="nb-logo-text">
+                        <span className="nb-logo-nx">nx</span
+                        ><span className="nb-logo-dot">.</span
+                        ><span className="nb-logo-ai">ai</span>
+                    </span>
+                </a>
+
+                {/* Nav links — center pill */}
+                <div className="nb-links-pill">
+                    {LINKS.map(l => (
+                        <a key={l.href} href={l.href} className="nb-link interactive">
+                            {l.label}
+                        </a>
+                    ))}
                 </div>
 
-                <div className="nav-links">
-                    <a href="#features" className="nav-link interactive">Features</a>
-                    <a href="#how-it-works" className="nav-link interactive">How it works</a>
-                    <a href="#integrations" className="nav-link interactive">Integrations</a>
-                    <a href="#pricing" className="nav-link interactive">Pricing</a>
+                {/* Right actions */}
+                <div className="nb-actions">
+                    <a href="#" className="nb-signin interactive">Sign in</a>
+                    <a href="#pricing" className="nb-cta interactive">
+                        Get started
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </a>
                 </div>
 
-                <div className="nav-actions">
-                    <a href="#" className="nav-login-link interactive">Sign in</a>
-                    <button className="nav-cta-btn interactive">Get nx.ai →</button>
-                </div>
             </div>
         </nav>
     );
