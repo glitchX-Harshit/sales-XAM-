@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Cursor from './components/Cursor';
+import Loader from './components/Loader';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Features from './components/Features';
@@ -25,14 +26,22 @@ const SectionPlaceholder = ({ title, id }) => (
 );
 
 function App() {
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    // Basic smooth scroll setup or any global GSAP config
-  }, []);
+    // Prevent scroll while loading
+    if (!loaded) document.body.style.overflow = 'hidden';
+    else {
+      document.body.style.overflow = '';
+      // Recalculate all scroll positions after loader exit
+      ScrollTrigger.refresh();
+    }
+  }, [loaded]);
 
   return (
     <>
       <Cursor />
+      {!loaded && <Loader onComplete={() => setLoaded(true)} />}
 
       <main>
         <Navbar />

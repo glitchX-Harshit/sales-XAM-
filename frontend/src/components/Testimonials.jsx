@@ -6,44 +6,146 @@ import './Testimonials.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const TESTIMONIALS = [
+/* Real-feeling social proof cards — mix of sizes, tones, styles */
+const CARDS = [
     {
-        text: "nx.ai single-handedly increased our team's close rate by 22% in the first quarter. I can't imagine selling without it.",
-        author: "Sarah J.",
-        role: "VP of Sales, TechCorp",
-        emoji: "🚀"
+        name: 'Sarah Johnson',
+        handle: '@sarahj_vp',
+        role: 'VP of Sales · TechCorp',
+        avatar: 'SJ',
+        avatarBg: '#ff5e00',
+        stars: 5,
+        featured: true,
+        text: 'I did not believe it would work. Three months later our close rate is up 22% and our team refuses to get on a call without it. Genuinely changed how we sell.',
+        meta: 'via App Store · Verified purchase',
     },
     {
-        text: "It's like having a senior AE whisper perfect responses into my ear on every live call. Game. Changer.",
-        author: "Mike T.",
-        role: "Solutions Architect",
-        emoji: "💬"
+        name: 'Mike Tran',
+        handle: '@miketran_arch',
+        role: 'Solutions Architect',
+        avatar: 'MT',
+        avatarBg: '#7c5cbf',
+        stars: 5,
+        text: 'It\'s like having a senior AE in your ear on every call. Except it never panics, never forgets a script, and never needs a coffee break.',
+        meta: 'via G2 · Verified',
     },
     {
-        text: "I used to dread discovery calls. Now I walk in knowing I have the perfect response to any objection.",
-        author: "Elena R.",
-        role: "Account Executive",
-        emoji: "⚡"
+        name: 'Elena R.',
+        handle: '@elena_ae',
+        role: 'Account Executive',
+        avatar: 'ER',
+        avatarBg: '#27c93f',
+        stars: 5,
+        featured: true,
+        pull: true,
+        text: '"I used to dread discovery calls.\n\nNow I look forward to them."',
+        meta: 'Capsule Review',
     },
     {
-        text: "We replaced our clunky call recording software entirely. nx.ai is faster, smarter, and totally invisible.",
-        author: "David K.",
-        role: "Founder",
-        emoji: "✦"
+        name: 'David Kim',
+        handle: '@davidkim_build',
+        role: 'Founder, Gridline',
+        avatar: 'DK',
+        avatarBg: '#0099ff',
+        stars: 5,
+        text: 'Replaced our clunky call recording stack entirely. nx.ai is faster, smarter, completely invisible — and our prospects never notice.',
+        meta: 'via Trustpilot',
     },
     {
-        text: "The objection detection is basically a cheat code for enterprise sales. 3 months in, numbers speak for themselves.",
-        author: "Jessica M.",
-        role: "Sales Director",
-        emoji: "📈"
+        name: 'Jessica Moore',
+        handle: '@jess_sells',
+        role: 'Sales Director',
+        avatar: 'JM',
+        avatarBg: '#ff3d71',
+        stars: 5,
+        stat: { n: '+31%', l: 'quota attainment jump' },
+        text: 'The objection detection is basically a superpower. I watched a junior SDR handle a VP-level pricing pushback perfectly because nx.ai surfaced the exact right reframe.',
+        meta: 'via Product Hunt',
     },
     {
-        text: "ROI within 10 days. Our entire SDR team now insists on using it for every call.",
-        author: "Brian L.",
-        role: "Head of Revenue",
-        emoji: "🎯"
+        name: 'Brian Liu',
+        handle: '@brian_rev',
+        role: 'Head of Revenue',
+        avatar: 'BL',
+        avatarBg: '#d4a017',
+        stars: 5,
+        featured: true,
+        text: 'ROI within 10 days of deployment. I had to stop myself from calling every investor and just saying "nx.ai".',
+        meta: 'via Capterra · Verified',
+    },
+    {
+        name: 'Priya Nair',
+        handle: '@priya_sdr',
+        role: 'Senior SDR',
+        avatar: 'PN',
+        avatarBg: '#17b0d4',
+        stars: 5,
+        pull: true,
+        text: '"Closed a $400k deal on my third week using nx.ai.\n\nI\'m not joking."',
+        meta: 'Shared via Discord',
+    },
+    {
+        name: 'Tom Hassan',
+        handle: '@tomh_cro',
+        role: 'Chief Revenue Officer',
+        avatar: 'TH',
+        avatarBg: '#ff5e00',
+        stars: 5,
+        featured: true,
+        text: 'We run 200+ calls a week across our sales team. Since deploying nx.ai, follow-up emails dropped by 80% — everyone already knows exactly what was agreed on each call. This thing runs our post-call workflow almost entirely.',
+        meta: 'via Salesforce AppExchange · Enterprise',
+    },
+    {
+        name: 'Anika V.',
+        handle: '@anikav_smb',
+        role: 'SMB Account Executive',
+        avatar: 'AV',
+        avatarBg: '#7c5cbf',
+        stars: 5,
+        text: 'My manager thought I was getting coaching on the side. Nope — just nx.ai.',
+        meta: 'via LinkedIn',
     },
 ];
+
+/* Split cards into 3 columns for masonry */
+const COLS = [
+    CARDS.filter((_, i) => i % 3 === 0),
+    CARDS.filter((_, i) => i % 3 === 1),
+    CARDS.filter((_, i) => i % 3 === 2),
+];
+
+const Stars = ({ n }) => (
+    <div className="tl-stars">
+        {[...Array(n)].map((_, i) => <Star key={i} size={12} fill="#ffbd2e" color="#ffbd2e" />)}
+    </div>
+);
+
+const Card = ({ card }) => (
+    <div className={`tl-card ${card.featured ? 'tl-card-featured' : ''} ${card.pull ? 'tl-card-pull' : ''}`}>
+        {/* Header */}
+        <div className="tl-card-header">
+            <div className="tl-avatar" style={{ background: card.avatarBg }}>
+                {card.avatar}
+            </div>
+            <div className="tl-info">
+                <div className="tl-name">{card.name}</div>
+                <div className="tl-handle">{card.handle} · {card.role}</div>
+            </div>
+            <Stars n={card.stars} />
+        </div>
+
+        {card.stat && (
+            <div className="tl-stat-chip">
+                <span className="tl-stat-n">{card.stat.n}</span>
+                <span className="tl-stat-l">{card.stat.l}</span>
+            </div>
+        )}
+
+        <p className={`tl-text ${card.pull ? 'tl-pull-quote' : ''}`}>{card.text}</p>
+
+        <div className="tl-meta">{card.meta}</div>
+    </div>
+);
 
 const Testimonials = () => {
     const sectionRef = useRef(null);
@@ -51,8 +153,8 @@ const Testimonials = () => {
     useEffect(() => {
         const ctx = gsap.context(() => {
 
-            // ── Header reveal ──
-            gsap.fromTo('.testi-header > *',
+            /* Header */
+            gsap.fromTo('.tl-header > *',
                 { y: 40, opacity: 0 },
                 {
                     y: 0, opacity: 1, stagger: 0.12, duration: 0.9, ease: 'power3.out',
@@ -60,100 +162,91 @@ const Testimonials = () => {
                 }
             );
 
-            // ── Parallax: each card moves at a different rate ──
-            gsap.utils.toArray('.testi-parallax-card').forEach((card, i) => {
-                const speed = (i % 3 === 0) ? -60 : (i % 3 === 1) ? -30 : -90;
-                gsap.fromTo(card,
-                    { y: 80 + Math.abs(speed), opacity: 0 },
+            /* Per-column: fly in from different directions */
+            const colDirections = [
+                { x: -120, y: 40 },   // col 1 — from left
+                { x: 0, y: 100 },  // col 2 — from below
+                { x: 120, y: 40 },   // col 3 — from right
+            ];
+
+            document.querySelectorAll('.tl-col').forEach((col, i) => {
+                const dir = colDirections[i];
+
+                // Entrance — fly from direction into position
+                gsap.fromTo(col,
+                    { x: dir.x, y: dir.y, opacity: 0 },
                     {
-                        y: 0, opacity: 1,
-                        duration: 0.9, ease: 'power3.out',
-                        scrollTrigger: { trigger: '.testi-grid', start: 'top 85%' }
+                        x: 0, y: 0, opacity: 1,
+                        duration: 1.0, delay: i * 0.12, ease: 'power3.out',
+                        scrollTrigger: { trigger: '.tl-masonry', start: 'top 85%' }
                     }
                 );
-                // Ongoing parallax while scrolling
-                gsap.to(card, {
-                    y: speed,
+
+                // Ongoing scroll parallax after entrance
+                const speeds = [-120, 60, -80];
+                gsap.to(col, {
+                    y: speeds[i],
                     ease: 'none',
                     scrollTrigger: {
-                        trigger: '.testi-grid',
+                        trigger: '.tl-masonry',
                         start: 'top bottom',
                         end: 'bottom top',
-                        scrub: 1.5 + i * 0.2
+                        scrub: 1.5 + i * 0.3,
                     }
                 });
             });
 
-            // ── Marquee rows ──
-            gsap.to('.testi-track-1', { x: '-50%', ease: 'none', duration: 32, repeat: -1 });
-            gsap.fromTo('.testi-track-2', { x: '-50%' }, { x: '0%', ease: 'none', duration: 26, repeat: -1 });
+            /* Individual cards within each col fly from alternating sub-directions */
+            document.querySelectorAll('.tl-card').forEach((card, i) => {
+                const fromX = i % 4 === 0 ? -40 : i % 4 === 1 ? 40 : i % 4 === 2 ? -20 : 20;
+                gsap.fromTo(card,
+                    { x: fromX, y: 30, opacity: 0, rotation: (i % 2 === 0 ? -1.5 : 1.5) },
+                    {
+                        x: 0, y: 0, opacity: 1, rotation: 0,
+                        duration: 0.8, delay: i * 0.06, ease: 'power3.out',
+                        scrollTrigger: { trigger: '.tl-masonry', start: 'top 85%' }
+                    }
+                );
+            });
+
 
         }, sectionRef);
 
         return () => ctx.revert();
     }, []);
 
-    const doubled = [...TESTIMONIALS, ...TESTIMONIALS];
-
     return (
-        <section className="testi-section" id="testimonials" ref={sectionRef}>
+        <section className="tl-section" id="testimonials" ref={sectionRef}>
 
-            <div className="container testi-header">
-                <div className="testi-eyebrow">Wall of Love</div>
-                <h2 className="testi-title">
-                    2,000+ teams already{' '}
-                    <em className="font-serif">winning more.</em>
-                </h2>
-                <p className="testi-subtitle">Real results from real salespeople.</p>
+            {/* Section header */}
+            <div className="container tl-header">
+                <div className="tl-eyebrow">Wall of Love</div>
+                <div className="tl-header-row">
+                    <h2 className="tl-title">
+                        Real results.<br />
+                        <em className="tl-title-italic font-serif">Real teams.</em>
+                    </h2>
+                    <p className="tl-subtitle">
+                        Over 2,000 sales teams use nx.ai every day.<br />
+                        Here's what they're saying.
+                    </p>
+                </div>
             </div>
 
-            {/* ── Parallax card grid ── */}
-            <div className="testi-grid container">
-                {TESTIMONIALS.map((t, i) => (
-                    <div className="testi-parallax-card" key={i} style={{ '--card-index': i }}>
-                        <div className="tpc-emoji">{t.emoji}</div>
-                        <div className="tpc-stars">
-                            {[...Array(5)].map((_, si) => <Star key={si} size={13} fill="#ffbd2e" color="#ffbd2e" />)}
-                        </div>
-                        <p className="tpc-text">"{t.text}"</p>
-                        <div className="tpc-author">
-                            <div className="tpc-avatar" style={{ background: `hsl(${i * 55}, 60%, 60%)` }}>{t.author[0]}</div>
-                            <div>
-                                <div className="tpc-name">{t.author}</div>
-                                <div className="tpc-role">{t.role}</div>
-                            </div>
-                        </div>
+            {/* Masonry wall */}
+            <div className="container tl-masonry">
+                {COLS.map((col, ci) => (
+                    <div className="tl-col" key={ci}>
+                        {col.map((card, i) => <Card key={i} card={card} />)}
                     </div>
                 ))}
             </div>
 
-            {/* ── Infinite dual-direction marquee ── */}
-            <div className="testi-marquee-wrap">
-                <div className="testi-row-overflow">
-                    <div className="testi-track testi-track-1">
-                        {doubled.map((t, i) => (
-                            <div className="testi-mini-card" key={i}>
-                                <div className="tmc-stars">
-                                    {[...Array(5)].map((_, si) => <Star key={si} size={11} fill="#ffbd2e" color="#ffbd2e" />)}
-                                </div>
-                                <p>"{t.text}"</p>
-                                <span>— {t.author}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div className="testi-row-overflow">
-                    <div className="testi-track testi-track-2">
-                        {[...doubled].reverse().map((t, i) => (
-                            <div className="testi-mini-card dark" key={i}>
-                                <div className="tmc-stars">
-                                    {[...Array(5)].map((_, si) => <Star key={si} size={11} fill="#ffbd2e" color="#ffbd2e" />)}
-                                </div>
-                                <p>"{t.text}"</p>
-                                <span>— {t.author}</span>
-                            </div>
-                        ))}
-                    </div>
+            {/* Bottom CTA strip */}
+            <div className="tl-bottom-strip">
+                <div className="tl-strip-inner">
+                    <span className="tl-strip-text">Join 2,000+ teams closing more.</span>
+                    <button className="tl-strip-btn interactive">Start free →</button>
                 </div>
             </div>
 

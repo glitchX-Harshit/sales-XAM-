@@ -1,0 +1,167 @@
+/* ================================================================
+   LOADER — Conversation Reveal
+================================================================= */
+.ld-root {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #fcf9ee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    padding: 2rem;
+}
+
+/* ── Waveform ── */
+.ld-wave {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 36px;
+    opacity: 0;
+}
+
+.ld-wave-bar {
+    width: 2.5px;
+    height: 100%;
+    background: #ff5e00;
+    border-radius: 10px;
+    transform-origin: center;
+    will-change: transform;
+}
+
+.ld-listening {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.25);
+    margin-left: 1rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    animation: ld-blink 1.2s step-end infinite;
+}
+
+@keyframes ld-blink {
+
+    0%,
+    100% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* ── Chat area ── */
+.ld-chat {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    width: 100%;
+    max-width: 480px;
+}
+
+/* ── Bubble shared ── */
+.ld-bubble {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 88%;
+}
+
+.ld-bubble p {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    font-weight: 500;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    min-height: 1.6em;
+}
+
+.ld-bubble-who {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ── Prospect bubble (left aligned) ── */
+.ld-prospect {
+    align-self: flex-start;
+}
+
+.ld-prospect .ld-bubble-who {
+    color: rgba(0, 0, 0, 0.3);
+}
+
+.ld-prospect p {
+    color: rgba(0, 0, 0, 0.5);
+    font-style: italic;
+}
+
+/* ── nx.ai bubble (right aligned, orange accent) ── */
+.ld-nxai {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+
+.ld-nxai .ld-bubble-who {
+    color: #ff5e00;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ld-bwdot {
+    font-size: 0.7rem;
+}
+
+.ld-nxai p {
+    color: #111;
+    font-weight: 600;
+    text-align: right;
+}
+
+/* ── Brand line ── */
+.ld-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+    opacity: 0;
+}
+
+.ld-brand-nx {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #111;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+}
+
+.ld-brand-dot {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #ff5e00;
+    margin: 0 1px;
+}
+
+.ld-brand-ai {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: rgba(0, 0, 0, 0.3);
+}
+
+.ld-brand-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.2);
+    margin-left: 1rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    align-self: center;
+}
