@@ -6,7 +6,7 @@ import './Hero.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Hero = () => {
+const Hero = ({ onGetStarted }) => {
     const heroRef = useRef(null);
     const blob1Ref = useRef(null);
     const blob2Ref = useRef(null);
@@ -117,9 +117,9 @@ const Hero = () => {
                 <div className="hero-bottom-bar">
                     <div className="hero-cta-group">
                         <div className="hero-cta-wrap">
-                            <button className="hero-cta-btn interactive">
+                            <button className="hero-cta-btn interactive" onClick={onGetStarted}>
                                 <Download size={18} />
-                                Download Free
+                                Get Started Free
                             </button>
                         </div>
                         <a href="#how-it-works" className="hero-scroll-link interactive">

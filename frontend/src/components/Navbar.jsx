@@ -9,7 +9,7 @@ const LINKS = [
     { label: 'Pricing', href: '#pricing' },
 ];
 
-const Navbar = () => {
+const Navbar = ({ onGetStarted }) => {
     const [scrolled, setScrolled] = useState(false);
     const navRef = useRef(null);
 
@@ -56,12 +56,12 @@ const Navbar = () => {
                 {/* Right actions */}
                 <div className="nb-actions">
                     <a href="#" className="nb-signin interactive">Sign in</a>
-                    <a href="#pricing" className="nb-cta interactive">
+                    <button className="nb-cta interactive" onClick={onGetStarted}>
                         Get started
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                             <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
-                    </a>
+                    </button>
                 </div>
 
             </div>

@@ -14,19 +14,23 @@ import UseCases from './components/UseCases';
 import Testimonials from './components/Testimonials';
 import Pricing from './components/Pricing';
 import Footer from './components/Footer';
+import Dashboard from './components/Dashboard';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Temporary placeholder for the upcoming sections
-const SectionPlaceholder = ({ title, id }) => (
-  <section id={id} className="container" style={{ padding: '15vh 0', borderBottom: '1px solid var(--color-border)', textAlign: 'center' }}>
-    <h2 className="font-serif" style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{title}</h2>
-    <p style={{ color: 'var(--color-gray)' }}>Section details to be implemented.</p>
-  </section>
-);
-
 function App() {
   const [loaded, setLoaded] = useState(false);
+  const [view, setView] = useState('landing'); // 'landing' | 'dashboard'
+
+  const navigateTo = (v) => {
+    setView(v);
+    if (v === 'landing') {
+      document.body.style.overflow = '';
+      setTimeout(() => ScrollTrigger.refresh(), 100);
+    } else {
+      document.body.style.overflow = 'hidden';
+    }
+  };
 
   useEffect(() => {
     // Prevent scroll while loading
@@ -43,11 +47,17 @@ function App() {
       <Cursor />
       {!loaded && <Loader onComplete={() => setLoaded(true)} />}
 
-      <main>
-        <Navbar />
+      {/* DASHBOARD VIEW */}
+      {view === 'dashboard' && loaded && (
+        <Dashboard onExit={() => navigateTo('landing')} />
+      )}
+
+      {/* LANDING VIEW */}
+      <main style={{ display: view === 'dashboard' ? 'none' : 'block' }}>
+        <Navbar onGetStarted={() => navigateTo('dashboard')} />
 
         {/* 1. Hero Section */}
-        <Hero />
+        <Hero onGetStarted={() => navigateTo('dashboard')} />
 
         {/* 2. Features / "4x Faster" Section (Reusing our bento grid for now) */}
         <Features />
