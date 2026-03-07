@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+websockets
+python-dotenv
+sqlalchemy
+asyncpg
+deepgram-sdk
+openai
+pydantic
+pydantic-settings

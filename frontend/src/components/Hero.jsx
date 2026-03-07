@@ -20,6 +20,7 @@ const Hero = ({ onGetStarted }) => {
                 { clipPath: 'inset(0 0 100% 0)', y: 30 },
                 { clipPath: 'inset(0 0 0% 0)', y: 0, duration: 1.1, stagger: 0.18, ease: 'power4.out' }
             )
+                // ... existing GSAP logic ...
                 .fromTo('.hero-meta-row', { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.6')
                 .fromTo('.hero-bottom-bar', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.5')
                 .fromTo('.hero-card', { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 1, ease: 'power3.out' }, '-=0.6');

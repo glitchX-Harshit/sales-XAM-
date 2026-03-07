@@ -8,6 +8,7 @@ const ObjectionHandling = () => {
     const sectionRef = useRef(null);
 
     useEffect(() => {
+        // ... existing GSAP logic ...
         const ctx = gsap.context(() => {
             // Title reveal
             gsap.fromTo('.obj-title-wrapper > *',

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
+import { useAudioStream } from '../audio/audioStreamClient';
 import './Dashboard.css';
 
 /* ─────────────────────────────────────────
@@ -69,17 +70,38 @@ const METRICS = [
     { label: 'Response Time', value: 1.2, unit: 's', delta: '-3.8s', color: '#7c5cbf' },
 ];
 
-/* ───────────────────────────────── */
-
 const Dashboard = ({ onExit }) => {
     const dashRef = useRef(null);
-    const [activeObjIndex, setActiveObjIndex] = useState(null);
-    const [transcriptCount, setTranscriptCount] = useState(3);
     const [callDuration, setCallDuration] = useState(0);
-    const [isListening, setIsListening] = useState(true);
-    const [detectedObjs, setDetectedObjs] = useState([]);
-    const [activeSuggestion, setActiveSuggestion] = useState(null);
+    const [isListening, setIsListening] = useState(false); // start off initially until explicit join
     const [wavePhase, setWavePhase] = useState(0);
+    const [transcript, setTranscript] = useState([]);
+    const [latestObjection, setLatestObjection] = useState(null);
+    const [latestSuggestion, setLatestSuggestion] = useState(null);
+
+    // MICROPHONE WEBSOCKET STREAM
+    const { startRecording, stopRecording, isRecording } = useAudioStream('ws://localhost:8000/ws/audio');
+
+    const handleToggleListen = async () => {
+        if (isListening) {
+            stopRecording();
+            setIsListening(false);
+        } else {
+            const success = await startRecording({
+                onTranscript: (t) => setTranscript((prev) => [...prev, t]),
+                onObjection: (o) => {
+                    setLatestObjection(o);
+                    setTimeout(() => setLatestObjection(null), 8000);
+                },
+                onSuggestion: (s) => {
+                    setLatestSuggestion(s);
+                    setTimeout(() => setLatestSuggestion(null), 12000);
+                }
+            });
+            if (success) setIsListening(true);
+            else console.error('Failed to start microphone');
+        }
+    };
 
     /* ── Entrance animation */
     useEffect(() => {
@@ -96,29 +118,6 @@ const Dashboard = ({ onExit }) => {
     useEffect(() => {
         const timer = setInterval(() => setCallDuration(d => d + 1), 1000);
         return () => clearInterval(timer);
-    }, []);
-
-    /* ── Simulate transcript growing */
-    useEffect(() => {
-        const grow = setInterval(() => {
-            setTranscriptCount(c => Math.min(c + 1, TRANSCRIPT_LINES.length));
-        }, 4000);
-        return () => clearInterval(grow);
-    }, []);
-
-    /* ── Simulate objection detection */
-    useEffect(() => {
-        const triggers = [2000, 5000, 10000, 16000]; // ms after mount
-        const timers = triggers.map((delay, i) =>
-            setTimeout(() => {
-                setDetectedObjs(prev => [...prev, OBJECTIONS[i]]);
-                setActiveObjIndex(i);
-                setActiveSuggestion(SUGGESTIONS[i]);
-                /* Flash panel */
-                gsap.fromTo('.db-objection-flash', { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.4)' });
-            }, delay)
-        );
-        return () => timers.forEach(clearTimeout);
     }, []);
 
     /* ── Wave animation */
@@ -188,8 +187,8 @@ const Dashboard = ({ onExit }) => {
                 <header className="db-topbar">
                     <div className="db-topbar-left">
                         <div className="db-live-badge">
-                            <span className="db-live-dot" />
-                            LIVE CALL
+                            <span className="db-live-dot" style={{ background: isListening ? '#ff3d71' : '#666' }} />
+                            {isListening ? 'LIVE CALL' : 'WAITING FOR AUDIO'}
                         </div>
                         <div className="db-call-info">
                             <span className="db-call-name">Sarah Chen · Acme Corp</span>
@@ -197,11 +196,15 @@ const Dashboard = ({ onExit }) => {
                         </div>
                     </div>
                     <div className="db-topbar-right">
-                        <div className={`db-listen-toggle ${isListening ? 'on' : 'off'}`} onClick={() => setIsListening(l => !l)}>
-                            <span className="db-toggle-dot" />
-                            {isListening ? 'AI Listening' : 'Paused'}
-                        </div>
-                        <button className="db-end-btn">End Call</button>
+                        <button
+                            className={`db-listen-toggle ${isListening ? 'on' : 'off'}`}
+                            onClick={handleToggleListen}
+                            style={{ cursor: 'pointer', border: 'none', background: isListening ? '#27c93f18' : '#222', color: isListening ? '#27c93f' : '#fff' }}
+                        >
+                            <span className="db-toggle-dot" style={{ background: isListening ? '#27c93f' : '#666' }} />
+                            {isListening ? 'mic live' : 'join audio'}
+                        </button>
+                        <button className="db-end-btn" onClick={onExit}>End Call</button>
                     </div>
                 </header>
 
@@ -259,9 +262,10 @@ const Dashboard = ({ onExit }) => {
                             <span className="db-panel-tag">Real-time · Whisper AI</span>
                         </div>
                         <div className="db-transcript-scroll">
-                            {TRANSCRIPT_LINES.slice(0, transcriptCount).map((line, i) => (
+                            {transcript.length === 0 && <div style={{ padding: '1rem', opacity: 0.5 }}>Waiting for dialogue...</div>}
+                            {transcript.map((line, i) => (
                                 <div key={i} className={`db-transcript-line ${line.speaker}`}>
-                                    <span className="db-tx-speaker">{line.speaker === 'rep' ? 'You' : 'Sarah'}</span>
+                                    <span className="db-tx-speaker" style={{ textTransform: 'capitalize' }}>{line.speaker}</span>
                                     <p className="db-tx-text">{line.text}</p>
                                 </div>
                             ))}
@@ -277,17 +281,16 @@ const Dashboard = ({ onExit }) => {
                     <div className="db-panel db-panel-objections">
                         <div className="db-panel-header">
                             <span className="db-panel-title">🎯 Objection Radar</span>
-                            <span className="db-panel-tag">{detectedObjs.length} detected</span>
+                            <span className="db-panel-tag">{latestObjection ? '1 detected' : 'Scanning...'}</span>
                         </div>
                         <div className="db-objections-list">
                             {OBJECTIONS.map((obj, i) => {
-                                const isDetected = detectedObjs.some(d => d.type === obj.type);
-                                const isActive = activeObjIndex === i;
+                                const isDetected = latestObjection && latestObjection.type.toUpperCase() === obj.type;
+                                const isActive = isDetected;
                                 return (
                                     <div
                                         key={obj.type}
                                         className={`db-objection-item ${isDetected ? 'detected' : 'pending'} ${isActive ? 'active db-objection-flash' : ''}`}
-                                        onClick={() => isDetected && (setActiveObjIndex(i), setActiveSuggestion(SUGGESTIONS[i]))}
                                         style={{ '--obj-color': obj.color }}
                                     >
                                         <div className="db-obj-indicator" style={{ background: isDetected ? obj.color : 'rgba(0,0,0,0.08)' }} />
@@ -315,23 +318,23 @@ const Dashboard = ({ onExit }) => {
                             <span className="db-panel-title">✦ AI Response Coach</span>
                             <span className="db-panel-tag">Powered by GPT-4o</span>
                         </div>
-                        {activeSuggestion ? (
+                        {latestSuggestion ? (
                             <div className="db-suggestion-body">
-                                <div className="db-sugg-tag" style={{ background: activeSuggestion.tagColor + '18', color: activeSuggestion.tagColor, borderColor: activeSuggestion.tagColor + '40' }}>
-                                    ⚡ {activeSuggestion.tag}
+                                <div className="db-sugg-tag" style={{ background: '#27c93f18', color: '#27c93f', borderColor: '#27c93f40' }}>
+                                    ⚡ AI Recommended
                                 </div>
-                                <div className="db-sugg-title">{activeSuggestion.title}</div>
-                                <div className="db-sugg-quote">{activeSuggestion.body}</div>
+                                <div className="db-sugg-title">{latestSuggestion.strategy}</div>
+                                <div className="db-sugg-quote">"{latestSuggestion.text}"</div>
                                 <div className="db-sugg-stat">
-                                    <span className="db-sugg-dot" style={{ background: activeSuggestion.tagColor }} />
-                                    {activeSuggestion.stat}
+                                    <span className="db-sugg-dot" style={{ background: '#27c93f' }} />
+                                    Highest success rate for {latestObjection?.type || 'this'}
                                 </div>
                                 <div className="db-sugg-alt">
                                     <span className="db-sugg-alt-label">Alt approach:</span>
-                                    {activeSuggestion.alt}
+                                    Offer a live sandbox demo on the call right now.
                                 </div>
                                 <div className="db-sugg-actions">
-                                    <button className="db-sugg-copy" onClick={() => navigator.clipboard?.writeText(activeSuggestion.body.replace(/^"|"$/g, ''))}>
+                                    <button className="db-sugg-copy" onClick={() => navigator.clipboard?.writeText(latestSuggestion.text)}>
                                         Copy Response
                                     </button>
                                     <button className="db-sugg-next">Next Tip →</button>
