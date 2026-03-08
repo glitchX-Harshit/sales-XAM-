@@ -15,7 +15,7 @@ client = AsyncOpenAI(
 class SalesAIEngine:
     def __init__(self):
         self.message_buffer = []
-        self.max_messages = 10
+        self.max_messages = 8
         self.min_messages = 2
         self.cooldown_messages = 1
         self.messages_since_last_trigger = 0
@@ -88,7 +88,24 @@ class SalesAIEngine:
         if not client:
             return await self._run_fallback()
             
-        system_content = f"You are an elite B2B sales coach using the {self.persona.upper()} selling methodology."
+        system_content = f"""You are an elite B2B sales strategist and closer.
+
+Your role during the call is to:
+- detect objections
+- guide the sales rep strategically
+- suggest persuasion techniques
+- recommend the next move in the conversation
+
+Use proven techniques such as:
+- ROI framing
+- social proof
+- cost of inaction
+- urgency creation
+- reframing objections
+- authority alignment
+- discovery questioning
+
+Your goal is to help the salesperson move the conversation closer to a deal."""
         prompt = f"""
         Analyze the following recent conversation snippet (sliding window).
         
@@ -97,12 +114,14 @@ class SalesAIEngine:
         
         Generate a precise, high-converting response suggestion and sales coaching insights for the sales rep.
         Return ONLY a JSON object with exactly these fields:
-        - "spin_stage": one of ["situation", "problem", "implication", "need_payoff"]
-        - "objection_type": one of ["pricing", "timeline", "trust", "authority", "need", "competitor", "none"]
+        - "spin_stage": "Current stage of SPIN conversation"
+        - "objection_type": "Detected objection type or none"
+        - "persuasion_strategy": "Psychological persuasion technique to use"
+        - "suggested_response": "Exact line the rep can say"
+        - "coaching_tip": "Strategic guidance"
+        - "next_best_question": "Question that moves the deal forward"
+        - "deal_signal": "positive" | "neutral" | "negative"
         - "confidence": Float between 0.0 and 1.0 representing confidence in the detection.
-        - "suggested_response": A short, recommended reply for the salesperson to say next.
-        - "coaching_tip": A 1-sentence sales strategy guidance.
-        - "next_best_question": A question that moves the conversation forward.
         """
         
         try:
@@ -160,10 +179,12 @@ class SalesAIEngine:
                     return {
                         "spin_stage": "problem",
                         "objection_type": obj_type,
+                        "persuasion_strategy": "Direct Response",
                         "confidence": confidence,
                         "suggested_response": suggestion_data.get("text", ""),
                         "coaching_tip": suggestion_data.get("strategy", ""),
-                        "next_best_question": "What are your specific requirements?"
+                        "next_best_question": "What are your specific requirements?",
+                        "deal_signal": "neutral"
                     }
             except Exception as e:
                 print(f"[AI_ERROR] Fallback failed: {e}")

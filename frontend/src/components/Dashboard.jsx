@@ -77,12 +77,11 @@ const Dashboard = ({ onExit }) => {
     const [wavePhase, setWavePhase] = useState(0);
     const [transcript, setTranscript] = useState([]);
     const [latestObjection, setLatestObjection] = useState(null);
-    const [latestSuggestion, setLatestSuggestion] = useState(null);
+    const [suggestionHistory, setSuggestionHistory] = useState([]);
+    const [dealHealthScore, setDealHealthScore] = useState(50);
 
     // New states from Sales AI Engine
     const [spinStage, setSpinStage] = useState('situation');
-    const [coachingTip, setCoachingTip] = useState(null);
-    const [nextQuestion, setNextQuestion] = useState(null);
 
     // MICROPHONE WEBSOCKET STREAM
     const { startRecording, stopRecording, isRecording } = useAudioStream('ws://localhost:8000/ws/audio');
@@ -98,16 +97,36 @@ const Dashboard = ({ onExit }) => {
                     const { spin_stage, objection_type, suggested_response, coaching_tip, next_best_question } = analysis;
 
                     if (spin_stage) setSpinStage(spin_stage);
-                    if (coaching_tip) setCoachingTip(coaching_tip);
-                    if (next_best_question) setNextQuestion(next_best_question);
+                    if (spin_stage) setSpinStage(spin_stage);
 
                     if (objection_type && objection_type !== 'none') {
                         setLatestObjection({ type: objection_type });
                         setTimeout(() => setLatestObjection(null), 8000);
                     }
+
+                    if (analysis.deal_signal) {
+                        setDealHealthScore(prev => {
+                            let change = 0;
+                            if (analysis.deal_signal === 'positive') change = 10;
+                            else if (analysis.deal_signal === 'neutral') change = 2;
+                            else if (analysis.deal_signal === 'negative') change = -8;
+
+                            const target = Math.min(100, Math.max(0, prev + change));
+                            return Math.round(prev * 0.4 + target * 0.6); // slight smoothing
+                        });
+                    }
+
                     if (suggested_response) {
-                        setLatestSuggestion({ text: suggested_response, strategy: coaching_tip || "Guidance" });
-                        setTimeout(() => setLatestSuggestion(null), 12000);
+                        const newSuggestion = {
+                            id: Date.now(),
+                            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                            text: suggested_response,
+                            strategy: coaching_tip || "Guidance",
+                            persuasion: analysis.persuasion_strategy || "Strategy",
+                            type: objection_type || 'none',
+                            nextQuestion: next_best_question
+                        };
+                        setSuggestionHistory(prev => [newSuggestion, ...prev].slice(0, 25));
                     }
                 }
             });
@@ -333,42 +352,57 @@ const Dashboard = ({ onExit }) => {
                     </div>
 
                     {/* ── AI SUGGESTION ENGINE */}
-                    <div className="db-panel db-panel-suggestion">
-                        <div className="db-panel-header">
+                    <div className="db-panel db-panel-suggestion" style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="db-panel-header" style={{ flexShrink: 0 }}>
                             <span className="db-panel-title">✦ AI Response Coach</span>
-                            <span className="db-panel-tag">Powered by GPT-4o</span>
+                            <span className="db-panel-tag">Powered by Llama 3.3</span>
                         </div>
-                        {latestSuggestion ? (
-                            <div className="db-suggestion-body">
-                                <div className="db-sugg-tag" style={{ background: '#27c93f18', color: '#27c93f', borderColor: '#27c93f40' }}>
-                                    ⚡ AI Recommended
+
+                        <div className="db-suggestion-history" style={{ flex: 1, overflowY: 'auto', paddingRight: '4px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            {suggestionHistory.length > 0 ? (
+                                suggestionHistory.map((sugg, idx) => {
+                                    const isLatest = idx === 0;
+                                    return (
+                                        <div key={sugg.id} className={`db-suggestion-body ${isLatest ? 'db-suggestion-latest' : 'db-suggestion-past'}`} style={{ opacity: isLatest ? 1 : 0.65, transition: 'opacity 0.2s', borderBottom: isLatest ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingBottom: isLatest ? '1rem' : '0' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                                    <div className="db-sugg-tag" style={{ background: isLatest ? '#27c93f18' : 'transparent', color: isLatest ? '#27c93f' : '#888', borderColor: isLatest ? '#27c93f40' : '#444', padding: isLatest ? undefined : '2px 8px' }}>
+                                                        {isLatest ? '⚡ Latest Recommendation' : 'Past Suggestion'}
+                                                    </div>
+                                                    <div className="db-sugg-tag" style={{ background: '#0ea5e918', color: '#0ea5e9', borderColor: '#0ea5e940' }}>
+                                                        {sugg.persuasion}
+                                                    </div>
+                                                    {sugg.type !== 'none' && (
+                                                        <div className="db-sugg-tag" style={{ background: '#ff5e0018', color: '#ff5e00', borderColor: '#ff5e0040' }}>
+                                                            Obj: {sugg.type}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div style={{ fontSize: '0.75rem', color: '#888', background: '#222', padding: '2px 6px', borderRadius: '4px' }}>
+                                                    {sugg.timestamp}
+                                                </div>
+                                            </div>
+
+                                            <div className="db-sugg-title" style={{ fontSize: isLatest ? '1.1rem' : '0.95rem' }}>{sugg.strategy}</div>
+                                            <div className="db-sugg-quote" style={{ fontSize: isLatest ? '1.05rem' : '0.9rem' }}>"{sugg.text}"</div>
+
+                                            {sugg.nextQuestion && isLatest && (
+                                                <div className="db-sugg-stat" style={{ color: '#0ea5e9', background: '#0ea5e910', padding: '6px 10px', borderRadius: '6px', marginTop: '10px' }}>
+                                                    <span className="db-sugg-dot" style={{ background: '#0ea5e9' }} />
+                                                    <strong style={{ opacity: 0.8, marginRight: '4px' }}>Ask Next:</strong> {sugg.nextQuestion}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <div className="db-suggestion-empty" style={{ margin: 'auto' }}>
+                                    <div className="db-sugg-idle-icon">✦</div>
+                                    <p>Listening for objections…</p>
+                                    <span>AI will accumulate real-time responses and history as your prospect speaks.</span>
                                 </div>
-                                <div className="db-sugg-title">{latestSuggestion.strategy}</div>
-                                <div className="db-sugg-quote">"{latestSuggestion.text}"</div>
-                                {nextQuestion && (
-                                    <div className="db-sugg-stat" style={{ color: '#0ea5e9', background: '#0ea5e910', padding: '6px 10px', borderRadius: '6px', marginTop: '10px' }}>
-                                        <span className="db-sugg-dot" style={{ background: '#0ea5e9' }} />
-                                        <strong style={{ opacity: 0.8, marginRight: '4px' }}>Ask Next:</strong> {nextQuestion}
-                                    </div>
-                                )}
-                                <div className="db-sugg-alt" style={{ marginTop: '10px' }}>
-                                    <span className="db-sugg-alt-label">Coach Tip:</span>
-                                    {coachingTip || "Listen actively and align with prospect value."}
-                                </div>
-                                <div className="db-sugg-actions">
-                                    <button className="db-sugg-copy" onClick={() => navigator.clipboard?.writeText(latestSuggestion.text)}>
-                                        Copy Response
-                                    </button>
-                                    <button className="db-sugg-next">Next Tip →</button>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="db-suggestion-empty">
-                                <div className="db-sugg-idle-icon">✦</div>
-                                <p>Listening for objections…</p>
-                                <span>AI will suggest real-time responses as your prospect speaks.</span>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
 
                     {/* ── DEAL HEALTH SCORE */}
@@ -382,11 +416,11 @@ const Dashboard = ({ onExit }) => {
                                 <svg viewBox="0 0 100 100" className="db-score-svg">
                                     <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="8" />
                                     <circle cx="50" cy="50" r="42" fill="none" stroke="#27c93f" strokeWidth="8"
-                                        strokeDasharray={`${2 * Math.PI * 42 * 0.74} ${2 * Math.PI * 42 * 0.26}`}
-                                        strokeLinecap="round" transform="rotate(-90 50 50)" />
+                                        strokeDasharray={`${2 * Math.PI * 42 * (dealHealthScore / 100)} ${2 * Math.PI * 42 * (1 - (dealHealthScore / 100))}`}
+                                        strokeLinecap="round" transform="rotate(-90 50 50)" style={{ transition: 'stroke-dasharray 0.5s ease-out' }} />
                                 </svg>
                                 <div className="db-score-label">
-                                    <span className="db-score-number">74</span>
+                                    <span className="db-score-number">{dealHealthScore}</span>
                                     <span className="db-score-sub">/100</span>
                                 </div>
                             </div>
