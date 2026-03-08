@@ -415,7 +415,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
-    padding: 1rem 2rem;
+    padding: 0.5rem 2rem;
     flex-shrink: 0;
 }
 
@@ -465,8 +465,8 @@
 .db-panels-grid {
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr 1.1fr 0.9fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
     gap: 1rem;
     padding: 0 2rem 1.5rem;
     overflow: hidden;
@@ -498,30 +498,32 @@
     grid-row: 1;
 }
 
-.db-panel-transcript {
+.db-panel-objections {
     grid-column: 2;
-    grid-row: 1 / 3;
+    grid-row: 1;
 }
 
-.db-panel-objections {
+.db-panel-health {
     grid-column: 3;
     grid-row: 1;
 }
 
 .db-panel-suggestion {
-    grid-column: 1;
+    grid-column: 1 / 3;
     grid-row: 2;
+    min-height: 320px;
+    max-height: 420px;
 }
 
-.db-panel-health {
+.db-panel-transcript {
     grid-column: 3;
     grid-row: 2;
+    min-height: 320px;
+    max-height: 420px;
 }
 
-/* Remove health; replace playbook to fill col 3 row 2 */
+/* Remove playbook */
 .db-panel-playbook {
-    grid-column: 3;
-    grid-row: 2;
     display: none;
 }
 
