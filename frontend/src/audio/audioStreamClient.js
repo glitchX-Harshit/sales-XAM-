@@ -10,8 +10,7 @@ export const useAudioStream = (wsUrl) => {
 
     // Callbacks for UI updates
     const onTranscriptRef = useRef(null);
-    const onObjectionRef = useRef(null);
-    const onSuggestionRef = useRef(null);
+    const onAiAnalysisRef = useRef(null);
 
     const connectWebSocket = useCallback(() => {
         return new Promise((resolve, reject) => {
@@ -32,10 +31,8 @@ export const useAudioStream = (wsUrl) => {
 
                     if (data.type === 'transcriptUpdate' && onTranscriptRef.current) {
                         onTranscriptRef.current(data);
-                    } else if (data.type === 'objectionDetect' && onObjectionRef.current) {
-                        onObjectionRef.current(data.objection);
-                    } else if (data.type === 'aiSuggestion' && onSuggestionRef.current) {
-                        onSuggestionRef.current(data.suggestion);
+                    } else if (data.type === 'aiAnalysis' && onAiAnalysisRef.current) {
+                        onAiAnalysisRef.current(data.payload);
                     }
                 } catch (err) {
                     console.error('WebSocket Error:', err);
@@ -65,8 +62,7 @@ export const useAudioStream = (wsUrl) => {
 
     const startRecording = useCallback(async (callbacks = {}) => {
         onTranscriptRef.current = callbacks.onTranscript;
-        onObjectionRef.current = callbacks.onObjection;
-        onSuggestionRef.current = callbacks.onSuggestion;
+        onAiAnalysisRef.current = callbacks.onAiAnalysis;
 
         try {
             // [BUGFIX] WAIT for websocket to be open as outlined in phase_3_1_websocket_stability
