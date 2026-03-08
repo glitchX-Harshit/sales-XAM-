@@ -1,8 +1,7 @@
 import json
 from fastapi import WebSocket, WebSocketDisconnect
 from services.transcript_manager import TranscriptManager
-from services.objection_engine import detect_objection
-from services.suggestion_engine import generate_response_suggestion
+from services.sales_ai_engine import SalesAIEngine
 from services.deepgram_stream import DeepgramStream
 
 
@@ -12,15 +11,20 @@ class ConnectionManager:
         self.active_connections: list[WebSocket] = []
         self.transcript_manager = TranscriptManager()
         self.deepgram_sessions = {}
+        self.ai_engines = {}
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         self.active_connections.append(websocket)
+        self.ai_engines[websocket] = SalesAIEngine()
         print(f"🔌 Client connected. Active WebSockets: {len(self.active_connections)}")
 
     def disconnect(self, websocket: WebSocket):
         if websocket in self.active_connections:
             self.active_connections.remove(websocket)
+
+        if websocket in self.ai_engines:
+            del self.ai_engines[websocket]
 
         print("❌ Client disconnected.")
 
@@ -62,38 +66,15 @@ class ConnectionManager:
             "text": text
         }), websocket)
 
-        # Detect objection
-        context = self.transcript_manager.get_recent_context()
-        objection_json = await detect_objection(context)
-
-        if objection_json:
-
-            try:
-                objection_data = json.loads(objection_json)
-
+        # Run unified Sales AI Engine logic
+        ai_engine = self.ai_engines.get(websocket)
+        if ai_engine:
+            analysis = await ai_engine.analyze(speaker, text)
+            if analysis:
                 await self.send_personal_message(json.dumps({
-                    "type": "objectionDetect",
-                    "objection": objection_data
+                    "type": "aiAnalysis",
+                    "payload": analysis
                 }), websocket)
-
-                # Generate suggestion
-                objection_type = objection_data.get("type")
-
-                suggestion_json = await generate_response_suggestion(
-                    objection_type,
-                    context
-                )
-
-                if suggestion_json:
-                    suggestion_data = json.loads(suggestion_json)
-
-                    await self.send_personal_message(json.dumps({
-                        "type": "aiSuggestion",
-                        "suggestion": suggestion_data
-                    }), websocket)
-
-            except Exception as e:
-                print("❌ Error parsing AI response:", e)
 
     # ==============================
     # AUDIO STREAM HANDLER
@@ -121,13 +102,18 @@ class ConnectionManager:
         try:
 
             while True:
-
-                # RECEIVE BINARY AUDIO
-                data = await websocket.receive_bytes()
-
-                print(f"📥 received audio chunk: {len(data)} bytes")
-
-                await dg_stream.send_audio(data)
+                # RECEIVE BINARY AUDIO OR TEXT COMMANDS
+                message = await websocket.receive()
+                
+                if "bytes" in message:
+                    data = message["bytes"]
+                    print(f"📥 received audio chunk: {len(data)} bytes")
+                    await dg_stream.send_audio(data)
+                elif "text" in message:
+                    text_data = message["text"]
+                    print(f"📥 received text command: {text_data}")
+                    if "close_stream" in text_data:
+                        break  # Stop loop cleanly
 
         except WebSocketDisconnect:
             print("❌ WebSocket disconnected")

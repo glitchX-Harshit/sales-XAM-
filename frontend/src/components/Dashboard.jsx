@@ -79,6 +79,11 @@ const Dashboard = ({ onExit }) => {
     const [latestObjection, setLatestObjection] = useState(null);
     const [latestSuggestion, setLatestSuggestion] = useState(null);
 
+    // New states from Sales AI Engine
+    const [spinStage, setSpinStage] = useState('situation');
+    const [coachingTip, setCoachingTip] = useState(null);
+    const [nextQuestion, setNextQuestion] = useState(null);
+
     // MICROPHONE WEBSOCKET STREAM
     const { startRecording, stopRecording, isRecording } = useAudioStream('ws://localhost:8000/ws/audio');
 
@@ -89,13 +94,21 @@ const Dashboard = ({ onExit }) => {
         } else {
             const success = await startRecording({
                 onTranscript: (t) => setTranscript((prev) => [...prev, t]),
-                onObjection: (o) => {
-                    setLatestObjection(o);
-                    setTimeout(() => setLatestObjection(null), 8000);
-                },
-                onSuggestion: (s) => {
-                    setLatestSuggestion(s);
-                    setTimeout(() => setLatestSuggestion(null), 12000);
+                onAiAnalysis: (analysis) => {
+                    const { spin_stage, objection_type, suggested_response, coaching_tip, next_best_question } = analysis;
+
+                    if (spin_stage) setSpinStage(spin_stage);
+                    if (coaching_tip) setCoachingTip(coaching_tip);
+                    if (next_best_question) setNextQuestion(next_best_question);
+
+                    if (objection_type && objection_type !== 'none') {
+                        setLatestObjection({ type: objection_type });
+                        setTimeout(() => setLatestObjection(null), 8000);
+                    }
+                    if (suggested_response) {
+                        setLatestSuggestion({ text: suggested_response, strategy: coaching_tip || "Guidance" });
+                        setTimeout(() => setLatestSuggestion(null), 12000);
+                    }
                 }
             });
             if (success) setIsListening(true);
@@ -192,7 +205,14 @@ const Dashboard = ({ onExit }) => {
                         </div>
                         <div className="db-call-info">
                             <span className="db-call-name">Sarah Chen · Acme Corp</span>
-                            <span className="db-call-duration">{formatTime(callDuration)}</span>
+                            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginTop: '3px' }}>
+                                <span className="db-call-duration" style={{ fontSize: '0.85rem' }}>{formatTime(callDuration)}</span>
+                                {isListening && (
+                                    <span className="db-spin-badge" style={{ fontSize: '0.7rem', fontWeight: 600, padding: '2px 6px', background: '#7c5cbf40', color: '#c5a3ff', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                        STAGE: {spinStage}
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </div>
                     <div className="db-topbar-right">
@@ -325,13 +345,15 @@ const Dashboard = ({ onExit }) => {
                                 </div>
                                 <div className="db-sugg-title">{latestSuggestion.strategy}</div>
                                 <div className="db-sugg-quote">"{latestSuggestion.text}"</div>
-                                <div className="db-sugg-stat">
-                                    <span className="db-sugg-dot" style={{ background: '#27c93f' }} />
-                                    Highest success rate for {latestObjection?.type || 'this'}
-                                </div>
-                                <div className="db-sugg-alt">
-                                    <span className="db-sugg-alt-label">Alt approach:</span>
-                                    Offer a live sandbox demo on the call right now.
+                                {nextQuestion && (
+                                    <div className="db-sugg-stat" style={{ color: '#0ea5e9', background: '#0ea5e910', padding: '6px 10px', borderRadius: '6px', marginTop: '10px' }}>
+                                        <span className="db-sugg-dot" style={{ background: '#0ea5e9' }} />
+                                        <strong style={{ opacity: 0.8, marginRight: '4px' }}>Ask Next:</strong> {nextQuestion}
+                                    </div>
+                                )}
+                                <div className="db-sugg-alt" style={{ marginTop: '10px' }}>
+                                    <span className="db-sugg-alt-label">Coach Tip:</span>
+                                    {coachingTip || "Listen actively and align with prospect value."}
                                 </div>
                                 <div className="db-sugg-actions">
                                     <button className="db-sugg-copy" onClick={() => navigator.clipboard?.writeText(latestSuggestion.text)}>
