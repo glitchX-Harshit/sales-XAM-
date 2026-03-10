@@ -13,7 +13,8 @@ client = AsyncOpenAI(
 ) if api_key else None
 
 class SalesAIEngine:
-    def __init__(self):
+    def __init__(self, call_context: dict = None):
+        self.call_context = call_context
         self.message_buffer = []
         self.max_messages = 8
         self.min_messages = 2
@@ -88,7 +89,13 @@ class SalesAIEngine:
         if not client:
             return await self._run_fallback()
             
-        system_content = f"""You are an elite B2B sales strategist and closer.
+        context_str = ""
+        if self.call_context:
+            context_str = "\n\nYou have access to the following call context:\n"
+            context_str += "\n".join([f"- {k.replace('_', ' ').capitalize()}: {v}" for k, v in self.call_context.items()])
+            context_str += "\n\nUse this context to generate more personalized persuasion strategies."
+            
+        system_content = f"""You are an elite B2B sales strategist and closer.{context_str}
 
 Your role during the call is to:
 - detect objections

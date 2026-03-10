@@ -12,11 +12,18 @@ class ConnectionManager:
         self.transcript_manager = TranscriptManager()
         self.deepgram_sessions = {}
         self.ai_engines = {}
+        from services.call_context_engine import call_context_engine
+        self.call_context_engine = call_context_engine
 
-    async def connect(self, websocket: WebSocket):
+    async def connect(self, websocket: WebSocket, context_id: str = None):
         await websocket.accept()
         self.active_connections.append(websocket)
-        self.ai_engines[websocket] = SalesAIEngine()
+        
+        call_context = None
+        if context_id:
+            call_context = self.call_context_engine.get_context(context_id)
+            
+        self.ai_engines[websocket] = SalesAIEngine(call_context=call_context)
         print(f"🔌 Client connected. Active WebSockets: {len(self.active_connections)}")
 
     def disconnect(self, websocket: WebSocket):

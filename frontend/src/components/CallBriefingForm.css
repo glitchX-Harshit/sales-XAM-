@@ -1,0 +1,124 @@
+.cb-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.cb-container {
+    background: #151515;
+    border: 1px solid #333;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    padding: 2rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.cb-header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.cb-header h2 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.cb-header p {
+    color: #888;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.cb-error {
+    background: rgba(255, 94, 0, 0.1);
+    border: 1px solid rgba(255, 94, 0, 0.3);
+    color: #ff5e00;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.cb-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.cb-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.cb-form-group label {
+    color: #aaa;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cb-form-group input,
+.cb-form-group textarea {
+    background: #0f0f0f;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    color: #fff;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.cb-form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.cb-form-group input:focus,
+.cb-form-group textarea:focus {
+    outline: none;
+    border-color: #27c93f;
+    box-shadow: 0 0 0 2px rgba(39, 201, 63, 0.2);
+}
+
+.cb-form-group input::placeholder,
+.cb-form-group textarea::placeholder {
+    color: #444;
+}
+
+.cb-submit-btn {
+    background: #27c93f;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+}
+
+.cb-submit-btn:hover:not(:disabled) {
+    background: #2ebd42;
+    transform: translateY(-1px);
+}
+
+.cb-submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}

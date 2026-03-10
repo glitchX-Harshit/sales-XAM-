@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useAudioStream } from '../audio/audioStreamClient';
+import CallBriefingForm from './CallBriefingForm';
 import './Dashboard.css';
+
 
 /* ─────────────────────────────────────────
    MOCK DATA — cycles through realistic scenarios
@@ -79,12 +81,16 @@ const Dashboard = ({ onExit }) => {
     const [latestObjection, setLatestObjection] = useState(null);
     const [suggestionHistory, setSuggestionHistory] = useState([]);
     const [dealHealthScore, setDealHealthScore] = useState(50);
+    const [callContext, setCallContext] = useState(null);
+    const [contextId, setContextId] = useState(null);
+    const [showBriefing, setShowBriefing] = useState(true);
 
     // New states from Sales AI Engine
     const [spinStage, setSpinStage] = useState('situation');
 
     // MICROPHONE WEBSOCKET STREAM
-    const { startRecording, stopRecording, isRecording } = useAudioStream('ws://localhost:8000/ws/audio');
+    const wsUrl = contextId ? `ws://localhost:8000/ws/audio?context_id=${contextId}` : 'ws://localhost:8000/ws/audio';
+    const { startRecording, stopRecording, isRecording } = useAudioStream(wsUrl);
 
     const handleToggleListen = async () => {
         if (isListening) {
@@ -135,8 +141,15 @@ const Dashboard = ({ onExit }) => {
         }
     };
 
+    const handleStartCall = (id, contextData) => {
+        setContextId(id);
+        setCallContext(contextData);
+        setShowBriefing(false);
+    };
+
     /* ── Entrance animation */
     useEffect(() => {
+        if (showBriefing) return; // wait till briefing is done
         const ctx = gsap.context(() => {
             gsap.fromTo('.db-sidebar', { x: -60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: 'power3.out' });
             gsap.fromTo('.db-topbar', { y: -30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' });
@@ -144,7 +157,7 @@ const Dashboard = ({ onExit }) => {
             gsap.fromTo('.db-metric-card', { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, stagger: 0.08, ease: 'back.out(1.7)', delay: 0.4 });
         }, dashRef);
         return () => ctx.revert();
-    }, []);
+    }, [showBriefing]);
 
     /* ── Call timer */
     useEffect(() => {
@@ -166,6 +179,8 @@ const Dashboard = ({ onExit }) => {
 
     return (
         <div className="db-root" ref={dashRef}>
+            {showBriefing && <CallBriefingForm onStartCall={handleStartCall} />}
+
             {/* ── AMBIENT BACKGROUND */}
             <div className="db-ambient">
                 <div className="db-blob db-blob-1" />
@@ -223,13 +238,23 @@ const Dashboard = ({ onExit }) => {
                             {isListening ? 'LIVE CALL' : 'WAITING FOR AUDIO'}
                         </div>
                         <div className="db-call-info">
-                            <span className="db-call-name">Sarah Chen · Acme Corp</span>
+                            <span className="db-call-name">{callContext ? `${callContext.client_name} · ${callContext.client_industry}` : 'Sarah Chen · Acme Corp'}</span>
                             <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginTop: '3px' }}>
                                 <span className="db-call-duration" style={{ fontSize: '0.85rem' }}>{formatTime(callDuration)}</span>
                                 {isListening && (
                                     <span className="db-spin-badge" style={{ fontSize: '0.7rem', fontWeight: 600, padding: '2px 6px', background: '#7c5cbf40', color: '#c5a3ff', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                                         STAGE: {spinStage}
                                     </span>
+                                )}
+                                {callContext && (
+                                    <>
+                                        <span className="db-spin-badge" style={{ fontSize: '0.7rem', fontWeight: 600, padding: '2px 6px', background: '#27c93f20', color: '#27c93f', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                            Product: {callContext.product_name}
+                                        </span>
+                                        <span className="db-spin-badge" style={{ fontSize: '0.7rem', fontWeight: 600, padding: '2px 6px', background: '#0ea5e920', color: '#0ea5e9', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                            Goal: {callContext.call_goal}
+                                        </span>
+                                    </>
                                 )}
                             </div>
                         </div>
