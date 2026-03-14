@@ -12,11 +12,18 @@ class ConnectionManager:
         self.transcript_manager = TranscriptManager()
         self.deepgram_sessions = {}
         self.ai_engines = {}
+        from services.call_context_engine import call_context_engine
+        self.call_context_engine = call_context_engine
 
-    async def connect(self, websocket: WebSocket):
+    async def connect(self, websocket: WebSocket, context_id: str = None):
         await websocket.accept()
         self.active_connections.append(websocket)
-        self.ai_engines[websocket] = SalesAIEngine()
+        
+        call_context = None
+        if context_id:
+            call_context = self.call_context_engine.get_context(context_id)
+            
+        self.ai_engines[websocket] = SalesAIEngine(call_context=call_context)
         print(f"🔌 Client connected. Active WebSockets: {len(self.active_connections)}")
 
     def disconnect(self, websocket: WebSocket):
@@ -69,12 +76,16 @@ class ConnectionManager:
         # Run unified Sales AI Engine logic
         ai_engine = self.ai_engines.get(websocket)
         if ai_engine:
-            analysis = await ai_engine.analyze(speaker, text)
-            if analysis:
-                await self.send_personal_message(json.dumps({
-                    "type": "aiAnalysis",
-                    "payload": analysis
-                }), websocket)
+            try:
+                analysis = await ai_engine.analyze(speaker, text)
+                if analysis:
+                    await self.send_personal_message(json.dumps({
+                        "type": "aiAnalysis",
+                        "payload": analysis
+                    }), websocket)
+            except Exception as e:
+                print(f"❌ [SalesAI] Unhandled pipeline error: {e}")
+                # Don't drop websocket, just log and continue listening
 
     # ==============================
     # AUDIO STREAM HANDLER
