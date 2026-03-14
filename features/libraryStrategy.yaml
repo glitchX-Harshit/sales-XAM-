@@ -1,0 +1,199 @@
+task: implement_sales_strategy_playbook_engine
+
+goal:
+  description: >
+    Build a structured sales strategy playbook that the AI can reference
+    when generating real-time coaching suggestions during calls.
+    The playbook guides the LLM but does not restrict creative reasoning.
+
+architecture:
+
+  pipeline_update:
+
+    previous_pipeline:
+      - audio_input
+      - speech_to_text
+      - transcript_buffer
+      - call_context
+      - sales_ai_engine
+      - suggestion_manager
+      - dashboard
+
+    new_pipeline:
+      - audio_input
+      - speech_to_text
+      - transcript_buffer
+      - call_context
+      - conversation_analyzer
+      - strategy_selector
+      - response_generator
+      - suggestion_manager
+      - dashboard
+
+
+new_backend_components:
+
+  strategy_playbook:
+
+    new_file: backend/data/sales_strategy_playbook.json
+
+    description: >
+      Structured library of persuasion techniques used by the
+      strategy selector and response generator.
+
+    fields_per_strategy:
+
+      strategy_id: unique_identifier
+      name: human_readable_name
+      use_when: objection_scenarios
+      psychology: persuasion_principle
+      pattern: conversation_pattern
+      example_line: example_response
+      followup_question: forward_question
+
+
+  conversation_analyzer:
+
+    new_file: backend/services/conversation_analyzer.py
+
+    purpose: >
+      Analyze transcript buffer and classify objection type,
+      sales stage, and prospect intent.
+
+    output_format:
+
+      objection_type:
+        - pricing
+        - authority
+        - timeline
+        - competitor
+        - trust
+        - value_unclear
+
+      sales_stage:
+        - discovery
+        - evaluation
+        - negotiation
+
+      prospect_intent:
+        - curious
+        - hesitant
+        - interested
+        - resistant
+
+
+  strategy_selector:
+
+    new_file: backend/services/strategy_selector.py
+
+    purpose: >
+      Choose the most relevant persuasion strategy from the playbook.
+
+    behavior:
+
+      - read objection_type from conversation_analyzer
+      - retrieve matching strategies from playbook
+      - provide strategies as guidance to LLM
+
+    important_rule:
+
+      strategy_library_is_guidance: true
+      allow_llm_to_propose_new_strategy: true
+
+
+  response_generator:
+
+    modify_file: backend/services/sales_ai_engine.py
+
+    behavior:
+
+      - receive selected_strategy
+      - generate suggested_response
+      - generate next_best_question
+
+    prompt_instruction:
+
+      system_prompt: >
+        You are an elite B2B sales strategist helping a salesperson
+        close deals during live calls.
+
+        Use the provided strategy as guidance, but you may adapt
+        or improve it if necessary.
+
+        Keep responses conversational, confident, and natural.
+
+
+strategy_playbook_initial_entries:
+
+  total_strategies: 14
+
+  strategies:
+
+    - strategy_id: ROI_REFRAMING
+      psychology: value_anchoring
+
+    - strategy_id: VALUE_REFRAME
+      psychology: perception_shift
+
+    - strategy_id: SOCIAL_PROOF
+      psychology: herd_behavior
+
+    - strategy_id: RISK_REVERSAL
+      psychology: loss_aversion
+
+    - strategy_id: PILOT_OFFER
+      psychology: commitment_consistency
+
+    - strategy_id: FUTURE_PACING
+      psychology: visualization
+
+    - strategy_id: AUTHORITY_ALIGNMENT
+      psychology: authority_bias
+
+    - strategy_id: COMPETITOR_POSITIONING
+      psychology: differentiation
+
+    - strategy_id: URGENCY_CREATION
+      psychology: scarcity
+
+    - strategy_id: LOSS_AVERSION
+      psychology: fear_of_loss
+
+    - strategy_id: ANCHORING
+      psychology: price_anchoring
+
+    - strategy_id: STAKEHOLDER_ALIGNMENT
+      psychology: group_consensus
+
+    - strategy_id: PROBLEM_AGITATION
+      psychology: pain_amplification
+
+    - strategy_id: OUTCOME_VISUALIZATION
+      psychology: future_reward
+
+
+ai_output_format:
+
+  example_output:
+
+    objection_type: pricing
+
+    strategy_selected: ROI_REFRAMING
+
+    suggested_response: >
+      Totally fair. Most teams initially feel the same,
+      but they usually recover the cost after closing
+      just one additional client.
+
+    next_best_question: >
+      If the tool helped you close one more deal,
+      would pricing still feel expensive?
+
+
+success_criteria:
+
+  - strategy library loaded correctly
+  - AI selects relevant persuasion tactics
+  - responses remain conversational
+  - latency stays under 2 seconds
+  - suggestions vary and avoid repetition

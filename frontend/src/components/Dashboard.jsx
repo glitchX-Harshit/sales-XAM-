@@ -108,6 +108,10 @@ const Dashboard = ({ onExit }) => {
                     if (objection_type && objection_type !== 'none') {
                         setLatestObjection({ type: objection_type });
                         setTimeout(() => setLatestObjection(null), 8000);
+                    } else if (analysis.type && analysis.type !== 'none') {
+                        // Fallback mapping if type is used instead of objection_type for radar UI
+                        setLatestObjection({ type: analysis.type });
+                        setTimeout(() => setLatestObjection(null), 8000);
                     }
 
                     if (analysis.deal_signal) {
@@ -127,12 +131,12 @@ const Dashboard = ({ onExit }) => {
                             id: Date.now(),
                             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                             text: suggested_response,
-                            strategy: coaching_tip || "Guidance",
-                            persuasion: analysis.persuasion_strategy || "Strategy",
-                            type: objection_type || 'none',
+                            strategy: analysis.strategy_used || coaching_tip || "Guidance",
+                            persuasion: analysis.intent ? `Intent: ${analysis.intent}` : (analysis.persuasion_strategy || "Strategy"),
+                            type: analysis.topic || objection_type || 'none',
                             nextQuestion: next_best_question
                         };
-                        setSuggestionHistory(prev => [newSuggestion, ...prev].slice(0, 25));
+                        setSuggestionHistory(prev => [...prev, newSuggestion].slice(-20)); // Keep last 20
                     }
                 }
             });
@@ -386,9 +390,9 @@ const Dashboard = ({ onExit }) => {
                         <div className="db-suggestion-history" style={{ flex: 1, overflowY: 'auto', paddingRight: '4px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             {suggestionHistory.length > 0 ? (
                                 suggestionHistory.map((sugg, idx) => {
-                                    const isLatest = idx === 0;
+                                    const isLatest = idx === suggestionHistory.length - 1;
                                     return (
-                                        <div key={sugg.id} className={`db-suggestion-body ${isLatest ? 'db-suggestion-latest' : 'db-suggestion-past'}`} style={{ opacity: isLatest ? 1 : 0.65, transition: 'opacity 0.2s', borderBottom: isLatest ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingBottom: isLatest ? '1rem' : '0' }}>
+                                        <div key={sugg.id} className={`db-suggestion-body ${isLatest ? 'db-suggestion-latest' : 'db-suggestion-past'}`} style={{ opacity: isLatest ? 1 : 0.65, transition: 'opacity 0.2s', borderBottom: isLatest ? 'none' : '1px solid rgba(255,255,255,0.05)', paddingBottom: isLatest ? '0' : '1rem' }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                                                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                                                     <div className="db-sugg-tag" style={{ background: isLatest ? '#27c93f18' : 'transparent', color: isLatest ? '#27c93f' : '#888', borderColor: isLatest ? '#27c93f40' : '#444', padding: isLatest ? undefined : '2px 8px' }}>
