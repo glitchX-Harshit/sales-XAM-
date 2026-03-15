@@ -1,124 +1,476 @@
+/* ================================================================
+   CALL BRIEFING FORM — matches nx.ai landing page aesthetic
+   Beige/cream base · orange accent · glassmorphism card
+================================================================= */
+
+/* ── OVERLAY ── */
 .cb-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(10px);
+    inset: 0;
+    z-index: 2000;
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1000;
+    justify-content: center;
+    background: #fcf9ee;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow: hidden;
+    padding: 1rem;
 }
 
-.cb-container {
-    background: #151515;
-    border: 1px solid #333;
-    border-radius: 12px;
+/* ── AMBIENT BLOBS ── */
+.cb-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.cb-blob-1 {
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(255, 94, 0, 0.12) 0%, transparent 70%);
+    top: -20%;
+    right: -10%;
+    animation: cbBlob1 14s ease-in-out infinite alternate;
+}
+
+.cb-blob-2 {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(124, 92, 191, 0.1) 0%, transparent 70%);
+    bottom: -15%;
+    left: 10%;
+    animation: cbBlob2 18s ease-in-out infinite alternate;
+}
+
+@keyframes cbBlob1 {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(-60px, 40px) scale(1.12); }
+}
+@keyframes cbBlob2 {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(50px, -30px) scale(1.1); }
+}
+
+.cb-grid {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+    pointer-events: none;
+}
+
+/* ── CARD ── */
+.cb-card {
+    position: relative;
+    z-index: 10;
     width: 100%;
-    max-width: 500px;
-    padding: 2rem;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    max-width: 680px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 28px;
+    padding: 2.5rem;
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.03),
+        0 20px 60px rgba(0, 0, 0, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+    animation: cbCardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.cb-header {
-    margin-bottom: 1.5rem;
-    text-align: center;
+@keyframes cbCardIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
-.cb-header h2 {
-    color: #fff;
-    font-size: 1.5rem;
-    margin: 0 0 0.5rem 0;
-    font-weight: 600;
+/* ── HEADER ── */
+.cb-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    margin-bottom: 1.6rem;
 }
 
-.cb-header p {
-    color: #888;
-    font-size: 0.95rem;
-    margin: 0;
+.cb-logo-mark {
+    width: 44px;
+    height: 44px;
+    background: #111;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    margin-top: 4px;
 }
 
-.cb-error {
-    background: rgba(255, 94, 0, 0.1);
-    border: 1px solid rgba(255, 94, 0, 0.3);
+.cb-logo-pulse {
+    width: 10px;
+    height: 10px;
+    background: #ff5e00;
+    border-radius: 50%;
+    animation: cbPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes cbPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%       { transform: scale(1.6); opacity: 0.5; }
+}
+
+.cb-head-text {
+    flex: 1;
+}
+
+.cb-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
     color: #ff5e00;
-    padding: 0.75rem;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    text-align: center;
+    background: rgba(255, 94, 0, 0.08);
+    border: 1px solid rgba(255, 94, 0, 0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    margin-bottom: 0.55rem;
 }
 
+.cb-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #111;
+    margin: 0 0 0.4rem;
+    line-height: 1.2;
+}
+
+.cb-title-accent {
+    color: rgba(17, 17, 17, 0.35);
+    font-weight: 700;
+}
+
+.cb-subtitle {
+    font-size: 0.84rem;
+    color: rgba(17, 17, 17, 0.5);
+    margin: 0;
+    line-height: 1.55;
+    max-width: 440px;
+    font-weight: 500;
+}
+
+/* ── DIVIDER ── */
+.cb-divider {
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(0,0,0,0.06) 20%,
+        rgba(0,0,0,0.06) 80%,
+        transparent
+    );
+    margin-bottom: 1.6rem;
+}
+
+/* ── FORM ── */
 .cb-form {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
 }
 
-.cb-form-group {
+.cb-grid-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.cb-col {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
 }
 
-.cb-form-group label {
-    color: #aaa;
-    font-size: 0.85rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+/* ── FIELD ── */
+.cb-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    transition: transform 0.2s ease;
 }
 
-.cb-form-group input,
-.cb-form-group textarea {
-    background: #0f0f0f;
-    border: 1px solid #333;
-    border-radius: 6px;
-    padding: 0.75rem 1rem;
-    color: #fff;
-    font-size: 0.95rem;
-    transition: all 0.2s;
-    font-family: inherit;
-}
-
-.cb-form-group textarea {
-    min-height: 80px;
-    resize: vertical;
-}
-
-.cb-form-group input:focus,
-.cb-form-group textarea:focus {
-    outline: none;
-    border-color: #27c93f;
-    box-shadow: 0 0 0 2px rgba(39, 201, 63, 0.2);
-}
-
-.cb-form-group input::placeholder,
-.cb-form-group textarea::placeholder {
-    color: #444;
-}
-
-.cb-submit-btn {
-    background: #27c93f;
-    color: #000;
-    border: none;
-    border-radius: 6px;
-    padding: 1rem;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 0.5rem;
-}
-
-.cb-submit-btn:hover:not(:disabled) {
-    background: #2ebd42;
+.cb-field-focused {
     transform: translateY(-1px);
 }
 
-.cb-submit-btn:disabled {
+.cb-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(17, 17, 17, 0.45);
+    user-select: none;
+}
+
+.cb-label-icon {
+    font-size: 0.85rem;
     opacity: 0.7;
+}
+
+.cb-input {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #111;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: all 0.2s ease;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.cb-input::placeholder {
+    color: rgba(17, 17, 17, 0.25);
+    font-weight: 500;
+}
+
+.cb-input:focus {
+    border-color: #ff5e00;
+    background: rgba(255, 94, 0, 0.03);
+    box-shadow: 0 0 0 3px rgba(255, 94, 0, 0.1);
+}
+
+.cb-textarea {
+    min-height: 80px;
+    resize: none;
+    line-height: 1.55;
+}
+
+/* ── ERROR ── */
+.cb-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(239, 68, 68, 0.06);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    animation: cbCardIn 0.3s ease;
+}
+
+/* ── SUBMIT BUTTON — Awwwards level ── */
+.cb-submit {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0;
+    height: 58px;
+    border-radius: 14px;
+    border: none;
+    background: #111;
+    color: #fff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer;
+    overflow: hidden;
+    margin-top: 0.25rem;
+    /* subtle magnetic shadow */
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cb-submit:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.008);
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.14),
+        0 20px 50px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgba(255, 94, 0, 0.2);
+}
+
+.cb-submit:active:not(:disabled) {
+    transform: translateY(-1px) scale(1.003);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.cb-submit:disabled {
+    opacity: 0.65;
     cursor: not-allowed;
+}
+
+/* ── 1. LIQUID FILL BLOB ── */
+/* A circle that scale-explodes from the center on hover */
+.cb-btn-blob {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ff5e00;
+    transform: scale(0);
+    transform-origin: center;
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.cb-submit:hover:not(:disabled) .cb-btn-blob {
+    /* must be large enough to cover the full button width at scale */
+    transform: scale(60);
+}
+
+/* ── 2. TEXT CONTAINER — parent clips overflow ── */
+.cb-btn-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    /* clip the two text rows so only current one is visible */
+    overflow: hidden;
+}
+
+/* Shared row styles */
+.cb-btn-default,
+.cb-btn-hover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    height: 58px;
+    flex-shrink: 0;
+    padding: 0 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    box-sizing: border-box;
+    /* stack them vertically: default on top, hover below */
+}
+
+/* DEFAULT row: starts at 0 (visible), slides to -100% on hover */
+.cb-btn-default {
+    transform: translateY(0%);
+}
+
+.cb-submit:hover:not(:disabled) .cb-btn-default {
+    transform: translateY(-100%);
+}
+
+/* HOVER row: starts at +100% (hidden below), slides to 0 on hover */
+.cb-btn-hover {
+    transform: translateY(0%);
+    /* sits just below: inner is column so it's already below */
+}
+
+/* On mount, hover row is translated DOWN relative to the container */
+.cb-btn-inner {
+    transform: translateY(0);
+}
+
+/* We offset the hover row down by making the inner taller via transform */
+.cb-btn-hover {
+    margin-top: -58px; /* overlap with default row */
+    transform: translateY(100%);
+}
+
+.cb-submit:hover:not(:disabled) .cb-btn-hover {
+    transform: translateY(0%);
+}
+
+/* ── 3. ICON & ARROW MICRO-ANIMATIONS ── */
+.cb-btn-icon {
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+.cb-btn-arrow {
+    opacity: 0.55;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    font-size: 1rem;
+    margin-left: auto;
+}
+
+/* Default row: icon bounces up, arrow pushes right on hover */
+.cb-submit:hover:not(:disabled) .cb-btn-default .cb-btn-icon {
+    transform: translateY(-3px) rotate(-10deg);
+}
+
+.cb-submit:hover:not(:disabled) .cb-btn-default .cb-btn-arrow {
+    transform: translateX(6px);
+    opacity: 1;
+}
+
+/* Hover row: subtle entrance for icon */
+.cb-btn-hover .cb-btn-icon {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cb-submit:hover:not(:disabled) .cb-btn-hover .cb-btn-icon {
+    transform: rotate(-5deg) scale(1.15);
+}
+
+/* ── LOADING STATE ── */
+.cb-btn-loading {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+/* Spinner */
+.cb-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: cbSpin 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes cbSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── FOOTNOTE ── */
+.cb-footnote {
+    text-align: center;
+    font-size: 0.72rem;
+    color: rgba(17, 17, 17, 0.3);
+    margin: 0.75rem 0 0;
+    font-weight: 500;
+    letter-spacing: 0.01em;
 }

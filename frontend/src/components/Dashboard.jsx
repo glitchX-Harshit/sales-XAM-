@@ -99,6 +99,7 @@ const DealStageIndicator = ({ stage }) => {
 
 const Dashboard = ({ onExit }) => {
     const dashRef = useRef(null);
+    const transcriptEndRef = useRef(null);
     const [callDuration, setCallDuration] = useState(0);
     const [isListening, setIsListening] = useState(false); // start off initially until explicit join
     const [wavePhase, setWavePhase] = useState(0);
@@ -215,6 +216,13 @@ const Dashboard = ({ onExit }) => {
         const wave = setInterval(() => setWavePhase(p => p + 1), 100);
         return () => clearInterval(wave);
     }, []);
+
+    /* ── Auto-scroll transcript to bottom */
+    useEffect(() => {
+        if (transcriptEndRef.current) {
+            transcriptEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [transcript]);
 
     const formatTime = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 
@@ -385,19 +393,25 @@ const Dashboard = ({ onExit }) => {
                             <span className="db-panel-title">📝 Live Transcript</span>
                             <span className="db-panel-tag">Real-time · Whisper AI</span>
                         </div>
-                        <div className="db-transcript-scroll">
+                        <div className="db-transcript-scroll" id="transcript-container">
                             {transcript.length === 0 && <div style={{ padding: '1rem', opacity: 0.5 }}>Waiting for dialogue...</div>}
-                            {transcript.map((line, i) => (
-                                <div key={i} className={`db-transcript-line ${line.speaker}`}>
-                                    <span className="db-tx-speaker" style={{ textTransform: 'capitalize' }}>{line.speaker}</span>
-                                    <p className="db-tx-text">{line.text}</p>
-                                </div>
-                            ))}
+                            {transcript.map((line, i) => {
+                                const isUser = line.speaker === 'user';
+                                return (
+                                    <div key={i} className={`chat-row ${isUser ? 'chat-user' : 'chat-prospect'}`}>
+                                        <div className="chat-bubble">
+                                            <span className="chat-speaker-label">{isUser ? 'You' : 'Prospect'}</span>
+                                            <p className="chat-text">{line.text}</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                             {isListening && (
-                                <div className="db-typing-indicator">
+                                <div className="db-typing-indicator chat-prospect-typing">
                                     <span /><span /><span />
                                 </div>
                             )}
+                            <div ref={transcriptEndRef} />
                         </div>
                     </div>
 
