@@ -65,11 +65,34 @@ export const useAudioStream = (wsUrl) => {
         onAiAnalysisRef.current = callbacks.onAiAnalysis;
 
         try {
-            // [BUGFIX] WAIT for websocket to be open as outlined in phase_3_1_websocket_stability
-            await connectWebSocket();
+            // ── STEP 1: Open tab picker FIRST ──────────────────────────────────────
+            // ⚠️ video:true is REQUIRED for Chrome to show the full tab picker
+            // (with the "Chrome Tab" option + "Share tab audio" checkbox).
+            // We immediately stop the video track — we only need audio.
+            const stream = await navigator.mediaDevices.getDisplayMedia({
+                video: true,
+                audio: {
+                    echoCancellation: false,   // Meeting app already handles this
+                    noiseSuppression: false,   // Preserve full audio fidelity
+                    autoGainControl: false     // Avoid double-processing
+                }
+            });
 
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            // Discard video track immediately (not needed)
+            stream.getVideoTracks().forEach(t => t.stop());
+
+            // Guard: user may have not ticked "Share tab audio"
+            if (!stream.getAudioTracks().length) {
+                console.error('No audio track — user did not enable Share tab audio.');
+                alert('No audio detected. Please select a Chrome tab and enable "Share tab audio".');
+                return false;
+            }
+
             mediaStreamRef.current = stream;
+
+            // ── STEP 2: Connect WebSocket AFTER stream is ready ────────────────────
+            // (Connecting before picker means WS can timeout while user picks a tab)
+            await connectWebSocket();
 
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             audioContextRef.current = new AudioContext({ sampleRate: 16000 });
@@ -84,7 +107,7 @@ export const useAudioStream = (wsUrl) => {
                 if (!isRecordingRef.current) return;
 
                 // [DEBUG LOG]
-                console.log("🎤 audio frame captured");
+                console.log("🎧 tab audio frame captured");
 
                 if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
                     console.log("⚠️ WebSocket dropped or not open yet");
@@ -99,6 +122,12 @@ export const useAudioStream = (wsUrl) => {
                 console.log("📤 audio chunk sent:", pcm16.byteLength);
             };
 
+            // Stop recording automatically if user ends tab share via browser UI
+            stream.getAudioTracks()[0].addEventListener('ended', () => {
+                console.log('🛑 Tab audio share ended by user');
+                stopRecording();
+            });
+
             console.log("🔗 Connecting AudioGraph Nodes...");
             source.connect(scriptProcessorRef.current);
             scriptProcessorRef.current.connect(audioContextRef.current.destination);
@@ -107,9 +136,10 @@ export const useAudioStream = (wsUrl) => {
             isRecordingRef.current = true;
             return true;
         } catch (err) {
-            console.error('Error starting microphone capture:', err);
+            console.error('Error starting tab audio capture:', err);
             return false;
         }
+
     }, [connectWebSocket]);
 
     const stopRecording = useCallback(() => {
