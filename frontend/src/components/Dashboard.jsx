@@ -65,12 +65,37 @@ const SUGGESTIONS = [
     },
 ];
 
-const METRICS = [
-    { label: 'Win Rate', value: 68, unit: '%', delta: '+22%', color: '#27c93f' },
-    { label: 'Avg Deal Speed', value: 12, unit: 'd', delta: '-4d', color: '#0ea5e9' },
-    { label: 'Objections Handled', value: 94, unit: '%', delta: '+31%', color: '#ff5e00' },
-    { label: 'Response Time', value: 1.2, unit: 's', delta: '-3.8s', color: '#7c5cbf' },
+const DEAL_STAGES = [
+    { key: 'discovery',          label: 'Discovery',          icon: '🔍', color: '#0ea5e9' },
+    { key: 'problem_exploration', label: 'Problem Exploration', icon: '🧩', color: '#7c5cbf' },
+    { key: 'solution_framing',   label: 'Solution Framing',   icon: '💡', color: '#27c93f' },
+    { key: 'objection_handling', label: 'Objection Handling', icon: '🛡', color: '#ff5e00' },
+    { key: 'negotiation',        label: 'Negotiation',        icon: '🤝', color: '#f59e0b' },
+    { key: 'closing',            label: 'Closing',            icon: '🎯', color: '#ec4899' },
 ];
+
+const DealStageIndicator = ({ stage }) => {
+    const activeIdx = DEAL_STAGES.findIndex(s => s.key === stage);
+    return (
+        <div className="db-deal-stage-bar">
+            {DEAL_STAGES.map((s, idx) => {
+                const isActive = s.key === stage;
+                const isPast = idx < activeIdx;
+                return (
+                    <div key={s.key} className={`db-deal-stage-step ${isActive ? 'active' : ''} ${isPast ? 'past' : ''}`}
+                        style={{ '--stage-color': s.color }}>
+                        <span className="db-dss-icon">{s.icon}</span>
+                        <span className="db-dss-label">{s.label}</span>
+                        {idx < DEAL_STAGES.length - 1 && (
+                            <div className={`db-dss-connector ${isPast || isActive ? 'filled' : ''}`}
+                                style={{ background: isPast || isActive ? s.color : undefined }} />
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
 
 const Dashboard = ({ onExit }) => {
     const dashRef = useRef(null);
@@ -84,6 +109,9 @@ const Dashboard = ({ onExit }) => {
     const [callContext, setCallContext] = useState(null);
     const [contextId, setContextId] = useState(null);
     const [showBriefing, setShowBriefing] = useState(true);
+    const [dealStage, setDealStage] = useState('discovery');
+    const [coachingTip, setCoachingTip] = useState(null);
+    const [showTabTip, setShowTabTip] = useState(false);
 
     // New states from Sales AI Engine
     const [spinStage, setSpinStage] = useState('situation');
@@ -96,7 +124,12 @@ const Dashboard = ({ onExit }) => {
         if (isListening) {
             stopRecording();
             setIsListening(false);
+            setShowTabTip(false);
         } else {
+            // Show guidance tip before browser popup appears
+            setShowTabTip(true);
+            setTimeout(() => setShowTabTip(false), 8000);
+
             const success = await startRecording({
                 onTranscript: (t) => setTranscript((prev) => [...prev, t]),
                 onAiAnalysis: (analysis) => {
@@ -137,6 +170,14 @@ const Dashboard = ({ onExit }) => {
                             nextQuestion: next_best_question
                         };
                         setSuggestionHistory(prev => [...prev, newSuggestion].slice(-20)); // Keep last 20
+                    }
+
+                    if (analysis.deal_stage) {
+                        setDealStage(analysis.deal_stage);
+                    }
+
+                    if (analysis.coaching_tip) {
+                        setCoachingTip(analysis.coaching_tip);
                     }
                 }
             });
@@ -276,18 +317,33 @@ const Dashboard = ({ onExit }) => {
                     </div>
                 </header>
 
-                {/* METRICS ROW */}
-                <div className="db-metrics-row">
-                    {METRICS.map((m) => (
-                        <div className="db-metric-card" key={m.label}>
-                            <div className="db-metric-val" style={{ color: m.color }}>
-                                {m.value}<span className="db-metric-unit">{m.unit}</span>
-                            </div>
-                            <div className="db-metric-label">{m.label}</div>
-                            <div className="db-metric-delta" style={{ color: m.color }}>{m.delta} vs avg</div>
-                        </div>
-                    ))}
-                </div>
+                {/* TAB AUDIO GUIDANCE TIP */}
+                {showTabTip && (
+                    <div style={{
+                        margin: '0 2rem',
+                        padding: '0.65rem 1rem',
+                        background: 'linear-gradient(135deg, rgba(124,92,191,0.12), rgba(14,165,233,0.08))',
+                        border: '1px solid rgba(124,92,191,0.25)',
+                        borderRadius: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        color: '#7c5cbf',
+                        flexShrink: 0,
+                        animation: 'txSlide 0.3s ease-out'
+                    }}>
+                        <span style={{ fontSize: '1rem' }}>🖥️</span>
+                        <span>
+                            Select your <strong>Zoom / Google Meet / Teams</strong> tab and enable{' '}
+                            <strong>"Share tab audio"</strong> so Clerio can listen to the call.
+                        </span>
+                    </div>
+                )}
+
+                {/* DEAL STAGE INDICATOR */}
+                <DealStageIndicator stage={dealStage} />
 
                 {/* PANELS GRID */}
                 <div className="db-panels-grid">
@@ -419,6 +475,12 @@ const Dashboard = ({ onExit }) => {
                                                 <div className="db-sugg-stat" style={{ color: '#0ea5e9', background: '#0ea5e910', padding: '6px 10px', borderRadius: '6px', marginTop: '10px' }}>
                                                     <span className="db-sugg-dot" style={{ background: '#0ea5e9' }} />
                                                     <strong style={{ opacity: 0.8, marginRight: '4px' }}>Ask Next:</strong> {sugg.nextQuestion}
+                                                </div>
+                                            )}
+                                            {coachingTip && isLatest && (
+                                                <div className="db-sugg-stat" style={{ color: '#7c5cbf', background: '#7c5cbf10', padding: '6px 10px', borderRadius: '6px', marginTop: '8px', borderLeft: '3px solid #7c5cbf50' }}>
+                                                    <span className="db-sugg-dot" style={{ background: '#7c5cbf' }} />
+                                                    <strong style={{ opacity: 0.8, marginRight: '4px' }}>🧠 Coaching:</strong> {coachingTip}
                                                 </div>
                                             )}
                                         </div>

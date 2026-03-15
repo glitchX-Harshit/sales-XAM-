@@ -35,12 +35,8 @@ class ConnectionManager:
 
         print("❌ Client disconnected.")
 
-        if websocket in self.deepgram_sessions:
-            dg = self.deepgram_sessions.pop(websocket)
-            try:
-                dg.close()
-            except Exception:
-                pass
+        # Note: Deepgram session is closed in handle_audio_stream's finally block (async)
+        self.deepgram_sessions.pop(websocket, None)
 
     async def send_personal_message(self, message: str, websocket: WebSocket):
         try:
@@ -115,7 +111,12 @@ class ConnectionManager:
             while True:
                 # RECEIVE BINARY AUDIO OR TEXT COMMANDS
                 message = await websocket.receive()
-                
+
+                # Starlette sends a disconnect message — exit cleanly
+                if message.get("type") == "websocket.disconnect":
+                    print("🔌 WebSocket disconnect message received")
+                    break
+
                 if "bytes" in message:
                     data = message["bytes"]
                     print(f"📥 received audio chunk: {len(data)} bytes")
@@ -128,8 +129,17 @@ class ConnectionManager:
 
         except WebSocketDisconnect:
             print("❌ WebSocket disconnected")
+        except RuntimeError as e:
+            print(f"⚠️ WebSocket runtime error (likely disconnect): {e}")
 
         finally:
+            # Close Deepgram session properly (async) before disconnecting
+            dg = self.deepgram_sessions.get(websocket)
+            if dg:
+                try:
+                    await dg.close()
+                except Exception as e:
+                    print(f"Deepgram close error: {e}")
             self.disconnect(websocket)
 
 

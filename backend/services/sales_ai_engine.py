@@ -8,6 +8,7 @@ from openai import AsyncOpenAI
 from services.conversation_analyzer import conversation_analyzer
 from services.persuasion_engine import persuasion_engine
 from services.suggestion_manager import suggestion_manager
+from services.deal_stage_engine import deal_stage_engine
 
 api_key = os.getenv("OPENAI_API_KEY")
 client = AsyncOpenAI(
@@ -97,6 +98,10 @@ class SalesAIEngine:
             latest_prospect_msg = analysis_result.get("latest_message", text)
             print(f"[AI_PIPELINE] Det. Intent: {intent} | Det. Topic: {topic}")
 
+            # 1b. Detect Deal Stage (heuristic, zero latency)
+            deal_stage = deal_stage_engine.detect_stage(self.message_buffer)
+            print(f"[DEAL_STAGE] Detected stage: {deal_stage}")
+
             # 2. Select Strategy
             selected_strategy_name = persuasion_engine.select_strategy(topic)
             strategy_name = selected_strategy_name
@@ -118,15 +123,27 @@ class SalesAIEngine:
                 
             dup_warning = "WARNING: Previous generation was too similar to older suggestions. You MUST generate a DIFFERENT sentence structure/angle this time." if retry_attempt > 0 else ""
 
+            stage_guidance = {
+                "discovery":           "Explain clearly and ask diagnostic questions to understand the prospect's world.",
+                "problem_exploration":  "Uncover deeper pain points. Ask why, how long, what impact.",
+                "solution_framing":     "Connect the product directly to the prospect's stated problem.",
+                "objection_handling":   "Reframe concerns, reduce perceived risk, and rebuild confidence.",
+                "negotiation":          "Defend the value firmly. Avoid premature discounts — anchor on ROI.",
+                "closing":              "Guide the prospect toward a concrete next step. Create momentum.",
+            }.get(deal_stage, "Guide the deal forward.")
+
             system_content = f"""You are an elite B2B sales strategist assisting a salesperson during a live call.
     {context_str}{strategy_context}
-    
+
+    CURRENT DEAL STAGE: {deal_stage.upper().replace('_', ' ')}
+    Stage guidance: {stage_guidance}
+
     Your job is to:
     1. Understand the prospect's latest message exactly.
-    2. Respond to the intent and topic mapped out.
+    2. Respond according to the current deal stage.
     3. Choose the most effective persuasion strategy (use the recommendation if provided).
     4. Provide a SHORT, conversational reply for the rep to say verbatim.
-    5. Suggest a follow-up question that moves the deal forward.
+    5. Suggest a follow-up question that moves the deal to the next stage.
 
     {dup_warning}
     Avoid generic chatbot language. Keep it human-like.
@@ -143,9 +160,11 @@ class SalesAIEngine:
             Return ONLY a JSON object with exactly these fields:
             - "intent": "{intent}"
             - "topic": "{topic}"
+            - "deal_stage": "{deal_stage}"
             - "persuasion_pattern": "<SELECTED_PATTERN>" 
             - "suggested_response": "Short conversational line the rep can say"
-            - "next_best_question": "Question that moves the deal forward"
+            - "next_best_question": "Question that moves the deal to the next stage"
+            - "coaching_tip": "1-sentence psychological insight about what the prospect is thinking right now"
             - "deal_signal": "positive" | "neutral" | "negative"
             - "confidence": Float between 0.0 and 1.0 representing confidence in the detection.
             """
@@ -201,14 +220,16 @@ class SalesAIEngine:
         print("[AI_ERROR] Exceeded retries on duplicate suggestions. Terminating generation.")
         return None
             
-    async def _run_fallback(self, intent: str, topic: str, latest_msg: str) -> dict | None:
+    async def _run_fallback(self, intent: str, topic: str, latest_msg: str, deal_stage: str = "discovery") -> dict | None:
         print("[AI_TRIGGERED] Running fallback pipeline...")
         return {
             "intent": intent,
             "topic": topic,
+            "deal_stage": deal_stage,
             "persuasion_pattern": "DIRECT_RESPONSE",
             "suggested_response": "I completely understand where you're coming from. Can you tell me more about that?",
             "next_best_question": "What specifically is the main concern?",
+            "coaching_tip": "The prospect may need more trust before moving forward.",
             "deal_signal": "neutral",
             "type": topic
         }
