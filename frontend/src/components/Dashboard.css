@@ -1,5 +1,5 @@
 /* ================================================================
-   DASHBOARD — nx.ai Sales Intelligence Dashboard
+   DASHBOARD — klyro.ai Sales Intelligence Dashboard
    Matches landing page aesthetic: beige/cream, orange accent
 ================================================================= */
 
@@ -1211,4 +1211,4 @@
     50% {
         box-shadow: 0 0 18px color-mix(in srgb, var(--stage-color) 50%, transparent);
     }
-}
+}

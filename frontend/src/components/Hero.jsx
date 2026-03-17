@@ -111,7 +111,7 @@ const Hero = ({ onGetStarted }) => {
                         <h1 className="hero-t2">Under pressure.</h1>
                     </div>
                     <div className="hero-line-reveal">
-                        <h1 className="hero-t3">nx.ai handles the rest.</h1>
+                        <h1 className="hero-t3">klyro.ai handles the rest.</h1>
                     </div>
                 </div>
 
@@ -153,7 +153,7 @@ const Hero = ({ onGetStarted }) => {
                             <span style={{ background: '#ffbd2e' }}></span>
                             <span style={{ background: '#27c93f' }}></span>
                         </div>
-                        <p className="hch-title">nx.ai — Live Call</p>
+                        <p className="hch-title">klyro.ai — Live Call</p>
                         <div className="hch-live">● LIVE</div>
                     </div>
 
@@ -164,7 +164,7 @@ const Hero = ({ onGetStarted }) => {
                         </div>
                         <div className="hcb-alert">⚡ Pricing Objection Detected</div>
                         <div className="hcb-response">
-                            <div className="hcb-response-label"><span className="resp-star">✦</span> nx.ai Recommends</div>
+                            <div className="hcb-response-label"><span className="resp-star">✦</span> klyro.ai Recommends</div>
                             <p>"Many clients start with our 5-seat plan and upgrade after seeing ROI. Want to walk through that?"</p>
                             <div className="hcb-response-stat"><span className="stat-dot"></span> 94% success on this objection</div>
                         </div>
@@ -184,7 +184,7 @@ const Hero = ({ onGetStarted }) => {
                             <path id="bc" d="M 80,80 m -60,0 a 60,60 0 1,1 120,0 a 60,60 0 1,1 -120,0" />
                         </defs>
                         <text fontSize="12" letterSpacing="5" fill="rgba(0,0,0,0.3)" fontFamily="'Plus Jakarta Sans'" fontWeight="700">
-                            <textPath href="#bc">CLOSE MORE • nx.ai • WIN EVERY CALL •&nbsp;</textPath>
+                            <textPath href="#bc">CLOSE MORE • klyro.ai • WIN EVERY CALL •&nbsp;</textPath>
                         </text>
                     </svg>
                     <div className="badge-star">★</div>

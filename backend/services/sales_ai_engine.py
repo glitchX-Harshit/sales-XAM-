@@ -2,6 +2,7 @@ import os
 import json
 import time
 import asyncio
+from typing import Any
 from openai import AsyncOpenAI
 # from services.objection_engine import detect_objection # DEPRECATED
 # from services.suggestion_engine import generate_response_suggestion # DEPRECATED
@@ -17,9 +18,9 @@ client = AsyncOpenAI(
 ) if api_key else None
 
 class SalesAIEngine:
-    def __init__(self, call_context: dict = None):
+    def __init__(self, call_context: dict[str, Any] | None = None):
         self.call_context = call_context
-        self.message_buffer = []
+        self.message_buffer: list[dict[str, Any]] = []
         self.max_messages = 8
         self.min_messages = 2
         self.cooldown_messages = 1
@@ -37,7 +38,7 @@ class SalesAIEngine:
         self.max_calls_per_minute = 12
 
     def add_message(self, speaker: str, text: str):
-        message = {"speaker": speaker, "text": text, "timestamp": time.time()}
+        message: dict[str, Any] = {"speaker": speaker, "text": text, "timestamp": time.time()}
         self.message_buffer.append(message)
         
         if len(self.message_buffer) > self.max_messages:
@@ -116,9 +117,10 @@ class SalesAIEngine:
                 return await self._run_fallback(intent, topic, latest_prospect_msg)
 
             context_str = ""
-            if self.call_context:
+            ctx = self.call_context
+            if ctx is not None:
                 context_str = "\n\nYou have access to the following call context:\n"
-                context_str += "\n".join([f"- {k.replace('_', ' ').capitalize()}: {v}" for k, v in self.call_context.items()])
+                context_str += "\n".join([f"- {k.replace('_', ' ').capitalize()}: {v}" for k, v in ctx.items()])
                 context_str += "\n\nUse this context to generate more personalized persuasion strategies."
                 
             dup_warning = "WARNING: Previous generation was too similar to older suggestions. You MUST generate a DIFFERENT sentence structure/angle this time." if retry_attempt > 0 else ""
@@ -148,11 +150,15 @@ class SalesAIEngine:
     {dup_warning}
     Avoid generic chatbot language. Keep it human-like.
     """
+            prev_context = list(self.message_buffer)
+            if prev_context:
+                prev_context.pop()
+
             prompt = f"""
             Analyze the following recent conversation snippet (sliding window).
             
             Previous Context:
-            {json.dumps(self.message_buffer[:-1])}
+            {json.dumps(prev_context)}
             
             LATEST PROSPECT MESSAGE (Respond to this specifically):
             "{latest_prospect_msg}"

@@ -15,22 +15,26 @@ import Testimonials from './components/Testimonials';
 import Pricing from './components/Pricing';
 import Footer from './components/Footer';
 import Dashboard from './components/Dashboard';
+import Signup from './components/Signup';
+import Login from './components/Login';
 
 gsap.registerPlugin(ScrollTrigger);
 
 function App() {
   const [loaded, setLoaded] = useState(false);
-  const [view, setView] = useState('landing'); // 'landing' | 'dashboard'
+    const [view, setView] = useState('landing'); // 'landing' | 'dashboard' | 'signup' | 'login'
 
-  const navigateTo = (v) => {
-    setView(v);
-    if (v === 'landing') {
-      document.body.style.overflow = '';
-      setTimeout(() => ScrollTrigger.refresh(), 100);
-    } else {
-      document.body.style.overflow = 'hidden';
-    }
-  };
+    const navigateTo = (v) => {
+        setView(v);
+        if (v === 'landing') {
+            document.body.style.overflow = '';
+            setTimeout(() => ScrollTrigger.refresh(), 100);
+        } else {
+            document.body.style.overflow = 'hidden';
+            // Wait for scroll to lock to top if moving to standalone full pages like dashboard or signup
+            window.scrollTo(0, 0);
+        }
+    };
 
   useEffect(() => {
     // Prevent scroll while loading
@@ -52,9 +56,31 @@ function App() {
         <Dashboard onExit={() => navigateTo('landing')} />
       )}
 
+      {/* SIGNUP VIEW */}
+      {view === 'signup' && loaded && (
+        <Signup 
+            onBack={() => navigateTo('landing')} 
+            onGetStarted={() => navigateTo('dashboard')} 
+            onLogin={() => navigateTo('login')}
+        />
+      )}
+
+      {/* LOGIN VIEW */}
+      {view === 'login' && loaded && (
+        <Login 
+            onBack={() => navigateTo('landing')} 
+            onGetStarted={() => navigateTo('dashboard')} 
+            onSignup={() => navigateTo('signup')}
+        />
+      )}
+
       {/* LANDING VIEW */}
-      <main style={{ display: view === 'dashboard' ? 'none' : 'block' }}>
-        <Navbar onGetStarted={() => navigateTo('dashboard')} />
+      <main style={{ display: (view === 'dashboard' || view === 'signup' || view === 'login') ? 'none' : 'block' }}>
+        <Navbar 
+            onGetStarted={() => navigateTo('dashboard')} 
+            onSignup={() => navigateTo('signup')}
+            onLogin={() => navigateTo('login')}
+        />
 
         {/* 1. Hero Section */}
         <Hero onGetStarted={() => navigateTo('dashboard')} />

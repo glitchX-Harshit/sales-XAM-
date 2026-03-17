@@ -9,13 +9,13 @@ const STEPS = [
     {
         num: '01',
         title: 'You join the call',
-        sub: 'nx.ai starts listening the moment your meeting begins — no commands, no setup.',
+        sub: 'klyro.ai starts listening the moment your meeting begins — no commands, no setup.',
         insight: 'Runs invisibly across Zoom, Meet, and Teams.',
     },
     {
         num: '02',
         title: 'AI detects objections',
-        sub: 'Prospect signals hesitation? nx.ai catches it in under 0.5 seconds.',
+        sub: 'Prospect signals hesitation? klyro.ai catches it in under 0.5 seconds.',
         insight: 'Trained on 10,000+ real discovery call transcripts.',
     },
     {
@@ -37,7 +37,7 @@ const REVEAL_LINES = [
     { top: '12%', left: '8%', text: '73% of lost deals fail at the objection stage.', size: '2.8rem' },
     { top: '28%', left: '55%', text: 'Your competitor already uses AI in every call.', size: '2.2rem' },
     { top: '46%', left: '12%', text: 'Silence kills commissions.', size: '3.8rem', italic: true },
-    { top: '62%', left: '40%', text: 'nx.ai gave back an average of $186k in recovered deals per team, per quarter.', size: '1.6rem' },
+    { top: '62%', left: '40%', text: 'klyro.ai gave back an average of $186k in recovered deals per team, per quarter.', size: '1.6rem' },
     { top: '79%', left: '5%', text: 'The best closers don\'t wing it. They prepare.', size: '2rem' },
 ];
 
@@ -231,7 +231,7 @@ const HowItWorks = () => {
                     <h2 className="hiw-title">
                         <span className="hiw-section-line">Speak normally.</span>
                         <span className="hiw-section-line font-serif">
-                            <em>nx.ai handles</em>
+                            <em>klyro.ai handles</em>
                         </span>
                         <span className="hiw-section-line">the hard part.</span>
                     </h2>
@@ -259,7 +259,7 @@ const HowItWorks = () => {
                             <div className="hiw-bar" key={i}></div>
                         ))}
                     </div>
-                    <div className="hiw-viz-label">nx.ai — Processing live audio</div>
+                    <div className="hiw-viz-label">klyro.ai — Processing live audio</div>
                 </div>
             </div>
 

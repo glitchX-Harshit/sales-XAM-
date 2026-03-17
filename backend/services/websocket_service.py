@@ -1,4 +1,5 @@
 import json
+from typing import Any, Optional
 from fastapi import WebSocket, WebSocketDisconnect
 from services.transcript_manager import TranscriptManager
 from services.sales_ai_engine import SalesAIEngine
@@ -10,12 +11,12 @@ class ConnectionManager:
     def __init__(self):
         self.active_connections: list[WebSocket] = []
         self.transcript_manager = TranscriptManager()
-        self.deepgram_sessions = {}
-        self.ai_engines = {}
+        self.deepgram_sessions: dict[WebSocket, Any] = {}
+        self.ai_engines: dict[WebSocket, SalesAIEngine] = {}
         from services.call_context_engine import call_context_engine
         self.call_context_engine = call_context_engine
 
-    async def connect(self, websocket: WebSocket, context_id: str = None):
+    async def connect(self, websocket: WebSocket, context_id: str | None = None):
         await websocket.accept()
         self.active_connections.append(websocket)
         

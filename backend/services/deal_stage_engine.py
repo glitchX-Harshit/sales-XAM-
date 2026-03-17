@@ -1,3 +1,5 @@
+from typing import Any, Dict, List
+
 class DealStageEngine:
     """
     Detects the current deal stage from recent conversation transcript.
@@ -8,7 +10,7 @@ class DealStageEngine:
       objection_handling → negotiation → closing
     """
 
-    STAGE_KEYWORDS = {
+    STAGE_KEYWORDS: Dict[str, List[str]] = {
         "closing": [
             "next step", "how do we start", "move forward", "sign up",
             "when can we begin", "let's do it", "send the contract",
@@ -53,18 +55,19 @@ class DealStageEngine:
         "discovery",
     ]
 
-    def detect_stage(self, recent_messages: list[dict]) -> str:
+    def detect_stage(self, recent_messages: List[Dict[str, Any]]) -> str:
         """
         Takes the recent message buffer and returns the most relevant deal stage.
         Scans the last 3 prospect messages, weighted toward the most recent.
         Returns 'discovery' as the default stage.
         """
         # Gather the last 3 prospect messages (most recent first)
-        prospect_msgs = [
-            m["text"].lower()
-            for m in reversed(recent_messages)
-            if m.get("speaker") == "prospect"
-        ][:3]
+        prospect_msgs: List[str] = []
+        for m in reversed(recent_messages):
+            if m.get("speaker") == "prospect":
+                prospect_msgs.append(m["text"].lower())
+            if len(prospect_msgs) >= 3:
+                break
 
         if not prospect_msgs:
             return "discovery"

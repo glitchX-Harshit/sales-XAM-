@@ -103,13 +103,14 @@
     font-style: italic;
 }
 
-/* ── nx.ai bubble (right aligned, orange accent) ── */
-.ld-nxai {
+/* ── klyro.ai bubble (right aligned, orange accent) ── */
+.ld-klyroai {
+    transform-origin: bottom right;
     align-self: flex-end;
     align-items: flex-end;
 }
 
-.ld-nxai .ld-bubble-who {
+.ld-bubble-who.klyro {
     color: #ff5e00;
     display: flex;
     align-items: center;

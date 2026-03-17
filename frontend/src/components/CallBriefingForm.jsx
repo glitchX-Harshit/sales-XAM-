@@ -44,7 +44,7 @@ const FIELDS = [
     },
 ];
 
-const CallBriefingForm = ({ onStartCall }) => {
+const CallBriefingForm = ({ onStartCall, onBack }) => {
     const [formData, setFormData] = useState({
         client_name: '',
         client_industry: '',
@@ -130,6 +130,11 @@ const CallBriefingForm = ({ onStartCall }) => {
             <div className="cb-blob cb-blob-1" />
             <div className="cb-blob cb-blob-2" />
             <div className="cb-grid" />
+
+            {/* Back Button */}
+            <button className="cb-back interactive" onClick={onBack}>
+                ← Back to home
+            </button>
 
             <div className="cb-card">
                 {/* Header */}

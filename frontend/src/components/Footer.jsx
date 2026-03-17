@@ -50,7 +50,7 @@ const Footer = () => {
                         <div className="bar bar3"></div>
                         <div className="bar bar4"></div>
                     </div>
-                    <div className="logo-text">nx.ai</div>
+                    <div className="logo-text">klyro.ai</div>
                 </div>
             </div>
         </footer>

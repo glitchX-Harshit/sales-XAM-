@@ -9,7 +9,7 @@ import './Dashboard.css';
    MOCK DATA — cycles through realistic scenarios
 ───────────────────────────────────────── */
 const TRANSCRIPT_LINES = [
-    { speaker: 'rep', text: 'Hi Sarah, glad we could connect today. I wanted to walk you through how nx.ai can transform your team\'s performance.' },
+    { speaker: 'rep', text: 'Hi Sarah, glad we could connect today. I wanted to walk you through how klyro.ai can transform your team\'s performance.' },
     { speaker: 'prospect', text: 'Sure, but I\'ll be honest — we\'ve tried AI tools before and they were too complex.' },
     { speaker: 'rep', text: 'That\'s a super fair concern. What specifically felt complex — the setup, the interface, or the AI output itself?' },
     { speaker: 'prospect', text: 'Mostly the pricing doesn\'t fit our current budget. We\'re a 12-person team.' },
@@ -59,7 +59,7 @@ const SUGGESTIONS = [
         tag: 'Timeline Inquiry',
         tagColor: '#27c93f',
         title: 'Speed-to-Value',
-        body: '"Teams go live in under 15 minutes. We handle migration, we handle setup. Most reps close their first nx.ai-assisted deal within week one."',
+        body: '"Teams go live in under 15 minutes. We handle migration, we handle setup. Most reps close their first klyro.ai-assisted deal within week one."',
         stat: '82% teams live same-day',
         alt: 'Offer a dedicated onboarding call tomorrow morning.',
     },
@@ -232,7 +232,7 @@ const Dashboard = ({ onExit }) => {
 
     return (
         <div className="db-root" ref={dashRef}>
-            {showBriefing && <CallBriefingForm onStartCall={handleStartCall} />}
+            {showBriefing && <CallBriefingForm onStartCall={handleStartCall} onBack={onExit} />}
 
             {/* ── AMBIENT BACKGROUND */}
             <div className="db-ambient">
@@ -246,7 +246,7 @@ const Dashboard = ({ onExit }) => {
                 <div className="db-sidebar-logo">
                     <span className="db-logo-mark"><span className="db-logo-pulse" /></span>
                     <span className="db-logo-text">
-                        <span className="db-logo-nx">nx</span>
+                        <span className="db-logo-nx">klyro</span>
                         <span className="db-logo-dot">.</span>
                         <span className="db-logo-ai">ai</span>
                     </span>
