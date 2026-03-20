@@ -140,7 +140,7 @@ const Integrations = () => {
                             <span className="int-header-line font-serif"><em>you already use.</em></span>
                         </h2>
                         <p className="int-desc">
-                            nx.ai sits at the OS level — no plugins to install, no bots to invite, no awkward "Recording" banners. It just listens.
+                            klyro.ai sits at the OS level — no plugins to install, no bots to invite, no awkward "Recording" banners. It just listens.
                         </p>
                     </div>
 
@@ -152,7 +152,7 @@ const Integrations = () => {
                             </div>
                         ))}
                         <div className="int-central-hub">
-                            <span className="font-serif">nx.ai</span>
+                            <span className="font-serif">klyro.ai</span>
                         </div>
                     </div>
                 </div>

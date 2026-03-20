@@ -1,5 +1,6 @@
 import os
 import asyncio
+from typing import Any
 from deepgram import DeepgramClient, LiveOptions, LiveTranscriptionEvents
 
 
@@ -7,7 +8,7 @@ class DeepgramStream:
 
     def __init__(self, transcript_callback):
         self.dg = DeepgramClient(os.getenv("DEEPGRAM_API_KEY"))
-        self.connection = None
+        self.connection: Any = None
         self.transcript_callback = transcript_callback
 
         # Speaker role mapping (populated on first/second speaker seen)

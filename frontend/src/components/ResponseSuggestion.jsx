@@ -83,7 +83,7 @@ const ResponseSuggestion = () => {
                             served on a platter.
                         </h2>
                         <p className="resp-desc">
-                            When the pressure is on, nx.ai feeds you the exact words you need to navigate tough questions, reposition value, and keep the momentum going.
+                            When the pressure is on, klyro.ai feeds you the exact words you need to navigate tough questions, reposition value, and keep the momentum going.
                         </p>
 
                         <button className="btn btn-primary interactive mt-8">

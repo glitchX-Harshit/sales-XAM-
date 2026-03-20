@@ -14,7 +14,7 @@ const PERSONAS = [
         color: '#ff5e00',
         bg: '#fff2ec',
         title: 'Close deals without freezing.',
-        desc: 'nx.ai listens to your calls, detects objections the second they surface, and surfaces the perfect response — so you never lose your footing again.',
+        desc: 'klyro.ai listens to your calls, detects objections the second they surface, and surfaces the perfect response — so you never lose your footing again.',
         stat: { n: '22%', l: 'Higher close rate' },
         preview: '"I think we need to think about it..." → ⚡ Detected: Stall objection → "That\'s fair — most teams feel that way at first. Let me show you what made the difference for [Company]."',
     },
@@ -25,7 +25,7 @@ const PERSONAS = [
         color: '#7c5cbf',
         bg: '#f4f0ff',
         title: 'Think at the speed of leadership.',
-        desc: 'Dictate strategy memos, team updates, and executive summaries between back-to-back meetings. nx.ai turns your thoughts into polished documents instantly.',
+        desc: 'Dictate strategy memos, team updates, and executive summaries between back-to-back meetings. klyro.ai turns your thoughts into polished documents instantly.',
         stat: { n: '3×', l: 'Faster decision docs' },
         preview: '"Draft: Focus next quarter on EMEA expansion, prioritize enterprise accounts above 500 seats..." → ✓ Structured memo ready in 4 seconds',
     },
@@ -193,11 +193,11 @@ const UseCases = () => {
             <div className="container uc-header">
                 <div className="uc-eyebrow">Who it's for</div>
                 <h2 className="uc-title">
-                    <span className="font-serif"><em>nx.ai</em> is made</span>{' '}
+                    <span className="font-serif"><em>klyro.ai</em> is made</span>{' '}
                     <span className="uc-title-plain">for you.</span>
                 </h2>
                 <p className="uc-subtitle">
-                    Select your role. See exactly what nx.ai does for you.
+                    Select your role. See exactly what klyro.ai does for you.
                 </p>
             </div>
 
@@ -236,7 +236,7 @@ const UseCases = () => {
                             <div className="uc-panel-dots">
                                 <span></span><span></span><span></span>
                             </div>
-                            <span className="uc-panel-title-bar">nx.ai — {active.label}</span>
+                            <span className="uc-panel-title-bar">klyro.ai — {active.label}</span>
                             <div className="uc-panel-live">● LIVE</div>
                         </div>
 

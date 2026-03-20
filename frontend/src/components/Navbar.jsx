@@ -9,7 +9,7 @@ const LINKS = [
     { label: 'Pricing', href: '#pricing' },
 ];
 
-const Navbar = ({ onGetStarted }) => {
+const Navbar = ({ onGetStarted, onSignup, onLogin }) => {
     const [scrolled, setScrolled] = useState(false);
     const navRef = useRef(null);
 
@@ -38,7 +38,7 @@ const Navbar = ({ onGetStarted }) => {
                         <span className="nb-logo-pulse"></span>
                     </span>
                     <span className="nb-logo-text">
-                        <span className="nb-logo-nx">nx</span
+                        <span className="nb-logo-nx">klyro</span
                         ><span className="nb-logo-dot">.</span
                         ><span className="nb-logo-ai">ai</span>
                     </span>
@@ -55,9 +55,9 @@ const Navbar = ({ onGetStarted }) => {
 
                 {/* Right actions */}
                 <div className="nb-actions">
-                    <a href="#" className="nb-signin interactive">Sign in</a>
-                    <button className="nb-cta interactive" onClick={onGetStarted}>
-                        Get started
+                    <a href="#" className="nb-signin interactive" onClick={(e) => { e.preventDefault(); onLogin(); }}>Log in</a>
+                    <button className="nb-cta interactive" onClick={onSignup}>
+                        Register Now
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                             <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>

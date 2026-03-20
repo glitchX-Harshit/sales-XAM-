@@ -9,7 +9,7 @@ import './Dashboard.css';
    MOCK DATA — cycles through realistic scenarios
 ───────────────────────────────────────── */
 const TRANSCRIPT_LINES = [
-    { speaker: 'rep', text: 'Hi Sarah, glad we could connect today. I wanted to walk you through how nx.ai can transform your team\'s performance.' },
+    { speaker: 'rep', text: 'Hi Sarah, glad we could connect today. I wanted to walk you through how klyro.ai can transform your team\'s performance.' },
     { speaker: 'prospect', text: 'Sure, but I\'ll be honest — we\'ve tried AI tools before and they were too complex.' },
     { speaker: 'rep', text: 'That\'s a super fair concern. What specifically felt complex — the setup, the interface, or the AI output itself?' },
     { speaker: 'prospect', text: 'Mostly the pricing doesn\'t fit our current budget. We\'re a 12-person team.' },
@@ -59,7 +59,7 @@ const SUGGESTIONS = [
         tag: 'Timeline Inquiry',
         tagColor: '#27c93f',
         title: 'Speed-to-Value',
-        body: '"Teams go live in under 15 minutes. We handle migration, we handle setup. Most reps close their first nx.ai-assisted deal within week one."',
+        body: '"Teams go live in under 15 minutes. We handle migration, we handle setup. Most reps close their first klyro.ai-assisted deal within week one."',
         stat: '82% teams live same-day',
         alt: 'Offer a dedicated onboarding call tomorrow morning.',
     },
@@ -99,6 +99,7 @@ const DealStageIndicator = ({ stage }) => {
 
 const Dashboard = ({ onExit }) => {
     const dashRef = useRef(null);
+    const transcriptEndRef = useRef(null);
     const [callDuration, setCallDuration] = useState(0);
     const [isListening, setIsListening] = useState(false); // start off initially until explicit join
     const [wavePhase, setWavePhase] = useState(0);
@@ -216,6 +217,13 @@ const Dashboard = ({ onExit }) => {
         return () => clearInterval(wave);
     }, []);
 
+    /* ── Auto-scroll transcript to bottom */
+    useEffect(() => {
+        if (transcriptEndRef.current) {
+            transcriptEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [transcript]);
+
     const formatTime = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 
     const waveHeights = Array.from({ length: 28 }, (_, i) =>
@@ -224,7 +232,7 @@ const Dashboard = ({ onExit }) => {
 
     return (
         <div className="db-root" ref={dashRef}>
-            {showBriefing && <CallBriefingForm onStartCall={handleStartCall} />}
+            {showBriefing && <CallBriefingForm onStartCall={handleStartCall} onBack={onExit} />}
 
             {/* ── AMBIENT BACKGROUND */}
             <div className="db-ambient">
@@ -238,7 +246,7 @@ const Dashboard = ({ onExit }) => {
                 <div className="db-sidebar-logo">
                     <span className="db-logo-mark"><span className="db-logo-pulse" /></span>
                     <span className="db-logo-text">
-                        <span className="db-logo-nx">nx</span>
+                        <span className="db-logo-nx">klyro</span>
                         <span className="db-logo-dot">.</span>
                         <span className="db-logo-ai">ai</span>
                     </span>
@@ -385,19 +393,25 @@ const Dashboard = ({ onExit }) => {
                             <span className="db-panel-title">📝 Live Transcript</span>
                             <span className="db-panel-tag">Real-time · Whisper AI</span>
                         </div>
-                        <div className="db-transcript-scroll">
+                        <div className="db-transcript-scroll" id="transcript-container">
                             {transcript.length === 0 && <div style={{ padding: '1rem', opacity: 0.5 }}>Waiting for dialogue...</div>}
-                            {transcript.map((line, i) => (
-                                <div key={i} className={`db-transcript-line ${line.speaker}`}>
-                                    <span className="db-tx-speaker" style={{ textTransform: 'capitalize' }}>{line.speaker}</span>
-                                    <p className="db-tx-text">{line.text}</p>
-                                </div>
-                            ))}
+                            {transcript.map((line, i) => {
+                                const isUser = line.speaker === 'user';
+                                return (
+                                    <div key={i} className={`chat-row ${isUser ? 'chat-user' : 'chat-prospect'}`}>
+                                        <div className="chat-bubble">
+                                            <span className="chat-speaker-label">{isUser ? 'You' : 'Prospect'}</span>
+                                            <p className="chat-text">{line.text}</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                             {isListening && (
-                                <div className="db-typing-indicator">
+                                <div className="db-typing-indicator chat-prospect-typing">
                                     <span /><span /><span />
                                 </div>
                             )}
+                            <div ref={transcriptEndRef} />
                         </div>
                     </div>
 

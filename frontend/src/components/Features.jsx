@@ -84,7 +84,7 @@ const Features = () => {
 
                 {/* Section header — editorial style */}
                 <div className="feat-header">
-                    <div className="feat-header-eyebrow">What nx.ai does</div>
+                    <div className="feat-header-eyebrow">What klyro.ai does</div>
                     <h2 className="feat-header-title">
                         <div className="feat-header-line">Listen.<em className="font-serif"> Detect.</em></div>
                         <div className="feat-header-line">Close.</div>
@@ -112,7 +112,7 @@ const Features = () => {
                         <div className="feat-card-body">
                             <div className="feat-icon-wrap"><Ear size={22} color="#fff" /></div>
                             <h3>Detect Objections<br /><em className="font-serif">before they kill the deal.</em></h3>
-                            <p>nx.ai monitors tonality, keyword velocity, and hesitation patterns to surface objections the instant a prospect starts hedging. No more catching yourself off-guard.</p>
+                            <p>klyro.ai monitors tonality, keyword velocity, and hesitation patterns to surface objections the instant a prospect starts hedging. No more catching yourself off-guard.</p>
                         </div>
                         <div className="feat-card-visual">
                             <div className="feat-orb-blob"></div>

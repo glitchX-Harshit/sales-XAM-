@@ -72,7 +72,7 @@ const ObjectionHandling = () => {
                     Before they derail the deal.
                 </h2>
                 <p className="obj-desc">
-                    nx.ai listens for subtle hesitation, pricing concerns, or competitive mentions, instantly flagging them so you know exactly what you're up against.
+                    klyro.ai listens for subtle hesitation, pricing concerns, or competitive mentions, instantly flagging them so you know exactly what you're up against.
                 </p>
             </div>
 
@@ -110,7 +110,7 @@ const ObjectionHandling = () => {
 
                 {/* Annotation labels */}
                 <span className="obj-scrib-label" style={{ top: '10%', left: '19%', transform: 'rotate(-4deg)' }}>
-                    nx.ai hears this ↓
+                    klyro.ai hears this ↓
                 </span>
                 <span className="obj-scrib-label" style={{ top: '38%', right: '4%', transform: 'rotate(3deg)', color: '#ff5e00' }}>
                     instantly ↙

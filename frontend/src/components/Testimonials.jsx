@@ -48,7 +48,7 @@ const CARDS = [
         avatar: 'DK',
         avatarBg: '#0099ff',
         stars: 5,
-        text: 'Replaced our clunky call recording stack entirely. nx.ai is faster, smarter, completely invisible — and our prospects never notice.',
+        text: 'Replaced our clunky call recording stack entirely. klyro.ai is faster, smarter, completely invisible — and our prospects never notice.',
         meta: 'via Trustpilot',
     },
     {
@@ -59,7 +59,7 @@ const CARDS = [
         avatarBg: '#ff3d71',
         stars: 5,
         stat: { n: '+31%', l: 'quota attainment jump' },
-        text: 'The objection detection is basically a superpower. I watched a junior SDR handle a VP-level pricing pushback perfectly because nx.ai surfaced the exact right reframe.',
+        text: 'The objection detection is basically a superpower. I watched a junior SDR handle a VP-level pricing pushback perfectly because klyro.ai surfaced the exact right reframe.',
         meta: 'via Product Hunt',
     },
     {
@@ -70,7 +70,7 @@ const CARDS = [
         avatarBg: '#d4a017',
         stars: 5,
         featured: true,
-        text: 'ROI within 10 days of deployment. I had to stop myself from calling every investor and just saying "nx.ai".',
+        text: 'ROI within 10 days of deployment. I had to stop myself from calling every investor and just saying "klyro.ai".',
         meta: 'via Capterra · Verified',
     },
     {
@@ -81,7 +81,7 @@ const CARDS = [
         avatarBg: '#17b0d4',
         stars: 5,
         pull: true,
-        text: '"Closed a $400k deal on my third week using nx.ai.\n\nI\'m not joking."',
+        text: '"Closed a $400k deal on my third week using klyro.ai.\n\nI\'m not joking."',
         meta: 'Shared via Discord',
     },
     {
@@ -92,7 +92,7 @@ const CARDS = [
         avatarBg: '#ff5e00',
         stars: 5,
         featured: true,
-        text: 'We run 200+ calls a week across our sales team. Since deploying nx.ai, follow-up emails dropped by 80% — everyone already knows exactly what was agreed on each call. This thing runs our post-call workflow almost entirely.',
+        text: 'We run 200+ calls a week across our sales team. Since deploying klyro.ai, follow-up emails dropped by 80% — everyone already knows exactly what was agreed on each call. This thing runs our post-call workflow almost entirely.',
         meta: 'via Salesforce AppExchange · Enterprise',
     },
     {
@@ -102,7 +102,7 @@ const CARDS = [
         avatar: 'AV',
         avatarBg: '#7c5cbf',
         stars: 5,
-        text: 'My manager thought I was getting coaching on the side. Nope — just nx.ai.',
+        text: 'My manager thought I was getting coaching on the side. Nope — just klyro.ai.',
         meta: 'via LinkedIn',
     },
 ];
@@ -227,7 +227,7 @@ const Testimonials = () => {
                         <em className="tl-title-italic font-serif">Real teams.</em>
                     </h2>
                     <p className="tl-subtitle">
-                        Over 2,000 sales teams use nx.ai every day.<br />
+                        Over 2,000 sales teams use klyro.ai every day.<br />
                         Here's what they're saying.
                     </p>
                 </div>
