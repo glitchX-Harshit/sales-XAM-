@@ -632,6 +632,7 @@
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1205,9 +1206,12 @@
 }
 
 @keyframes stageGlow {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 10px color-mix(in srgb, var(--stage-color) 25%, transparent);
     }
+
     50% {
         box-shadow: 0 0 18px color-mix(in srgb, var(--stage-color) 50%, transparent);
     }

@@ -41,7 +41,7 @@ class ConversationAnalyzer:
         
         Return ONLY a JSON object with:
         - "latest_message": String (the exact text of the latest prospect message)
-        - "intent": strict choice array ["objection", "question", "interest", "negotiation", "hesitation", "consideration", "small_talk", "none"]
+        - "intent": strict choice array ["objection", "curiosity", "hesitation", "interest", "ready_to_close", "none"]
         - "topic": strict choice array ["pricing", "timeline", "authority", "competitor", "trust", "value", "implementation", "next_steps", "none"]
         - "confidence": Float between 0.0 and 1.0 representing your confidence in this classification.
         """
@@ -90,7 +90,7 @@ class ConversationAnalyzer:
         text = latest_message.lower()
         
         topic = "none"
-        intent = "small_talk"
+        intent = "none"
         
         if any(w in text for w in ["price", "cost", "expensive", "budget"]):
             topic = "pricing"
@@ -100,13 +100,15 @@ class ConversationAnalyzer:
             intent = "hesitation"
         elif any(w in text for w in ["when", "time", "later", "next quarter"]):
             topic = "timeline"
-            if "?" in text: intent = "question"
+            if "?" in text: intent = "curiosity"
             else: intent = "objection"
         elif any(w in text for w in ["competitor", "other tool", "currently use"]):
             topic = "competitor"
             intent = "objection"
+        elif any(w in text for w in ["ready", "start", "sign", "next step", "let's do it"]):
+            intent = "ready_to_close"
         elif "?" in text:
-            intent = "question"
+            intent = "curiosity"
 
         return {
             "latest_message": latest_message,

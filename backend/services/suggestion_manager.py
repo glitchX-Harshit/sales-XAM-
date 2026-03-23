@@ -1,7 +1,7 @@
 from difflib import SequenceMatcher
 
 class SuggestionManager:
-    def __init__(self, max_history=10, similarity_threshold=0.75):
+    def __init__(self, max_history=2, similarity_threshold=0.75):
         self.history = []
         self.max_history = max_history
         self.similarity_threshold = similarity_threshold

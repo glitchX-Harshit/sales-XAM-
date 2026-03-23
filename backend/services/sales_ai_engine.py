@@ -134,21 +134,34 @@ class SalesAIEngine:
                 "closing":              "Guide the prospect toward a concrete next step. Create momentum.",
             }.get(deal_stage, "Guide the deal forward.")
 
-            system_content = f"""You are an elite B2B sales strategist assisting a salesperson during a live call.
+            system_content = f"""You are not an assistant. You are a high-performance sales closer.
     {context_str}{strategy_context}
 
     CURRENT DEAL STAGE: {deal_stage.upper().replace('_', ' ')}
     Stage guidance: {stage_guidance}
 
-    Your job is to:
-    1. Understand the prospect's latest message exactly.
-    2. Respond according to the current deal stage.
-    3. Choose the most effective persuasion strategy (use the recommendation if provided).
-    4. Provide a SHORT, conversational reply for the rep to say verbatim.
-    5. Suggest a follow-up question that moves the deal to the next stage.
-
+    Your job is to control the conversation and move the deal forward.
+    For every input:
+    1. Identify intent and stage
+    2. Select best persuasion strategy
+    3. Respond with calm authority
+    4. Apply subtle pressure when needed
+    5. Always guide toward next step
+    
+    Do NOT:
+    - sound polite or generic
+    - repeat phrases
+    - over-explain
+    
+    DO:
+    - challenge assumptions slightly
+    - reframe objections
+    - ask sharp, strategic questions
+    - keep responses concise and powerful
+    
+    Your tone profiles (pick one): [calm_authority, slightly_challenging, confident_minimal]
+    
     {dup_warning}
-    Avoid generic chatbot language. Keep it human-like.
     """
             prev_context = list(self.message_buffer)
             if prev_context:
@@ -165,13 +178,11 @@ class SalesAIEngine:
             
             Return ONLY a JSON object with exactly these fields:
             - "intent": "{intent}"
-            - "topic": "{topic}"
-            - "deal_stage": "{deal_stage}"
-            - "persuasion_pattern": "<SELECTED_PATTERN>" 
-            - "suggested_response": "Short conversational line the rep can say"
-            - "next_best_question": "Question that moves the deal to the next stage"
-            - "coaching_tip": "1-sentence psychological insight about what the prospect is thinking right now"
-            - "deal_signal": "positive" | "neutral" | "negative"
+            - "stage": "{deal_stage}"
+            - "strategy": "<SELECTED_PATTERN>" 
+            - "tone": "<SELECTED_TONE>"
+            - "response": "Short conversational line the rep can say"
+            - "next_question": "Question that moves the deal to the next stage"
             - "confidence": Float between 0.0 and 1.0 representing confidence in the detection.
             """
             
@@ -197,7 +208,7 @@ class SalesAIEngine:
                     print(f"[AI_RESPONSE] Confidence {confidence} below threshold. Ignoring.")
                     return None
                     
-                suggested_resp = data.get("suggested_response", "")
+                suggested_resp = data.get("response", "")
                 
                 # Check for duplicate suggestions
                 if suggestion_manager.is_duplicate(suggested_resp) and retry_attempt == 0:
@@ -207,7 +218,11 @@ class SalesAIEngine:
                 print("[AI_RESPONSE] Analysis successful.")
                 suggestion_manager.add_suggestion(suggested_resp) # Record to history
                 
-                # Normalize keys for the frontend
+                # Map keys for frontend/backend backwards compatibility
+                # Frontend might expect `suggested_response` or `next_best_question`
+                data["suggested_response"] = suggested_resp
+                data["next_best_question"] = data.get("next_question", "")
+                data["persuasion_pattern"] = data.get("strategy", strategy_name)
                 data["type"] = topic
                 
                 return data
@@ -232,10 +247,13 @@ class SalesAIEngine:
             "intent": intent,
             "topic": topic,
             "deal_stage": deal_stage,
-            "persuasion_pattern": "DIRECT_RESPONSE",
-            "suggested_response": "I completely understand where you're coming from. Can you tell me more about that?",
-            "next_best_question": "What specifically is the main concern?",
-            "coaching_tip": "The prospect may need more trust before moving forward.",
-            "deal_signal": "neutral",
+            "stage": deal_stage,
+            "strategy": "straight_line",
+            "persuasion_pattern": "straight_line",
+            "tone": "calm_authority",
+            "response": "Understood. The key here is moving forward effectively.",
+            "suggested_response": "Understood. The key here is moving forward effectively.",
+            "next_question": "What is the single most important metric for you?",
+            "next_best_question": "What is the single most important metric for you?",
             "type": topic
         }

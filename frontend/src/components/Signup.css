@@ -44,12 +44,23 @@
 }
 
 @keyframes suBlob1 {
-    from { transform: translate(0, 0) scale(1); }
-    to   { transform: translate(-60px, 40px) scale(1.12); }
+    from {
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        transform: translate(-60px, 40px) scale(1.12);
+    }
 }
+
 @keyframes suBlob2 {
-    from { transform: translate(0, 0) scale(1); }
-    to   { transform: translate(50px, -30px) scale(1.1); }
+    from {
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        transform: translate(50px, -30px) scale(1.1);
+    }
 }
 
 .su-grid {
@@ -88,7 +99,7 @@
 .su-back:hover {
     background: rgba(255, 255, 255, 0.9);
     transform: translateX(-4px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* ── CARD ── */
@@ -115,6 +126,7 @@
         opacity: 0;
         transform: translateY(30px) scale(0.97);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -139,7 +151,7 @@
     justify-content: center;
     flex-shrink: 0;
     position: relative;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
     margin-top: 4px;
 }
 
@@ -152,8 +164,17 @@
 }
 
 @keyframes suPulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50%       { transform: scale(1.6); opacity: 0.5; }
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.6);
+        opacity: 0.5;
+    }
 }
 
 .su-head-text {
@@ -201,13 +222,11 @@
 /* ── DIVIDER ── */
 .su-divider {
     height: 1px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(0,0,0,0.06) 20%,
-        rgba(0,0,0,0.06) 80%,
-        transparent
-    );
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(0, 0, 0, 0.06) 20%,
+            rgba(0, 0, 0, 0.06) 80%,
+            transparent);
     margin-bottom: 1.6rem;
 }
 
@@ -322,7 +341,7 @@
     overflow: hidden;
     margin-top: 0.75rem;
     transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-                box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .su-submit:hover:not(:disabled) {
@@ -389,14 +408,22 @@
     box-sizing: border-box;
 }
 
-.su-btn-default { transform: translateY(0%); }
-.su-submit:hover:not(:disabled) .su-btn-default { transform: translateY(-100%); }
+.su-btn-default {
+    transform: translateY(0%);
+}
+
+.su-submit:hover:not(:disabled) .su-btn-default {
+    transform: translateY(-100%);
+}
 
 .su-btn-hover {
     margin-top: -58px;
     transform: translateY(100%);
 }
-.su-submit:hover:not(:disabled) .su-btn-hover { transform: translateY(0%); }
+
+.su-submit:hover:not(:disabled) .su-btn-hover {
+    transform: translateY(0%);
+}
 
 .su-btn-icon {
     font-size: 1rem;
@@ -450,7 +477,9 @@
 }
 
 @keyframes suSpin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .su-login-prompt {

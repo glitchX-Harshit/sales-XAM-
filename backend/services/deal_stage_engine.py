@@ -6,8 +6,8 @@ class DealStageEngine:
     Uses keyword heuristics — zero LLM calls, zero latency overhead.
     
     Stages (in order of progression):
-      discovery → problem_exploration → solution_framing →
-      objection_handling → negotiation → closing
+      discovery → problem → solution →
+      negotiation → closing
     """
 
     STAGE_KEYWORDS: Dict[str, List[str]] = {
@@ -21,18 +21,13 @@ class DealStageEngine:
             "better deal", "price", "can you do better", "negotiate",
             "flexible on pricing", "best price"
         ],
-        "objection_handling": [
-            "expensive", "not sure", "don't think", "not convinced",
-            "too much", "not ready", "we'll see", "concerned about",
-            "not a priority", "already have", "competitor"
-        ],
-        "solution_framing": [
+        "solution": [
             "how will this help", "how would this help", "how would this work",
             "what does it improve", "what results", "can it solve", "does it handle",
             "how does it fix", "show me how", "what would change", "would this help",
             "help our team", "help my team", "help us"
         ],
-        "problem_exploration": [
+        "problem": [
             "our problem is", "our challenge is", "we struggle with",
             "biggest issue", "biggest problem", "pain point", "difficulty", "failing at",
             "not working", "bottleneck", "frustration", "converting leads",
@@ -49,9 +44,8 @@ class DealStageEngine:
     STAGE_PRIORITY = [
         "closing",
         "negotiation",
-        "objection_handling",
-        "solution_framing",
-        "problem_exploration",
+        "solution",
+        "problem",
         "discovery",
     ]
 
