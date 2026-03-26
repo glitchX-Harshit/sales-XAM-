@@ -4,7 +4,8 @@ websockets
 python-dotenv
 sqlalchemy
 asyncpg
-deepgram-sdk
+deepgram-sdk==3.*
 openai
 pydantic
 pydantic-settings
+PyJWT

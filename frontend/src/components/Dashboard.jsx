@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
+import { supabase } from '../lib/supabaseClient';
 import { useAudioStream } from '../audio/audioStreamClient';
 import CallBriefingForm from './CallBriefingForm';
+import SecuritySettings from './SecuritySettings';
 import './Dashboard.css';
 
 
@@ -113,6 +115,15 @@ const Dashboard = ({ onExit }) => {
     const [dealStage, setDealStage] = useState('discovery');
     const [coachingTip, setCoachingTip] = useState(null);
     const [showTabTip, setShowTabTip] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
+    const [user, setUser] = useState(null);
+
+    // Fetch user on mount
+    useEffect(() => {
+        supabase.auth.getUser().then(({ data: { user: currentUser } }) => {
+            setUser(currentUser);
+        });
+    }, []);
 
     // New states from Sales AI Engine
     const [spinStage, setSpinStage] = useState('situation');
@@ -254,14 +265,18 @@ const Dashboard = ({ onExit }) => {
 
                 <nav className="db-nav">
                     {[
-                        { icon: '⚡', label: 'Live Call', active: true },
+                        { icon: '⚡', label: 'Live Call', active: !showSettings },
                         { icon: '📋', label: 'History' },
                         { icon: '📊', label: 'Analytics' },
                         { icon: '🎯', label: 'Playbooks' },
                         { icon: '🔗', label: 'Integrations' },
-                        { icon: '⚙️', label: 'Settings' },
+                        { icon: '⚙️', label: 'Settings', action: () => setShowSettings(true) },
                     ].map((item) => (
-                        <button key={item.label} className={`db-nav-item ${item.active ? 'active' : ''}`}>
+                        <button 
+                            key={item.label} 
+                            className={`db-nav-item ${item.active ? 'active' : ''}`}
+                            onClick={item.action || (() => {})}
+                        >
                             <span className="db-nav-icon">{item.icon}</span>
                             <span className="db-nav-label">{item.label}</span>
                             {item.active && <span className="db-nav-pip" />}
@@ -577,6 +592,13 @@ const Dashboard = ({ onExit }) => {
                     </div>
                 </div>
             </div>
+
+            {/* SECURITY SETTINGS MODAL */}
+            <SecuritySettings 
+                isOpen={showSettings} 
+                onClose={() => setShowSettings(false)} 
+                user={user}
+            />
         </div>
     );
 };

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { supabase } from '../lib/supabaseClient';
 
 export const useRealtimeCopilot = (wsUrl = 'ws://localhost:8000/ws') => {
     const [isConnected, setIsConnected] = useState(false);
@@ -8,39 +9,49 @@ export const useRealtimeCopilot = (wsUrl = 'ws://localhost:8000/ws') => {
     const ws = useRef(null);
 
     useEffect(() => {
-        ws.current = new WebSocket(wsUrl);
+        let isMounted = true;
 
-        ws.current.onopen = () => {
-            setIsConnected(true);
-            console.log('Connected to klyro.ai copilot backend');
-        };
+        const connectWs = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            const token = session?.access_token;
+            if (!isMounted) return;
 
-        ws.current.onclose = () => {
-            setIsConnected(false);
-            console.log('Disconnected from klyro.ai copilot backend');
-        };
+            const finalUrl = token ? `${wsUrl}?token=${token}` : wsUrl;
+            ws.current = new WebSocket(finalUrl);
 
-        ws.current.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
+            ws.current.onopen = () => {
+                setIsConnected(true);
+                console.log('Connected to klyro.ai copilot backend securely');
+            };
 
-                if (data.type === 'objectionDetect') {
-                    setLatestObjection(data.objection);
-                    // clear objection after 8 seconds
-                    setTimeout(() => setLatestObjection(null), 8000);
-                } else if (data.type === 'aiSuggestion') {
-                    setLatestSuggestion(data.suggestion);
-                    // clear suggestion after 12 seconds
-                    setTimeout(() => setLatestSuggestion(null), 12000);
-                } else if (data.type === 'transcriptUpdate') {
-                    setTranscript(prev => [...prev, data]);
+            ws.current.onclose = () => {
+                setIsConnected(false);
+                console.log('Disconnected from klyro.ai copilot backend');
+            };
+
+            ws.current.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+
+                    if (data.type === 'objectionDetect') {
+                        setLatestObjection(data.objection);
+                        setTimeout(() => setLatestObjection(null), 8000);
+                    } else if (data.type === 'aiSuggestion') {
+                        setLatestSuggestion(data.suggestion);
+                        setTimeout(() => setLatestSuggestion(null), 12000);
+                    } else if (data.type === 'transcriptUpdate') {
+                        setTranscript(prev => [...prev, data]);
+                    }
+                } catch (err) {
+                    console.error('WebSocket message parse error:', err);
                 }
-            } catch (err) {
-                console.error('WebSocket message parse error:', err);
-            }
+            };
         };
+
+        connectWs();
 
         return () => {
+            isMounted = false;
             if (ws.current) {
                 ws.current.close();
             }

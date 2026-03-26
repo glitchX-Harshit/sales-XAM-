@@ -1,5 +1,6 @@
 import { useRef, useCallback, useEffect } from 'react';
 import { floatTo16BitPCM } from './audioEncoder';
+import { supabase } from '../lib/supabaseClient';
 
 export const useAudioStream = (wsUrl) => {
     const wsRef = useRef(null);
@@ -12,16 +13,20 @@ export const useAudioStream = (wsUrl) => {
     const onTranscriptRef = useRef(null);
     const onAiAnalysisRef = useRef(null);
 
-    const connectWebSocket = useCallback(() => {
-        return new Promise((resolve, reject) => {
-            if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-                return resolve();
-            }
+    const connectWebSocket = useCallback(async () => {
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+            return Promise.resolve();
+        }
 
-            wsRef.current = new WebSocket(wsUrl);
+        const { data: { session } } = await supabase.auth.getSession();
+        const token = session?.access_token;
+        const finalUrl = token ? `${wsUrl}?token=${token}` : wsUrl;
+
+        return new Promise((resolve, reject) => {
+            wsRef.current = new WebSocket(finalUrl);
 
             wsRef.current.onopen = () => {
-                console.log('✅ Audio WebSocket Connected');
+                console.log('✅ Audio WebSocket Connected Securely');
                 resolve();
             };
 
