@@ -38,6 +38,37 @@ Designed with an "Awwwards-winning" aesthetic, the application features an engag
 - **Interactive Data Visualization:** Implements physics-based (Matter.js) layout elements and GSAP-powered parallax scrolling.
 - **Seamless Integrations:** Works across your existing CRM and communication platforms (Salesforce, HubSpot, Zoom, Slack).
 
+---
+
+## 🔐 Military-Grade Security & Auth Setup
+
+**klyro.ai** uses a secure OTP-first authentication system powered by **Supabase**.
+
+### 1. Supabase Project Configuration
+*   **Project Settings > API**: Copy your `Project URL`, `Anon Key`, and **`JWT Secret`**.
+*   **Authentication > Providers**: Enable **Email**.
+*   **Authentication > Email Settings**: Configure your SMTP (Mailtrap for local, Resend for production).
+    *   **🟢 Local (Mailtrap)**: `sandbox.smtp.mailtrap.io` | Port `2525`
+    *   **🟡 Personal (Gmail)**: `smtp.gmail.com` | Port `587` | App Password
+    *   **🔴 Business (Resend)**: `smtp.resend.com` | Port `587` | API Key
+
+#### 💡 Deep Email Setup Tips:
+-   **For Resend**: You MUST add 3 DNS records (MX/TXT) to your provider (GoDaddy/Cloudflare) to verify the `klyro.ai` domain.
+-   **For Gmail**: Enable 2FA first, then generate a **16-digit App Password**. The regular password will NOT work.
+-   **For Mailtrap**: Any email you send will be "caught" in the Mailtrap inbox. Perfect for local testing without real clients.
+
+### 2. Environment Variables
+You must create a `.env` file in both `frontend/` and `backend/` using the `.env.example` templates.
+
+| Component | Variable | Why it matters? |
+| :--- | :--- | :--- |
+| **Frontend** | `VITE_SUPABASE_URL` | Connects your UI to your database. |
+| **Frontend** | `VITE_SUPABASE_ANON_KEY` | Public key for safe client-side auth. |
+| **Backend** | `SUPABASE_JWT_SECRET` | **CRITICAL**: Validates sessions securely. |
+| **Backend** | `DEEPGRAM_API_KEY` | Key for real-time AI transcription. |
+
+---
+
 ## Tech Stack
 
 The application relies on a modern, high-performance frontend architecture:
