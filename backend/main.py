@@ -21,9 +21,25 @@ app.add_middleware(
 )
 
 import json
+import jwt
 from pydantic import BaseModel
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Depends, Query
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from services.websocket_service import websocket_manager
 from services.call_context_engine import call_context_engine
+
+security = HTTPBearer()
+
+def verify_supabase_jwt(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    jwt_secret = os.getenv("SUPABASE_JWT_SECRET")
+    if not jwt_secret:
+        raise HTTPException(status_code=500, detail="Server Configuration Error: SUPABASE_JWT_SECRET not set")
+    try:
+        payload = jwt.decode(token, jwt_secret, algorithms=["HS256"], audience="authenticated")
+        return payload
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Security validation failed: Invalid or expired token")
 
 class CallStartRequest(BaseModel):
     client_name: str
@@ -35,14 +51,14 @@ class CallStartRequest(BaseModel):
 
 @app.get("/")
 async def root():
-    return {"message": "klyro.ai backend is running."}
+    return {"message": "klyro.ai backend is running securely."}
 
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
 
 @app.post("/call/start")
-async def start_call(request: CallStartRequest):
+async def start_call(request: CallStartRequest, user: dict = Depends(verify_supabase_jwt)):
     context_id = call_context_engine.create_context(
         client_name=request.client_name,
         client_industry=request.client_industry,
@@ -50,10 +66,10 @@ async def start_call(request: CallStartRequest):
         product_name=request.product_name,
         call_goal=request.call_goal
     )
-    return {"context_id": context_id, "message": "Call session initialized"}
+    return {"context_id": context_id, "message": "Call session initialized securely"}
 
 @app.get("/call/context/{context_id}")
-async def get_call_context(context_id: str):
+async def get_call_context(context_id: str, user: dict = Depends(verify_supabase_jwt)):
     context = call_context_engine.get_context(context_id)
     if not context:
         return {"error": "Context not found"}
@@ -61,7 +77,17 @@ async def get_call_context(context_id: str):
 
 
 @app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
+async def websocket_endpoint(websocket: WebSocket, token: str = Query(default=None)):
+    if not token:
+        await websocket.close(code=1008, reason="Missing authentication token")
+        return
+    try:
+        jwt_secret = os.getenv("SUPABASE_JWT_SECRET")
+        jwt.decode(token, jwt_secret, algorithms=["HS256"], audience="authenticated")
+    except Exception:
+        await websocket.close(code=1008, reason="Invalid authentication token")
+        return
+
     await websocket_manager.connect(websocket)
     try:
         while True:
@@ -79,7 +105,17 @@ async def websocket_endpoint(websocket: WebSocket):
         websocket_manager.disconnect(websocket)
 
 @app.websocket("/ws/audio")
-async def websocket_audio_endpoint(websocket: WebSocket, context_id: str = None):
+async def websocket_audio_endpoint(websocket: WebSocket, context_id: str | None = None, token: str = Query(default=None)):
+    if not token:
+        await websocket.close(code=1008, reason="Missing authentication token")
+        return
+    try:
+        jwt_secret = os.getenv("SUPABASE_JWT_SECRET")
+        jwt.decode(token, jwt_secret, algorithms=["HS256"], audience="authenticated")
+    except Exception:
+        await websocket.close(code=1008, reason="Invalid authentication token")
+        return
+
     print(f"🔌 WebSocket connection attempt to /ws/audio (context_id: {context_id})")
     await websocket_manager.connect(websocket, context_id=context_id)
     print("✅ WebSocket connected to /ws/audio")

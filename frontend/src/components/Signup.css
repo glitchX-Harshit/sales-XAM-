@@ -471,3 +471,70 @@
 .su-login-prompt a:hover {
     opacity: 0.8;
 }
+
+/* ── ERROR MESSAGE ── */
+.su-error-message {
+    padding: 0.85rem 1.25rem;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 12px;
+    color: #dc2626;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: suShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.su-error-message::before {
+    content: '⚠️';
+    font-size: 1rem;
+}
+
+@keyframes suShake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+/* ── OTP ENHANCEMENTS ── */
+.su-otp-container {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+}
+
+.su-otp-input {
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 1rem;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #111;
+    font-family: inherit;
+    text-align: center;
+    letter-spacing: 0.4em;
+    width: 100%;
+    max-width: 320px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    outline: none;
+    padding-left: 1.4em; /* Adjust for letter-spacing offset */
+}
+
+.su-otp-input:focus {
+    border-color: #ff5e00;
+    background: #fff;
+    box-shadow: 
+        0 0 0 4px rgba(255, 94, 0, 0.1),
+        0 8px 20px rgba(255, 94, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.su-otp-input::placeholder {
+    color: rgba(0, 0, 0, 0.08);
+}

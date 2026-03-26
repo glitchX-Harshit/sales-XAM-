@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { supabase } from '../lib/supabaseClient';
 import './CallBriefingForm.css';
 
 const FIELDS = [
@@ -66,12 +67,19 @@ const CallBriefingForm = ({ onStartCall, onBack }) => {
         setIsSubmitting(true);
         setError('');
         try {
+            const { data: { session } } = await supabase.auth.getSession();
+            const token = session?.access_token;
+            if (!token) throw new Error("Security Error: Authentication token missing. Please log in again.");
+
             const response = await fetch('http://localhost:8000/call/start', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
                 body: JSON.stringify(formData),
             });
-            if (!response.ok) throw new Error('Failed to start call session');
+            if (!response.ok) throw new Error('Failed to start secure call session');
             const data = await response.json();
             if (data.context_id) {
                 onStartCall(data.context_id, formData);

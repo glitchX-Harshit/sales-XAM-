@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { supabase } from './lib/supabaseClient';
 import Cursor from './components/Cursor';
 import Loader from './components/Loader';
 import Navbar from './components/Navbar';
@@ -22,7 +23,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 function App() {
   const [loaded, setLoaded] = useState(false);
-    const [view, setView] = useState('landing'); // 'landing' | 'dashboard' | 'signup' | 'login'
+  const [view, setView] = useState('landing'); // 'landing' | 'dashboard' | 'signup' | 'login'
+  const [session, setSession] = useState(null);
 
     const navigateTo = (v) => {
         setView(v);
@@ -35,6 +37,28 @@ function App() {
             window.scrollTo(0, 0);
         }
     };
+
+    useEffect(() => {
+        // 1. Initial session check
+        supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+            setSession(initialSession);
+            if (initialSession) {
+                setView('dashboard');
+            }
+        });
+
+        // 2. Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+            if (session) {
+                setView('dashboard');
+            } else {
+                setView('landing');
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
 
   useEffect(() => {
     // Prevent scroll while loading
@@ -53,7 +77,7 @@ function App() {
 
       {/* DASHBOARD VIEW */}
       {view === 'dashboard' && loaded && (
-        <Dashboard onExit={() => navigateTo('landing')} />
+        <Dashboard onExit={() => supabase.auth.signOut()} />
       )}
 
       {/* SIGNUP VIEW */}
