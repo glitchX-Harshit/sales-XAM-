@@ -17,7 +17,9 @@ class DeepgramStream:
 
     async def connect(self):
         try:
+            print("🎤 [Deepgram] Creating live connection...")
             self.connection = self.dg.listen.asynclive.v("1")
+            print("🎤 [Deepgram] Live connection object created")
 
             options = LiveOptions(
                 model="nova-2-general",
@@ -36,13 +38,16 @@ class DeepgramStream:
                 self._on_transcript
             )
 
+            print("🎤 [Deepgram] Starting stream with options...")
             await self.connection.start(options)
 
-            print("Deepgram stream connected")
+            print("✅ [Deepgram] Stream connected and active!")
             return True
 
         except Exception as e:
-            print("Exception connecting to Deepgram:", e)
+            print(f"❌ [Deepgram] Exception connecting: {type(e).__name__}: {e}")
+            import traceback
+            traceback.print_exc()
             return False
 
     def _resolve_speaker(self, dg_speaker_id: int) -> str:

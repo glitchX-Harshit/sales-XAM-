@@ -9,7 +9,7 @@ const LINKS = [
     { label: 'Pricing', href: '#pricing' },
 ];
 
-const Navbar = ({ onGetStarted, onSignup, onLogin }) => {
+const Navbar = ({ session, onGetStarted, onSignup, onLogin }) => {
     const [scrolled, setScrolled] = useState(false);
     const navRef = useRef(null);
 
@@ -55,13 +55,24 @@ const Navbar = ({ onGetStarted, onSignup, onLogin }) => {
 
                 {/* Right actions */}
                 <div className="nb-actions">
-                    <a href="#" className="nb-signin interactive" onClick={(e) => { e.preventDefault(); onLogin(); }}>Log in</a>
-                    <button className="nb-cta interactive" onClick={onSignup}>
-                        Register Now
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                    </button>
+                    {session ? (
+                        <button className="nb-cta interactive" onClick={onGetStarted}>
+                            Go to Dashboard
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" style={{marginLeft: '6px'}}>
+                                <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </button>
+                    ) : (
+                        <>
+                            <a href="#" className="nb-signin interactive" onClick={(e) => { e.preventDefault(); onLogin(); }}>Log in</a>
+                            <button className="nb-cta interactive" onClick={onSignup}>
+                                Register Now
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                                    <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </button>
+                        </>
+                    )}
                 </div>
 
             </div>

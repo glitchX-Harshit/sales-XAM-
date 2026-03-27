@@ -39,16 +39,22 @@ function App() {
     };
 
     useEffect(() => {
+        console.log("App mounted. Checking initial session...");
         // 1. Initial session check
-        supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+        supabase.auth.getSession().then(({ data: { session: initialSession }, error }) => {
+            console.log("getSession() returned:", initialSession, "Error:", error);
             setSession(initialSession);
             if (initialSession) {
+                console.log("Initial session found! Routing to dashboard...");
                 setView('dashboard');
+            } else {
+                console.log("No initial session found. Staying on landing.");
             }
         });
 
         // 2. Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            console.log("Auth Event:", event, "Session exists?", !!session);
             setSession(session);
             if (session) {
                 setView('dashboard');
@@ -101,13 +107,14 @@ function App() {
       {/* LANDING VIEW */}
       <main style={{ display: (view === 'dashboard' || view === 'signup' || view === 'login') ? 'none' : 'block' }}>
         <Navbar 
+            session={session}
             onGetStarted={() => navigateTo('dashboard')} 
             onSignup={() => navigateTo('signup')}
             onLogin={() => navigateTo('login')}
         />
 
         {/* 1. Hero Section */}
-        <Hero onGetStarted={() => navigateTo('dashboard')} />
+        <Hero session={session} onGetStarted={() => navigateTo('dashboard')} />
 
         {/* 2. Features / "4x Faster" Section (Reusing our bento grid for now) */}
         <Features />

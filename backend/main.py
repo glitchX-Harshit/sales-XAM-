@@ -1,7 +1,13 @@
 import os
+import ssl
+import certifi
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+
+# Fix macOS Python SSL certificate issues by pointing OpenSSL to certifi universally
+os.environ["SSL_CERT_FILE"] = certifi.where()
+ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())
 
 # Load environment variables
 load_dotenv()
@@ -22,6 +28,7 @@ app.add_middleware(
 
 import json
 import jwt
+from jwt import PyJWKClient
 from pydantic import BaseModel
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Depends, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -30,16 +37,36 @@ from services.call_context_engine import call_context_engine
 
 security = HTTPBearer()
 
-def verify_supabase_jwt(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
-    jwt_secret = os.getenv("SUPABASE_JWT_SECRET")
-    if not jwt_secret:
-        raise HTTPException(status_code=500, detail="Server Configuration Error: SUPABASE_JWT_SECRET not set")
+# Initialize the JWKS client to fetch Supabase's public keys for ES256 verification
+SUPABASE_URL = os.getenv("SUPABASE_URL", "")
+JWKS_URL = f"{SUPABASE_URL}/auth/v1/.well-known/jwks.json"
+jwks_client = PyJWKClient(JWKS_URL, cache_keys=True)
+
+def _verify_token(token: str) -> dict:
+    """Core JWT verification using Supabase JWKS (ES256)."""
+    # Strip any potential quotes
+    if token.startswith('"') and token.endswith('"'):
+        token = token[1:-1]
     try:
-        payload = jwt.decode(token, jwt_secret, algorithms=["HS256"], audience="authenticated")
+        # Fetch the correct public key from Supabase's JWKS endpoint
+        signing_key = jwks_client.get_signing_key_from_jwt(token)
+        payload = jwt.decode(
+            token,
+            signing_key.key,
+            algorithms=["ES256"],
+            options={"verify_aud": False}
+        )
         return payload
     except Exception as e:
-        raise HTTPException(status_code=401, detail="Security validation failed: Invalid or expired token")
+        print(f"JWT Verification failed: {str(e)}")
+        raise e
+
+def verify_supabase_jwt(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """FastAPI dependency for REST endpoint auth."""
+    try:
+        return _verify_token(credentials.credentials)
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Security validation failed: {str(e)}")
 
 class CallStartRequest(BaseModel):
     client_name: str
@@ -82,8 +109,7 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Query(default=No
         await websocket.close(code=1008, reason="Missing authentication token")
         return
     try:
-        jwt_secret = os.getenv("SUPABASE_JWT_SECRET")
-        jwt.decode(token, jwt_secret, algorithms=["HS256"], audience="authenticated")
+        _verify_token(token)
     except Exception:
         await websocket.close(code=1008, reason="Invalid authentication token")
         return
@@ -106,13 +132,16 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Query(default=No
 
 @app.websocket("/ws/audio")
 async def websocket_audio_endpoint(websocket: WebSocket, context_id: str | None = None, token: str = Query(default=None)):
+    print(f"🔌 WS /ws/audio: context_id={context_id}, token={'present' if token else 'MISSING'}")
     if not token:
+        print("❌ WebSocket rejected: No token parameter found in URL")
         await websocket.close(code=1008, reason="Missing authentication token")
         return
     try:
-        jwt_secret = os.getenv("SUPABASE_JWT_SECRET")
-        jwt.decode(token, jwt_secret, algorithms=["HS256"], audience="authenticated")
-    except Exception:
+        _verify_token(token)
+        print("✅ WebSocket token verified successfully")
+    except Exception as e:
+        print(f"❌ WebSocket token verification failed: {str(e)}")
         await websocket.close(code=1008, reason="Invalid authentication token")
         return
 
