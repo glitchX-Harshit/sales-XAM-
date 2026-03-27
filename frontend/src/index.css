@@ -1,15 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --color-bg: #fcf9ee;
-  /* Off-white/beige from Wispr */
-  --color-text: #1a1a1a;
-  --color-black: #111111;
+  --color-bg: #050505;
+  --color-text: #ffffff;
+  --color-text-dim: #a0a0a0;
+  --color-primary: #7c3aed;
+  --color-primary-hover: #9333ea;
+  --color-accent: #a855f7;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-glass: rgba(255, 255, 255, 0.05);
+  --color-glass-hover: rgba(255, 255, 255, 0.08);
+  --color-black: #000000;
   --color-white: #ffffff;
-  --color-primary: #e6d5ff;
-  /* Light purple button */
-  --color-primary-hover: #d8c2ff;
-  --color-border: #e2dfd5;
 }
 
 * {
@@ -19,7 +21,7 @@
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   background-color: var(--color-bg);
   color: var(--color-text);
   overflow-x: hidden;
@@ -27,20 +29,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: var(--color-black);
-  letter-spacing: -0.03em;
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-white);
+  letter-spacing: -0.04em;
+  font-weight: 700;
 }
 
-.font-serif {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 700;
-  /* Use the bold weight for luxury */
+p {
+  color: var(--color-text-dim);
+  line-height: 1.6;
 }
 
 a {
@@ -49,78 +46,75 @@ a {
 }
 
 .container {
-  max-width: 1440px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 5%;
+  padding: 0 2rem;
 }
 
 .interactive {
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.8rem 1.5rem;
-  font-size: 0.95rem;
-  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
   gap: 0.5rem;
+  white-space: nowrap;
 }
 
 .btn-primary {
   background-color: var(--color-primary);
-  color: var(--color-black);
-  border: 1px solid var(--color-black);
-  border-radius: 12px;
+  color: var(--color-white);
 }
 
 .btn-primary:hover {
   background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
 }
 
 .btn-outline {
   background-color: transparent;
-  color: var(--color-black);
+  color: var(--color-white);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
 }
 
 .btn-outline:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-  border-color: rgba(0, 0, 0, 0.1);
-}
-
-.custom-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: var(--color-black);
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
-  opacity: 0.5;
-}
-
-.custom-cursor.active {
-  width: 40px;
-  height: 40px;
-  opacity: 0.2;
+  background-color: var(--color-glass);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 section {
-  padding: 8vh 0;
+  padding: 6rem 0;
   position: relative;
 }
 
 .min-h-screen {
   min-height: 100vh;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }

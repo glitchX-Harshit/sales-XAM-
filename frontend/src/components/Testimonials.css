@@ -1,317 +1,122 @@
-/* ================================================================
-   TESTIMONIALS — Masonry Social Card Wall
-================================================================= */
 .tl-section {
-    background: #0a0a0a;
-    color: #fff;
-    padding: 12vh 0 0;
-    overflow: hidden;
+    background: var(--color-bg);
+    padding: 8rem 0;
+    border-top: 1px solid var(--color-border);
 }
 
-/* ── Header ── */
 .tl-header {
-    margin-bottom: 6rem;
+    margin-bottom: 4.5rem;
 }
 
 .tl-eyebrow {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 700;
+    color: var(--color-primary);
     text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: #ffbd2e;
-    margin-bottom: 2rem;
-    display: block;
-}
-
-.tl-header-row {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 4rem;
-    flex-wrap: wrap;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
 }
 
 .tl-title {
-    font-size: clamp(3.5rem, 7vw, 6rem);
-    font-weight: 800;
-    line-height: 1.0;
-    letter-spacing: -0.035em;
-    color: #fff;
-    margin: 0;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1.1;
 }
 
-.tl-title-italic {
-    font-style: italic;
-    color: #ffbd2e;
+.tl-title em {
+    font-style: normal;
+    color: var(--color-primary);
 }
 
 .tl-subtitle {
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.4);
-    line-height: 1.7;
-    max-width: 300px;
-    flex-shrink: 0;
+    font-size: 1.125rem;
+    color: var(--color-text-dim);
+    margin-top: 1.5rem;
+    max-width: 600px;
 }
 
-/* ── 3-Column Masonry ── */
+/* Masonry Grid */
 .tl-masonry {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
-    align-items: start;
-    /* Extra bottom padding so parallax columns don't clip */
-    padding-bottom: 10vh;
 }
 
-.tl-col {
+.tl-card {
+    background: var(--color-glass);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    will-change: transform;
-}
-
-/* Stagger the column starting heights slightly */
-.tl-col:nth-child(2) {
-    margin-top: 3rem;
-}
-
-/* ── Cards ── */
-.tl-card {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 20px;
-    padding: 1.8rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-    transition: background 0.3s, border-color 0.3s, transform 0.3s;
-    cursor: default;
-    will-change: transform;
+    transition: all 0.3s ease;
 }
 
 .tl-card:hover {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(255, 255, 255, 0.12);
+    background: var(--color-glass-hover);
+    border-color: var(--color-primary);
     transform: translateY(-4px);
 }
 
-/* Featured card: white background on dark */
-.tl-card-featured {
-    background: #fff;
-    border-color: transparent;
-}
-
-.tl-card-featured .tl-name,
-.tl-card-featured .tl-text {
-    color: #111;
-}
-
-.tl-card-featured .tl-handle,
-.tl-card-featured .tl-meta {
-    color: rgba(0, 0, 0, 0.4);
-}
-
-.tl-card-featured:hover {
-    background: #fff;
-    border-color: rgba(0, 0, 0, 0.06);
-    transform: translateY(-4px);
-}
-
-/* Pull quote card: large italic quote */
-.tl-card-pull {
-    background: rgba(255, 189, 46, 0.06);
-    border-color: rgba(255, 189, 46, 0.15);
-}
-
-/* ── Card Header ── */
 .tl-card-header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 1rem;
 }
 
 .tl-avatar {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
+    background: var(--color-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 800;
-    color: #fff;
-    flex-shrink: 0;
-    letter-spacing: 0.02em;
-}
-
-.tl-info {
-    flex: 1;
-    min-width: 0;
+    font-weight: 700;
+    color: white;
 }
 
 .tl-name {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    color: #fff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    color: var(--color-white);
 }
 
 .tl-handle {
-    font-size: 0.72rem;
-    color: rgba(255, 255, 255, 0.3);
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 0.8rem;
+    color: var(--color-text-dim);
 }
 
-.tl-stars {
-    display: flex;
-    gap: 2px;
-    flex-shrink: 0;
-}
-
-/* ── Stat chip inside card ── */
-.tl-stat-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255, 94, 0, 0.1);
-    border: 1px solid rgba(255, 94, 0, 0.2);
-    border-radius: 100px;
-    padding: 0.3rem 0.9rem;
-    width: fit-content;
-}
-
-.tl-stat-n {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: #ff5e00;
-    letter-spacing: -0.04em;
-}
-
-.tl-stat-l {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: rgba(255, 94, 0, 0.7);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-}
-
-/* ── Quote text ── */
 .tl-text {
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.65);
-    margin: 0;
-    white-space: pre-line;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-text-dim);
 }
 
 .tl-pull-quote {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.35rem;
-    font-style: italic;
+    font-size: 1.25rem;
     font-weight: 600;
-    color: #ffbd2e;
-    line-height: 1.4;
-    letter-spacing: -0.01em;
+    color: var(--color-white);
+    font-style: italic;
 }
 
-.tl-card-featured .tl-pull-quote {
-    color: #ff5e00;
-}
-
-/* ── Meta line ── */
-.tl-meta {
-    font-size: 0.7rem;
-    font-weight: 700;
+.tl-card-footer {
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.75rem;
+    color: var(--color-text-dim);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: rgba(255, 255, 255, 0.2);
-    margin-top: auto;
-    padding-top: 0.8rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    letter-spacing: 0.05em;
 }
 
-.tl-card-featured .tl-meta {
-    border-color: rgba(0, 0, 0, 0.06);
-}
-
-/* ── Bottom Strip ── */
-.tl-bottom-strip {
-    background: #ff5e00;
-    margin-top: 8rem;
-    padding: 2.5rem 0;
-}
-
-.tl-strip-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 4%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
-    flex-wrap: wrap;
-}
-
-.tl-strip-text {
-    font-size: clamp(1.5rem, 3vw, 2.2rem);
-    font-weight: 800;
-    color: #fff;
-    letter-spacing: -0.02em;
-}
-
-.tl-strip-btn {
-    background: #fff;
-    color: #ff5e00;
-    border: none;
-    padding: 0.9rem 2rem;
-    border-radius: 100px;
-    font-size: 1rem;
-    font-weight: 800;
-    cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
-    flex-shrink: 0;
-}
-
-.tl-strip-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-}
-
-/* ── Responsive ── */
-@media (max-width: 960px) {
+@media (max-width: 1024px) {
     .tl-masonry {
         grid-template-columns: repeat(2, 1fr);
     }
-
-    .tl-col:nth-child(3) {
-        display: none;
-    }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
     .tl-masonry {
         grid-template-columns: 1fr;
-    }
-
-    .tl-col {
-        margin-top: 0 !important;
-    }
-
-    .tl-col:nth-child(3) {
-        display: flex;
-    }
-
-    .tl-header-row {
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-
-    .tl-subtitle {
-        max-width: 100%;
     }
 }

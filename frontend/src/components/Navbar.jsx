@@ -1,5 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
-import gsap from 'gsap';
+import { useEffect, useState } from 'react';
 import './Navbar.css';
 
 const LINKS = [
@@ -9,38 +8,25 @@ const LINKS = [
     { label: 'Pricing', href: '#pricing' },
 ];
 
-const Navbar = ({ onGetStarted, onSignup, onLogin }) => {
+const Navbar = ({ onSignup, onLogin }) => {
     const [scrolled, setScrolled] = useState(false);
-    const navRef = useRef(null);
 
-    /* Scroll state */
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 60);
+        const onScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
-    /* Entrance slide-down after loader */
-    useEffect(() => {
-        gsap.fromTo(navRef.current,
-            { y: -24, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.2 }
-        );
-    }, []);
-
     return (
-        <nav className={`nb ${scrolled ? 'nb-scrolled' : ''}`} ref={navRef}>
+        <nav className={`nb ${scrolled ? 'nb-scrolled' : ''}`}>
             <div className="nb-inner">
-
                 {/* Logo */}
                 <a href="#" className="nb-logo interactive">
                     <span className="nb-logo-mark">
                         <span className="nb-logo-pulse"></span>
                     </span>
                     <span className="nb-logo-text">
-                        <span className="nb-logo-nx">klyro</span
-                        ><span className="nb-logo-dot">.</span
-                        ><span className="nb-logo-ai">ai</span>
+                        klyro<span className="nb-logo-dot">.</span><span className="nb-logo-ai">ai</span>
                     </span>
                 </a>
 
@@ -57,13 +43,12 @@ const Navbar = ({ onGetStarted, onSignup, onLogin }) => {
                 <div className="nb-actions">
                     <a href="#" className="nb-signin interactive" onClick={(e) => { e.preventDefault(); onLogin(); }}>Log in</a>
                     <button className="nb-cta interactive" onClick={onSignup}>
-                        Register Now
+                        Get Started
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                             <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     </button>
                 </div>
-
             </div>
         </nav>
     );

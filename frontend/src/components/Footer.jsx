@@ -5,52 +5,52 @@ const Footer = () => {
     return (
         <footer className="footer-section">
             <div className="container">
-
-                {/* Top 3 Columns */}
+                {/* Top Links Grid */}
                 <div className="footer-links-grid">
                     <div className="footer-column">
-                        <h3 className="font-serif">Company</h3>
+                        <h3>Company</h3>
                         <ul>
-                            <li><a href="#" className="interactive">About</a></li>
+                            <li><a href="#" className="interactive">About Us</a></li>
                             <li><a href="#" className="interactive">Careers</a></li>
-                            <li><a href="#" className="interactive">Trust Center</a></li>
-                            <li><a href="#" className="interactive">Become an Affiliate</a></li>
-                            <li><a href="#" className="interactive">Media Kit</a></li>
+                            <li><a href="#" className="interactive">Security</a></li>
+                            <li><a href="#" className="interactive">Terms of Service</a></li>
+                            <li><a href="#" className="interactive">Privacy Policy</a></li>
                         </ul>
                     </div>
 
                     <div className="footer-column">
-                        <h3 className="font-serif">Product</h3>
+                        <h3>Product</h3>
                         <ul>
-                            <li><a href="#" className="interactive">What's New</a></li>
-                            <li><a href="#" className="interactive">Use Cases</a></li>
-                            <li><a href="#" className="interactive">Flow for Students</a></li>
-                            <li><a href="#" className="interactive">Flow for Non-Profits</a></li>
-                            <li><a href="#" className="interactive">Flow for Android</a></li>
+                            <li><a href="#" className="interactive">Features</a></li>
+                            <li><a href="#" className="interactive">Integrations</a></li>
+                            <li><a href="#" className="interactive">Pricing</a></li>
+                            <li><a href="#" className="interactive">Desktop App</a></li>
+                            <li><a href="#" className="interactive">Enterprise</a></li>
                         </ul>
                     </div>
 
                     <div className="footer-column">
-                        <h3 className="font-serif">Resources</h3>
+                        <h3>Resources</h3>
                         <ul>
-                            <li><a href="#" className="interactive">Workflows</a></li>
-                            <li><a href="#" className="interactive">Vibe Coding</a></li>
-                            <li><a href="#" className="interactive">Talk to Support</a></li>
-                            <li><a href="#" className="interactive">Talk to Sales</a></li>
-                            <li><a href="#" className="interactive">Help Center</a></li>
+                            <li><a href="#" className="interactive">Documentation</a></li>
+                            <li><a href="#" className="interactive">API Reference</a></li>
+                            <li><a href="#" className="interactive">Sales Guide</a></li>
+                            <li><a href="#" className="interactive">Support Center</a></li>
+                            <li><a href="#" className="interactive">Status</a></li>
                         </ul>
                     </div>
                 </div>
 
-                {/* Large Bottom Logo */}
-                <div className="footer-bottom-logo">
-                    <div className="animated-volume-icon">
-                        <div className="bar bar1"></div>
-                        <div className="bar bar2"></div>
-                        <div className="bar bar3"></div>
-                        <div className="bar bar4"></div>
+                {/* Bottom Bar */}
+                <div className="footer-bottom">
+                    <div className="footer-bottom-logo">
+                        <div className="footer-logo-text">
+                            klyro<span className="footer-logo-dot">.</span>ai
+                        </div>
                     </div>
-                    <div className="logo-text">klyro.ai</div>
+                    <div className="footer-copyright">
+                        © 2026 klyro.ai. All rights reserved.
+                    </div>
                 </div>
             </div>
         </footer>

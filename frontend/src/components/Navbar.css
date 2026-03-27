@@ -1,207 +1,129 @@
-/* ================================================================
-   NAVBAR — Floating Pill Design
-================================================================= */
 .nb {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 900;
-    padding: 1.2rem 4%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: padding 0.4s ease;
+    z-index: 1000;
+    padding: 1.5rem 0;
+    transition: all 0.3s ease;
 }
 
-/* ── Scrolled state: shrink padding, show frosted glass ── */
-.nb.nb-scrolled {
-    padding: 0.7rem 4%;
+.nb-scrolled {
+    padding: 1rem 0;
+    background: rgba(5, 5, 5, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border);
 }
 
-.nb.nb-scrolled .nb-inner {
-    background: rgba(252, 249, 238, 0.85);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 8px 32px rgba(0, 0, 0, 0.06);
-    border-color: rgba(0, 0, 0, 0.06);
-}
-
-/* ── Inner container (the pill itself) ── */
 .nb-inner {
-    width: 100%;
-    max-width: 1100px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 2rem;
-    background: rgba(252, 249, 238, 0.6);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 100px;
-    padding: 0.55rem 0.55rem 0.55rem 1.4rem;
-    transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
-/* ── Logo ── */
 .nb-logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-white);
     text-decoration: none;
-    flex-shrink: 0;
 }
 
 .nb-logo-mark {
+    width: 24px;
+    height: 24px;
+    background: var(--color-primary);
+    border-radius: 6px;
     position: relative;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: #111;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
 }
 
 .nb-logo-pulse {
     width: 8px;
     height: 8px;
+    background: #fff;
     border-radius: 50%;
-    background: #ff5e00;
-    display: block;
-    animation: nb-pulse 2s ease-in-out infinite;
-}
-
-@keyframes nb-pulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-
-    50% {
-        transform: scale(1.6);
-        opacity: 0.7;
-    }
 }
 
 .nb-logo-text {
-    font-size: 1.2rem;
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    line-height: 1;
-}
-
-.nb-logo-nx {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 700;
-    color: #111;
+    letter-spacing: -0.02em;
 }
 
 .nb-logo-dot {
-    color: #ff5e00;
-    font-weight: 900;
+    color: var(--color-primary);
 }
 
 .nb-logo-ai {
-    color: rgba(0, 0, 0, 0.35);
-    font-weight: 800;
+    color: var(--color-text-dim);
 }
 
-/* ── Nav links group ── */
 .nb-links-pill {
     display: flex;
     align-items: center;
-    gap: 0.2rem;
-    flex: 1;
-    justify-content: center;
+    gap: 2rem;
+    background: var(--color-glass);
+    padding: 0.5rem 1.5rem;
+    border-radius: 100px;
+    border: 1px solid var(--color-border);
 }
 
 .nb-link {
-    text-decoration: none;
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: rgba(0, 0, 0, 0.5);
-    padding: 0.45rem 0.9rem;
-    border-radius: 100px;
-    transition: color 0.2s, background 0.2s;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-dim);
+    transition: color 0.2s ease;
 }
 
 .nb-link:hover {
-    color: #111;
-    background: rgba(0, 0, 0, 0.05);
+    color: var(--color-white);
 }
 
-/* ── Right actions ── */
 .nb-actions {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-    flex-shrink: 0;
+    gap: 1.5rem;
 }
 
 .nb-signin {
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: rgba(0, 0, 0, 0.45);
-    text-decoration: none;
-    padding: 0.45rem 0.8rem;
-    border-radius: 100px;
-    transition: color 0.2s, background 0.2s;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-dim);
+    transition: color 0.2s ease;
 }
 
 .nb-signin:hover {
-    color: #111;
-    background: rgba(0, 0, 0, 0.04);
+    color: var(--color-white);
 }
 
 .nb-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: #111;
-    color: #fff;
-    text-decoration: none;
-    font-size: 0.88rem;
-    font-weight: 700;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    padding: 0.6rem 1.3rem;
-    border-radius: 100px;
+    background: var(--color-primary);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
     border: none;
     cursor: pointer;
-    transition: background 0.25s, transform 0.2s;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
 }
 
 .nb-cta:hover {
-    background: #ff5e00;
+    background: var(--color-primary-hover);
     transform: translateY(-1px);
 }
 
-.nb-cta svg {
-    transition: transform 0.2s;
-}
-
-.nb-cta:hover svg {
-    transform: translateX(3px);
-}
-
-/* ── Responsive ── */
-@media (max-width: 900px) {
+@media (max-width: 768px) {
     .nb-links-pill {
         display: none;
-    }
-
-    .nb-signin {
-        display: none;
-    }
-
-    .nb-inner {
-        justify-content: space-between;
     }
 }
