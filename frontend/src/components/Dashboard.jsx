@@ -394,18 +394,13 @@ const Dashboard = ({ onExit }) => {
                             <span className="db-panel-tag">Real-time · Whisper AI</span>
                         </div>
                         <div className="db-transcript-scroll" id="transcript-container">
-                            {transcript.length === 0 && <div style={{ padding: '1rem', opacity: 0.5 }}>Waiting for dialogue...</div>}
-                            {transcript.map((line, i) => {
-                                const isUser = line.speaker === 'user';
-                                return (
-                                    <div key={i} className={`chat-row ${isUser ? 'chat-user' : 'chat-prospect'}`}>
-                                        <div className="chat-bubble">
-                                            <span className="chat-speaker-label">{isUser ? 'You' : 'Prospect'}</span>
-                                            <p className="chat-text">{line.text}</p>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                            {transcript.length === 0 && <div style={{ padding: '1rem', opacity: 0.5 }}>Waiting for prospect audio...</div>}
+                            {transcript.map((msg, i) => (
+                                <div key={i} className="chat-bubble prospect">
+                                    <span className="chat-speaker-label" style={{ color: '#0ea5e9', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px', display: 'block' }}>Prospect</span>
+                                    <p className="chat-text">{msg.text}</p>
+                                </div>
+                            ))}
                             {isListening && (
                                 <div className="db-typing-indicator chat-prospect-typing">
                                     <span /><span /><span />

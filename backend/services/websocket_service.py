@@ -57,8 +57,10 @@ class ConnectionManager:
     # ==============================
 
     async def handle_new_transcript(self, speaker: str, text: str, websocket: WebSocket):
+        # ── PROSPECT-ONLY MODE: ignore any speaker label from Deepgram ──────────
+        speaker = "prospect"
 
-        print(f"📝 Transcript: {speaker}: {text}")
+        print(f"📝 Transcript [prospect]: {text}")
 
         # Store transcript
         self.transcript_manager.add_message(speaker, text)
@@ -66,7 +68,7 @@ class ConnectionManager:
         # Send transcript to frontend
         await self.send_personal_message(json.dumps({
             "type": "transcriptUpdate",
-            "speaker": speaker,
+            "speaker": "prospect",
             "text": text
         }), websocket)
 

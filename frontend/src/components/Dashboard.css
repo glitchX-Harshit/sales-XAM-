@@ -620,6 +620,23 @@
     border-radius: 4px;
 }
 
+/* ── PROSPECT-ONLY SINGLE STREAM ── */
+.chat-bubble.prospect {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    animation: txSlide 0.35s ease-out;
+}
+
+.chat-bubble.prospect .chat-text {
+    background: rgba(14, 165, 233, 0.08);
+    color: rgba(17, 17, 17, 0.85);
+    border-radius: 4px 14px 14px 14px;
+    border-left: 2px solid rgba(14, 165, 233, 0.3);
+}
+
 /* ── CHAT BUBBLE LAYOUT ── */
 .chat-row {
     display: flex;
