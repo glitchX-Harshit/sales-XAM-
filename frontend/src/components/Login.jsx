@@ -16,6 +16,8 @@ const Login = ({ onBack, onGetStarted, onSignup }) => {
     const [resetStep, setResetStep] = useState(1); // 1: Email, 2: OTP
     const [recoveryOtp, setRecoveryOtp] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [otp, setOtp] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -80,6 +82,43 @@ const Login = ({ onBack, onGetStarted, onSignup }) => {
         }
     };
 
+    const handleVerifyOtp = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setError(null);
+        try {
+            const { data, error: verifyError } = await supabase.auth.verifyOtp({
+                email: formData.email,
+                token: otp,
+                type: 'signup'
+            });
+            if (verifyError) throw verifyError;
+            if (data?.session) {
+                onGetStarted();
+            }
+        } catch (err) {
+            console.error('OTP Verification Error:', err);
+            setError(err.message || 'Invalid code. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleResendOtp = async () => {
+        setError(null);
+        try {
+            const { error: resendError } = await supabase.auth.resend({
+                type: 'signup',
+                email: formData.email
+            });
+            if (resendError) throw resendError;
+            alert("Verification code has been resent! Please check your email.");
+        } catch (err) {
+            console.error('Resend OTP Error:', err);
+            setError(err.message || 'Failed to resend secure code. Please try again later.');
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -101,8 +140,11 @@ const Login = ({ onBack, onGetStarted, onSignup }) => {
 
             if (loginError) throw loginError;
 
-            if (data?.user) {
+            if (data?.session) {
                 onGetStarted(); // Navigate to dashboard after login
+            } else if (data?.user) {
+                // Supabase prevents returning a session if email is unconfirmed
+                setIsVerifying(true);
             }
         } catch (err) {
             console.error('Login error:', err);
@@ -183,7 +225,68 @@ const Login = ({ onBack, onGetStarted, onSignup }) => {
                 <div className="su-divider" style={{ marginBottom: '2rem' }} />
 
                 {/* Form Logic */}
-                {isResettingPassword ? (
+                {isVerifying ? (
+                    <div className="su-form">
+                        <div className="su-head-text" style={{ textAlign: 'center', marginBottom: '1rem' }}>
+                            <p className="su-subtitle">Please enter the <strong>6-digit secure code</strong> sent to <strong>{formData.email}</strong> to verify your account.</p>
+                        </div>
+                        {error && <div className="su-error-message">{error}</div>}
+                        
+                        <form onSubmit={handleVerifyOtp}>
+                            <div className="su-field su-field-focused">
+                                <label className="su-label" htmlFor="otp">
+                                    <span className="su-label-icon">🔑</span>
+                                    6-Digit Code
+                                </label>
+                                <div className="su-otp-container">
+                                    <input
+                                        id="otp"
+                                        type="text"
+                                        value={otp}
+                                        onChange={(e) => setOtp(e.target.value)}
+                                        placeholder="000000"
+                                        required
+                                        className="su-otp-input"
+                                        maxLength={6}
+                                    />
+                                </div>
+                            </div>
+                            
+                            <button type="submit" className="su-submit" disabled={isSubmitting || otp.length < 6}>
+                                <span className="su-btn-blob" aria-hidden="true" />
+                                {isSubmitting ? (
+                                    <span className="su-btn-loading">
+                                        <span className="su-spinner" />
+                                        <span>Verifying…</span>
+                                    </span>
+                                ) : (
+                                    <span className="su-btn-inner">
+                                        <span className="su-btn-default">
+                                            <span className="su-btn-icon">🛡️</span>
+                                            <span className="su-btn-label">Verify Email</span>
+                                            <span className="su-btn-arrow">→</span>
+                                        </span>
+                                        <span className="su-btn-hover">
+                                            <span className="su-btn-icon">✨</span>
+                                            <span className="su-btn-label">Complete Security Check</span>
+                                            <span className="su-btn-arrow">↗</span>
+                                        </span>
+                                    </span>
+                                )}
+                            </button>
+                        </form>
+
+                        <p className="su-login-prompt" style={{ marginTop: '1.5rem' }}>
+                            Didn't receive the code?{' '}
+                            <button className="su-resend-btn interactive" onClick={handleResendOtp} type="button">
+                                Resend Code
+                            </button>
+                        </p>
+                        <p className="su-login-prompt" style={{ marginTop: '1rem' }}>
+                            <a href="#" className="interactive" onClick={(e) => { e.preventDefault(); setIsVerifying(false); }}>← Back to login</a>
+                        </p>
+                    </div>
+                ) : isResettingPassword ? (
                     <div className="su-form">
                         {resetStep === 1 ? (
                             <form onSubmit={handleResetPasswordRequest}>

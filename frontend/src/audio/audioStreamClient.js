@@ -20,7 +20,8 @@ export const useAudioStream = (wsUrl) => {
 
         const { data: { session } } = await supabase.auth.getSession();
         const token = session?.access_token;
-        const finalUrl = token ? `${wsUrl}?token=${token}` : wsUrl;
+        const separator = wsUrl.includes('?') ? '&' : '?';
+        const finalUrl = token ? `${wsUrl}${separator}token=${token}` : wsUrl;
 
         return new Promise((resolve, reject) => {
             wsRef.current = new WebSocket(finalUrl);
