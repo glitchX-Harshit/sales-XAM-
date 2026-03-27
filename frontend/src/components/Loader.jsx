@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import './Loader.css';
 
-/* A real sales objection → nx.ai responds */
+/* A real sales objection → klyro.ai responds */
 const OBJECTION = `"We don't have budget for this right now."`;
 const RESPONSE = `Surfacing best response... 94% confidence.`;
 
@@ -52,14 +52,14 @@ const Loader = ({ onComplete }) => {
             await typeInto(objRef.current, OBJECTION, 22);
             await new Promise(r => setTimeout(r, 400));
 
-            // 5. nx.ai response bubble
+            // 5. klyro.ai response bubble
             gsap.set(respRef.current?.parentElement, { display: 'flex' });
             await gsap.fromTo(respRef.current?.parentElement,
                 { opacity: 0, x: 16 },
                 { opacity: 1, x: 0, duration: 0.35, ease: 'power3.out' }
             );
 
-            // 6. Type nx.ai response
+            // 6. Type klyro.ai response
             await typeInto(respRef.current, RESPONSE, 20);
 
             // 7. Brand appears
@@ -105,10 +105,10 @@ const Loader = ({ onComplete }) => {
                     <p ref={objRef}></p>
                 </div>
 
-                {/* nx.ai response — right */}
-                <div className="ld-bubble ld-nxai" style={{ display: 'none' }}>
-                    <div className="ld-bubble-who nx">
-                        <span className="ld-bwdot">✦</span> nx.ai
+                {/* klyro.ai response — right */}
+                <div className="ld-bubble ld-klyroai" style={{ display: 'none' }}>
+                    <div className="ld-bubble-who klyro">
+                        <span className="ld-bwdot">✦</span> klyro.ai
                     </div>
                     <p ref={respRef}></p>
                 </div>
@@ -117,7 +117,7 @@ const Loader = ({ onComplete }) => {
 
             {/* Brand line at bottom */}
             <div className="ld-brand" ref={brandRef}>
-                <span className="ld-brand-nx">nx</span>
+                <span className="ld-brand-nx">klyro</span>
                 <span className="ld-brand-dot">.</span>
                 <span className="ld-brand-ai">ai</span>
                 <span className="ld-brand-tag">— AI Sales Assistant</span>

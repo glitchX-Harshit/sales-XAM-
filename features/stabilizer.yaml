@@ -1,0 +1,274 @@
+task: stabilize_sales_ai_conversation_engine
+
+goal:
+  description: >
+    Upgrade the Sales AI Engine so suggestions always respond to the
+    latest prospect message, detect conversation intent correctly,
+    avoid repeated strategies, and guide the salesperson through
+    natural trust-building conversations instead of only objection handling.
+
+
+pipeline_architecture:
+
+  new_pipeline:
+
+    - audio_input
+    - speech_to_text
+    - transcript_buffer
+    - conversation_analyzer
+    - intent_classifier
+    - topic_detector
+    - strategy_selector
+    - response_generator
+    - suggestion_manager
+    - dashboard
+
+
+conversation_analyzer:
+
+  new_file: backend/services/conversation_analyzer.py
+
+  behavior:
+
+    description: >
+      Analyze only the latest prospect message while using previous
+      transcript context as support.
+
+  rules:
+
+    latest_message_priority: true
+    ignore_salesperson_messages: true
+
+  output_format:
+
+    latest_message: string
+    intent: string
+    topic: string
+    confidence: float
+
+
+intent_classifier:
+
+  purpose: >
+    Determine the intent behind the latest prospect message.
+
+  intent_types:
+
+    - objection
+    - question
+    - interest
+    - negotiation
+    - hesitation
+    - small_talk
+
+  examples:
+
+    "this is too expensive":
+      intent: objection
+      topic: pricing
+
+    "when can you deliver this":
+      intent: question
+      topic: timeline
+
+    "this sounds interesting":
+      intent: interest
+      topic: product_value
+
+    "send me the proposal":
+      intent: consideration
+      topic: next_steps
+
+
+topic_detector:
+
+  purpose: >
+    Detect what the prospect is talking about so responses remain relevant.
+
+  topic_types:
+
+    - pricing
+    - timeline
+    - authority
+    - competitor
+    - trust
+    - value
+    - implementation
+    - next_steps
+
+
+strategy_selector:
+
+  modify_file: backend/services/strategy_selector.py
+
+  behavior:
+
+    description: >
+      Select a persuasion strategy based on detected intent and topic.
+
+  rules:
+
+    if_intent_is_question:
+      use_strategy: informative_guidance
+
+    if_intent_is_interest:
+      use_strategy: momentum_building
+
+    if_intent_is_objection:
+      use_strategy: persuasion_playbook
+
+  strategy_rotation:
+
+    description: >
+      Prevent repeating the same persuasion strategy for the same objection.
+
+    rules:
+
+      - store_last_3_strategies
+      - if_strategy_used_recently: choose_alternative_strategy
+      - allow_strategy_variation: true
+
+
+sales_strategy_playbook:
+
+  location: backend/data/sales_strategy_playbook.json
+
+  strategies:
+
+    pricing:
+
+      - ROI_REFRAMING
+      - VALUE_REFRAME
+      - SOCIAL_PROOF
+      - PILOT_OFFER
+      - COST_OF_INACTION
+
+    authority:
+
+      - STAKEHOLDER_ALIGNMENT
+      - DECISION_PROCESS_DISCOVERY
+      - INTERNAL_CHAMPION_BUILDING
+
+    timeline:
+
+      - FUTURE_PACING
+      - PILOT_OFFER
+      - SMALL_COMMITMENT
+
+    trust:
+
+      - SOCIAL_PROOF
+      - CASE_STORY
+      - RISK_REVERSAL
+
+    competitor:
+
+      - DIFFERENTIATION
+      - POSITIONING
+      - CATEGORY_REFRAME
+
+
+response_generator:
+
+  modify_file: backend/services/sales_ai_engine.py
+
+  behavior:
+
+    description: >
+      Generate a natural conversational response using the selected
+      strategy while maintaining relevance to the latest message.
+
+  rules:
+
+    response_length: short
+    conversational_style: true
+    avoid_generic_language: true
+
+  output_format:
+
+    intent: string
+    topic: string
+    strategy_used: string
+
+    suggested_response: string
+
+    next_best_question: string
+
+
+suggestion_manager:
+
+  modify_file: backend/services/suggestion_manager.py
+
+  purpose: >
+    Manage suggestion history and prevent repetitive responses.
+
+  rules:
+
+    max_history: 10
+
+    duplicate_prevention:
+
+      similarity_threshold: 0.75
+
+      action_if_duplicate:
+        regenerate_response
+
+    strategy_rotation_enabled: true
+
+
+dashboard_updates:
+
+  modify_file: frontend/src/components/Dashboard.jsx
+
+  behavior:
+
+    suggestion_history:
+
+      keep_last: 20
+
+      display_order:
+        newest_at_bottom
+
+    suggestion_cards:
+
+      show:
+
+        - strategy_used
+        - objection_topic
+        - suggested_response
+        - next_best_question
+
+
+ai_prompt_upgrade:
+
+  system_prompt:
+
+    description: >
+      Convert the AI into a real sales strategist instead of a generic chatbot.
+
+    instruction: |
+
+      You are an elite B2B sales strategist assisting a salesperson
+      during a live call.
+
+      Your job is to:
+
+      1. Understand the prospect's latest message.
+      2. Detect their intent and topic.
+      3. Choose the most effective persuasion strategy.
+      4. Provide a short conversational reply.
+      5. Suggest a follow-up question that moves the deal forward.
+
+      Avoid repeating the same persuasion technique repeatedly.
+
+      Keep responses natural and human-like.
+
+
+success_criteria:
+
+  - AI responds to latest prospect message
+  - no outdated suggestions
+  - pricing objections produce varied responses
+  - non-objection questions receive helpful replies
+  - suggestions move conversation toward closing
+  - average latency remains under 2 seconds

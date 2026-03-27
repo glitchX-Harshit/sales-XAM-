@@ -1,0 +1,130 @@
+{
+  "strategies": [
+    {
+      "strategy_id": "ROI_REFRAMING",
+      "name": "ROI Reframing",
+      "use_when": ["pricing", "budget"],
+      "psychology": "value_anchoring",
+      "pattern": "Acknowledge concern -> Shift focus to return on investment -> Ask confirming question",
+      "example_line": "Totally fair. Most teams initially feel the same, but they usually recover the cost after closing just one additional client.",
+      "followup_question": "If the tool helped you close one more deal, would pricing still feel expensive?"
+    },
+    {
+      "strategy_id": "VALUE_REFRAME",
+      "name": "Value Reframe",
+      "use_when": ["value_unclear"],
+      "psychology": "perception_shift",
+      "pattern": "Agree on current state -> Present alternative perspective highlighting underlying value -> Check for agreement",
+      "example_line": "I understand your hesitation. Think of this not as an added expense, but as replacing three fragmented tools you're already paying for.",
+      "followup_question": "How much time does your team currently spend juggling those different systems?"
+    },
+    {
+      "strategy_id": "SOCIAL_PROOF",
+      "name": "Social Proof",
+      "use_when": ["trust", "competitor"],
+      "psychology": "herd_behavior",
+      "pattern": "Validate objection -> Mention similar successful client -> Highlight their outcome",
+      "example_line": "That's exactly what [Similar Company] asked. Once they deployed our system, they saw a 40% increase in productivity.",
+      "followup_question": "Would a similar increase make an impact for your team?"
+    },
+    {
+      "strategy_id": "RISK_REVERSAL",
+      "name": "Risk Reversal",
+      "use_when": ["trust", "hesitation"],
+      "psychology": "loss_aversion",
+      "pattern": "Acknowledge risk -> Offer guarantee or opt-out -> Ask for low-friction next step",
+      "example_line": "I wouldn't want you to take any risks. That's why we offer a 30-day out clause if we don't hit the agreed metrics.",
+      "followup_question": "With the downside covered, are you open to testing the waters?"
+    },
+    {
+      "strategy_id": "PILOT_OFFER",
+      "name": "Pilot Offer",
+      "use_when": ["timeline", "hesitation", "authority"],
+      "psychology": "commitment_consistency",
+      "pattern": "Suggest smaller commitment -> Define success metrics -> Propose timeline",
+      "example_line": "Instead of a full rollout, let's start with a 3-user pilot for two weeks so you can see the data yourself.",
+      "followup_question": "Would a quick pilot be easier to get approved natively?"
+    },
+    {
+      "strategy_id": "FUTURE_PACING",
+      "name": "Future Pacing",
+      "use_when": ["value_unclear", "timeline"],
+      "psychology": "visualization",
+      "pattern": "Paint scenario of future success -> Link to product feature -> Ask how that changes things",
+      "example_line": "Imagine it's next quarter and your team is automatically capturing all call data without any manual entry.",
+      "followup_question": "How much time would that free up for actual selling?"
+    },
+    {
+      "strategy_id": "AUTHORITY_ALIGNMENT",
+      "name": "Authority Alignment",
+      "use_when": ["authority"],
+      "psychology": "authority_bias",
+      "pattern": "Respect current process -> Offer to help build business case -> Suggest joint meeting",
+      "example_line": "Makes sense that your VP needs to sign off. Usually, it's helpful if we provide a quick 1-pager outlining the ROI specifically for them.",
+      "followup_question": "Would it make sense for us to hop on a brief call with them to walk through it?"
+    },
+    {
+      "strategy_id": "COMPETITOR_POSITIONING",
+      "name": "Competitor Positioning",
+      "use_when": ["competitor"],
+      "psychology": "differentiation",
+      "pattern": "Acknowledge competitor strength -> Pivot to your unique differentiator -> Relate to prospect's specific pain",
+      "example_line": "[Competitor] is great for general marketing, but our platform is built from the ground up specifically for high-velocity sales teams.",
+      "followup_question": "Is your primary goal general tracking, or optimizing every sales conversation?"
+    },
+    {
+      "strategy_id": "URGENCY_CREATION",
+      "name": "Urgency Creation",
+      "use_when": ["timeline"],
+      "psychology": "scarcity",
+      "pattern": "Identify cost of delay -> Introduce time-sensitive benefit -> Ask for commitment",
+      "example_line": "Every month you wait is another month of lost data. Plus, we're offering onboarding support for teams that sign this week.",
+      "followup_question": "What's preventing us from getting started and capturing that value today?"
+    },
+    {
+      "strategy_id": "LOSS_AVERSION",
+      "name": "Loss Aversion",
+      "use_when": ["status_quo"],
+      "psychology": "fear_of_loss",
+      "pattern": "Highlight negative consequence of inaction -> Contrast with potential gain -> Ask for perspective",
+      "example_line": "Sticking with the current process means you're continuing to lose hours a week on manual entry, while your competitors are automating it.",
+      "followup_question": "Is that a cost you are comfortable absorbing long-term?"
+    },
+    {
+      "strategy_id": "ANCHORING",
+      "name": "Price Anchoring",
+      "use_when": ["pricing"],
+      "psychology": "price_anchoring",
+      "pattern": "State higher cost alternative -> Compare to your price -> End on value",
+      "example_line": "Hiring a full-time sales ops person would cost over $80k a year. Our software gives you similar insights for a fraction of that.",
+      "followup_question": "Does framing it against the cost of an FTE change how you look at the investment?"
+    },
+    {
+      "strategy_id": "STAKEHOLDER_ALIGNMENT",
+      "name": "Stakeholder Alignment",
+      "use_when": ["authority", "consensus"],
+      "psychology": "group_consensus",
+      "pattern": "Acknowledge multiple views -> Map out stakeholder needs -> Suggest unified approach",
+      "example_line": "I know your IT team cares about security while you care about speed. We've got SOC2 compliance to make IT happy while keeping the interface fast for you.",
+      "followup_question": "What specifically is IT going to need to see to feel comfortable?"
+    },
+    {
+      "strategy_id": "PROBLEM_AGITATION",
+      "name": "Problem Agitation",
+      "use_when": ["value_unclear", "status_quo"],
+      "psychology": "pain_amplification",
+      "pattern": "Restate problem clearly -> Explore downstream impact -> Present solution",
+      "example_line": "You mentioned deals are slipping through the cracks. That's not just lost revenue, that impacts team morale and quota attainment.",
+      "followup_question": "How much longer can the team sustain that kind of leakage?"
+    },
+    {
+      "strategy_id": "OUTCOME_VISUALIZATION",
+      "name": "Outcome Visualization",
+      "use_when": ["hesitation", "value_unclear"],
+      "psychology": "future_reward",
+      "pattern": "Focus on ultimate goal -> Describe what success looks like -> Ask for confirmation",
+      "example_line": "Imagine hitting your quarterly target a month early because your reps instantly know how to handle every objection.",
+      "followup_question": "Is that the kind of impact you're looking to drive this year?"
+    }
+  ]
+}

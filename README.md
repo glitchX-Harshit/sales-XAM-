@@ -8,7 +8,7 @@
 
 </div>
 
-# ✦ nx.ai — AI Sales Assistant
+# ✦ klyro.ai — AI Sales Assistant
 
 <p align="center">
   <strong>An intelligent, real-time AI agent that handles clients on your behalf, detecting objections and providing high-accuracy reasoning to close deals.</strong>
@@ -26,7 +26,7 @@
 
 ## About the Project
 
-**nx.ai** is not just a call recorder. It is a live, real-time AI sales partner designed for high-pressure environments. By listening to client interactions continuously, nx.ai analyzes sentiment, detects key objections (pricing, competitors, timelines), and surfaces the most effective counter-responses instantly. 
+**klyro.ai** is not just a call recorder. It is a live, real-time AI sales partner designed for high-pressure environments. By listening to client interactions continuously, klyro.ai analyzes sentiment, detects key objections (pricing, competitors, timelines), and surfaces the most effective counter-responses instantly. 
 
 Designed with an "Awwwards-winning" aesthetic, the application features an engaging, minimal, and premium UI with seamless animations and interactive elements.
 
@@ -83,24 +83,40 @@ To get a local copy up and running, follow these simple steps.
 
 ```text
 sales-XAM-/
+├── backend/
+│   ├── main.py              // FastAPI application entry point
+│   ├── services/
+│   │   ├── sales_ai_engine.py      // Core AI orchestrator
+│   │   ├── persuasion_engine.py    // AI Persuasion Strategy engine
+│   │   ├── conversation_analyzer.py // Intent & Topic detection
+│   │   ├── suggestion_manager.py   // Suggestion history & deduplication
+│   │   ├── deepgram_stream.py      // Real-time audio transcription
+│   │   └── websocket_service.py    // Live WebSocket management
+│   ├── data/                   // Strategy playbooks and JSON data
+│   └── routers/                // API route definitions
 ├── frontend/
 │   ├── public/
 │   └── src/
 │       ├── components/
-│       │   ├── Hero.jsx            // Landing page hero with scratch canvas and GSAP
-│       │   ├── HowItWorks.jsx      // Interactive scratch-reveal mechanism
-│       │   ├── Pricing.jsx         // 3-Column pricing with Matter.js physics
-│       │   ├── ObjectionHandling.jsx // Real-time detection visualization
-│       │   ├── Testimonials.jsx    // Masonry grid with scroll parallax
-│       │   ├── Integrations.jsx    // SVG snake animations for integrations
-│       │   ├── Loader.jsx          // Custom conversation-reveal loader
-│       │   ├── Navbar.jsx          // Floating pill frosted glass navigation
+│       │   ├── Dashboard.jsx       // Real-time AI sales dashboard
+│       │   ├── Hero.jsx            // Landing page hero with scratch canvas
+│       │   ├── ObjectionHandling.jsx // Objection detection visualization
+│       │   ├── ResponseSuggestion.jsx // AI-generated response interface
 │       │   └── ...
-│       ├── App.jsx                 // Main routing and layout wrapper
-│       ├── main.jsx                // Application entry point
-│       └── index.css               // Global styles and design tokens
-└── README.md                       // You are here
+│       ├── App.jsx                 // Global layout and view management
+│       └── main.jsx                // React entry point
+└── README.md                       
 ```
+
+## AI Pipeline & Persuasion Engine
+
+The backend features a sophisticated AI pipeline that processes live conversations:
+
+1.  **Transcription**: Uses **Deepgram** for ultra-low latency, real-time audio-to-text conversion.
+2.  **Analysis**: The `conversation_analyzer` detects the prospect's **Intent** and **Topic** using custom LLM prompts.
+3.  **Strategy Selection**: The `persuasion_engine` rotates between 7 high-level sales strategies (e.g., *Future Pacing*, *The Social Proof Push*, *The Scarcity Lever*) to keep the conversation dynamic.
+4.  **Generation**: Suggests verbatim responses and "Next Best Questions" for the salesperson, optimized for closing deals.
+5.  **Deduplication**: The `suggestion_manager` ensures the AI never repeats the same advice twice during a call.
 
 ## Contact
 

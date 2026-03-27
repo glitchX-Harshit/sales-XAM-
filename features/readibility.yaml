@@ -1,0 +1,102 @@
+task: Convert Transcript Panel to Chat Style Layout
+
+goal: |
+  Improve readability of the transcript panel by rendering
+  messages in a chat-style interface similar to messaging apps.
+  Prospect messages appear on the left side and user messages
+  appear on the right side. This makes conversations easier
+  to scan during live calls.
+
+files_to_modify:
+  - frontend/src/components/Dashboard.jsx
+  - frontend/src/styles/Dashboard.css
+
+steps:
+
+  - step: Update Transcript Message Rendering
+    file: frontend/src/components/Dashboard.jsx
+    action: modify_render_logic
+    description: |
+      Modify the transcript message render logic so messages
+      conditionally render left or right depending on speaker role.
+
+    implementation: |
+      transcript.map((msg, index) => {
+        const isUser = msg.speaker === "user";
+
+        return (
+          <div
+            key={index}
+            className={`chat-row ${isUser ? "chat-user" : "chat-prospect"}`}
+          >
+            <div className="chat-bubble">
+              {msg.text}
+            </div>
+          </div>
+        );
+      })
+
+  - step: Add Chat Layout Styles
+    file: frontend/src/styles/Dashboard.css
+    action: add_styles
+
+    styles: |
+
+      .chat-row {
+        display: flex;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .chat-prospect {
+        justify-content: flex-start;
+      }
+
+      .chat-user {
+        justify-content: flex-end;
+      }
+
+      .chat-bubble {
+        max-width: 70%;
+        padding: 10px 14px;
+        border-radius: 14px;
+        font-size: 14px;
+        line-height: 1.4;
+        word-wrap: break-word;
+      }
+
+      .chat-prospect .chat-bubble {
+        background: #f1f1f1;
+        color: #222;
+        border-bottom-left-radius: 4px;
+      }
+
+      .chat-user .chat-bubble {
+        background: #2563eb;
+        color: white;
+        border-bottom-right-radius: 4px;
+      }
+
+  - step: Enable Auto Scroll
+    file: frontend/src/components/Dashboard.jsx
+    action: add_autoscroll
+    description: |
+      Ensure transcript automatically scrolls to the latest message
+      during a live call.
+
+    implementation: |
+      useEffect(() => {
+        const el = document.getElementById("transcript-container");
+        if (el) {
+          el.scrollTop = el.scrollHeight;
+        }
+      }, [transcript]);
+
+verification:
+
+  expected_behavior:
+    - Prospect messages appear left
+    - User messages appear right
+    - Transcript scrolls automatically
+    - Messages styled like chat bubbles
+    - No impact to websocket pipeline

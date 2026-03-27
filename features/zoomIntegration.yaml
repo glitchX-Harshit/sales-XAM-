@@ -1,0 +1,242 @@
+feature: Clerio Real Call Integration
+
+goal: |
+  Allow Clerio to listen to real sales calls from Zoom, Google Meet,
+  Teams or any meeting platform, transcribe conversations in real time,
+  detect prospect speech, and provide proactive AI sales guidance.
+
+audio_capture:
+
+  frontend_capture:
+
+    method: system_audio_capture
+
+    api: navigator.mediaDevices.getDisplayMedia
+
+    configuration:
+      audio: true
+      video: false
+
+    user_flow:
+
+      step_1:
+        user_clicks: "Start Live Call"
+
+      step_2:
+        browser_popup: "Choose tab to share"
+
+      step_3:
+        user_selects:
+          - Chrome Tab
+          - Meeting tab (Zoom / Meet / Teams)
+
+      step_4:
+        system_audio_stream_sent_to_backend: true
+
+
+audio_processing:
+
+  speech_to_text:
+
+    provider: deepgram
+
+    model: nova-2-general
+
+    options:
+
+      encoding: linear16
+      sample_rate: 16000
+      channels: 1
+      punctuate: true
+      interim_results: false
+      diarize: true
+
+  diarization_output_example:
+
+    - speaker: speaker_0
+      text: Hello thanks for joining
+
+    - speaker: speaker_1
+      text: Your pricing seems expensive
+
+
+speaker_mapping:
+
+  logic:
+
+    first_speaker_detected:
+      assign_role: user
+
+    second_speaker_detected:
+      assign_role: prospect
+
+  stored_variables:
+
+    user_speaker_id
+    prospect_speaker_id
+
+
+transcript_pipeline:
+
+  transcript_manager:
+
+    buffer_size: 10
+
+    store_message:
+
+      structure:
+
+        speaker_role:
+          - user
+          - prospect
+
+        text: string
+
+        timestamp: datetime
+
+
+ai_processing_pipeline:
+
+  trigger_condition:
+
+    analyze_only_when:
+
+      speaker_role: prospect
+
+  reasoning_steps:
+
+    step_1:
+      detect_stage:
+        service: deal_stage_engine
+
+    step_2:
+      detect_intent:
+        service: intent_engine
+
+    step_3:
+      select_strategy:
+        service: persuasion_engine
+
+    step_4:
+      generate_response:
+        service: sales_ai_engine
+
+
+proactive_guidance:
+
+  outputs:
+
+    ai_suggestion:
+
+      description: |
+        Suggested sentence the user can say next.
+
+    next_best_question:
+
+      description: |
+        Strategic question to move the conversation forward.
+
+    coaching_tip:
+
+      description: |
+        Psychological insight about what the prospect is thinking.
+
+    deal_stage:
+
+      description: |
+        Current stage of the sales conversation.
+
+
+websocket_output:
+
+  event: aiAnalysis
+
+  payload:
+
+    deal_stage: string
+    intent: string
+    persuasion_pattern: string
+    suggested_response: string
+    next_best_question: string
+    coaching_tip: string
+
+
+frontend_dashboard:
+
+  new_components:
+
+    deal_stage_indicator:
+
+      display_stages:
+
+        - discovery
+        - problem_exploration
+        - solution_framing
+        - objection_handling
+        - negotiation
+        - closing
+
+    ai_suggestion_panel:
+
+      show:
+        - suggested_response
+
+    proactive_question_panel:
+
+      show:
+        - next_best_question
+
+    coaching_tip_panel:
+
+      show:
+        - coaching_tip
+
+    transcript_panel:
+
+      show_speaker_labels: true
+
+
+verification_plan:
+
+  test_cases:
+
+    test_1:
+
+      prospect_message:
+        "Your pricing seems expensive"
+
+      expected_stage:
+        objection_handling
+
+    test_2:
+
+      prospect_message:
+        "What exactly does your product do"
+
+      expected_stage:
+        discovery
+
+    test_3:
+
+      prospect_message:
+        "How do we move forward"
+
+      expected_stage:
+        closing
+
+
+performance_constraints:
+
+  max_ai_latency: 2 seconds
+
+  max_llm_calls_per_message: 1
+
+  transcript_buffer_limit: 10
+
+
+future_extensions:
+
+  - deal_health_score
+  - close_probability_estimation
+  - objection_frequency_tracking
+  - automatic deal risk alerts
