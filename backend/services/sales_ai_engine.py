@@ -4,10 +4,7 @@ import time
 import asyncio
 from typing import Any
 from openai import AsyncOpenAI
-from services.conversation_analyzer import conversation_analyzer
-from services.persuasion_engine import persuasion_engine
-from services.suggestion_manager import suggestion_manager
-from services.deal_stage_engine import deal_stage_engine
+from difflib import SequenceMatcher
 
 api_key = os.getenv("OPENAI_API_KEY")
 client = AsyncOpenAI(
@@ -20,179 +17,132 @@ class SalesAIEngine:
     def __init__(self, call_context: dict[str, Any] | None = None):
         self.call_context = call_context
         self.message_buffer: list[dict[str, Any]] = []
+        self.response_history: list[str] = []
+        self.last_strategies: list[str] = []
+        
         self.max_messages = 8
-        self.max_latency = 6.0          # LLM timeout in seconds
-        self.confidence_threshold = 0.0  # Accept all responses — fallback handles bad ones
-        self._last_response: str = ""
+        self.max_latency = 2.0  # V2 2-sec strict limit
         self._last_call_time: float = 0.0
-        self._cooldown_secs: float = 1.0  # Min seconds between AI triggers
-
-    # ── Buffer management ──────────────────────────────────────────────────────
+        self._cooldown_secs: float = 2.0  # Min 2 secs between calls
 
     def add_message(self, speaker: str, text: str):
         self.message_buffer.append({"speaker": speaker, "text": text, "timestamp": time.time()})
         if len(self.message_buffer) > self.max_messages:
-            self.message_buffer.pop(0)  # FIFO eviction
+            self.message_buffer.pop(0)
 
-    # ── Smart context-aware fallback ───────────────────────────────────────────
+    def is_duplicate(self, text: str) -> bool:
+        if not text:
+            return False
+        text_lower = text.lower()
+        for past_sugg in self.response_history:
+            if SequenceMatcher(None, text_lower, past_sugg.lower()).ratio() > 0.70:
+                return True
+        return False
 
-    def smart_fallback(self, text: str, intent: str = "none", topic: str = "none",
-                       deal_stage: str = "discovery") -> dict:
+    def push_response_history(self, response: str, strategy: str):
+        self.response_history.append(response)
+        if len(self.response_history) > 3:
+            self.response_history.pop(0)
+            
+        if strategy:
+            self.last_strategies.append(strategy)
+            # Avoid repeating last 2 used strategies
+            if len(self.last_strategies) > 2:
+                self.last_strategies.pop(0)
+
+    def smart_fallback(self) -> dict:
         """
-        Keyword-matched fallback responses — never empty, never dumb.
-        Triggered when LLM is rate-limited, timed out, or unavailable.
+        V2 Fallback System: Short strategic question instead of long explanation.
         """
-        t = text.lower()
-
-        if any(kw in t for kw in ["price", "cost", "budget", "expensive", "cheap", "charge"]):
-            suggested = ("Totally fair — most teams feel that initially. "
-                         "But usually they recover the cost with just one extra closed client. "
-                         "Would you be open to seeing how that math works?")
-            strategy = "fallback_pricing"
-
-        elif any(kw in t for kw in ["time", "when", "long", "fast", "quick", "soon", "timeline"]):
-            suggested = ("Good question — typically you start seeing movement within a few weeks, "
-                         "depending on how aggressively you implement it. What timeline are you aiming for?")
-            strategy = "fallback_timeline"
-
-        elif any(kw in t for kw in ["not interested", "don't need", "no thanks", "pass", "already have"]):
-            suggested = ("Got it — just so I understand, is it timing, or does it not feel relevant right now?")
-            strategy = "fallback_recovery"
-
-        elif any(kw in t for kw in ["how", "what", "explain", "tell me", "help", "work", "does it"]):
-            suggested = ("Great question. The simplest way to think about it: "
-                         "it removes the friction between your top performers and everyone else. "
-                         "What does that gap look like on your team right now?")
-            strategy = "fallback_discovery"
-
-        elif any(kw in t for kw in ["competitor", "alternative", "other", "vs", "compare"]):
-            suggested = ("Fair — most people look around. The real question is what specifically "
-                         "you're benchmarking on. What matters most to you in this decision?")
-            strategy = "fallback_competitive"
-
-        else:
-            suggested = ("Makes sense. Let me ask — what would need to happen for this "
-                         "to feel like a no-brainer for you?")
-            strategy = "fallback_generic"
-
-        print(f"[FALLBACK] Strategy: {strategy} | Response: {suggested[:60]}...")
+        print("[FALLBACK] Using V2 short strategic fallback.")
+        fallback_msg = "Can I ask — what's the main hesitation right now?"
         return {
-            "intent": intent,
-            "topic": topic,
-            "stage": deal_stage,
-            "deal_stage": deal_stage,
-            "strategy": strategy,
-            "persuasion_pattern": strategy,
-            "tone": "calm_authority",
-            "response": suggested,
-            "suggested_response": suggested,
-            "next_question": "What would make this decision easier for you?",
-            "next_best_question": "What would make this decision easier for you?",
-            "type": topic,
+            "intent": "hesitation",
+            "stage": "objection",
+            "strategy": "DIAGNOSTIC_QUESTION",
             "confidence": 1.0,
+            "response": fallback_msg,
+            "next_question": fallback_msg,
+            "coaching_tip": "API failed. Use this to keep the prospect talking."
         }
 
-    # ── Main analysis entry point ──────────────────────────────────────────────
-
     async def analyze(self, speaker: str, text: str) -> dict | None:
-        print(f"[TRANSCRIPT_RECEIVED] {speaker}: {text}")
+        print(f"[TRANSCRIPT] {speaker}: {text}")
 
-        # ── Gate 1: prospect-only ─────────────────────────────────────────────
+        # V2 Trigger Control
         if speaker != "prospect":
             return None
 
-        if not text.strip():
+        # Pass transcripts containing useful words
+        if len(text.strip().split()) < 3 and len(text.strip()) < 15:
+            print("[AI_SKIPPED] Transcript too short.")
+            self.add_message(speaker, text)
             return None
 
-        # ── Gate 2: per-message cooldown (1 second) ────────────────────────────
         now = time.time()
         if now - self._last_call_time < self._cooldown_secs:
-            print("[AI_SKIPPED] Cooldown — too fast. Skipping.")
+            print("[AI_SKIPPED] Cooldown active.")
             return None
+            
         self._last_call_time = now
-
-        # Always add to buffer (after cooldown check)
         self.add_message(speaker, text)
 
-        print("[AI_TRIGGERED] Running sales insights analysis...")
+        print("[AI_TRIGGERED] V2 CloserBrain analyzing...")
 
-        # ── Lightweight heuristics (zero-latency) ─────────────────────────────
-        intent, topic, deal_stage = "none", "none", "discovery"
-        try:
-            analysis_result = await conversation_analyzer.analyze_conversation(self.message_buffer)
-            intent = analysis_result.get("intent", "none")
-            topic = analysis_result.get("topic", "none")
-        except Exception as e:
-            print(f"[ANALYZER_ERROR] {e}")
-
-        try:
-            deal_stage = deal_stage_engine.detect_stage(self.message_buffer)
-        except Exception as e:
-            print(f"[STAGE_ERROR] {e}")
-
-        print(f"[AI_PIPELINE] Intent: {intent} | Topic: {topic} | Stage: {deal_stage}")
-
-        selected_strategy = "straight_line"
-        try:
-            selected_strategy = persuasion_engine.select_strategy(topic)
-        except Exception as e:
-            print(f"[STRATEGY_ERROR] {e}")
-
-        latest_prospect_msg = text
-
-        # ── LLM call (with fallback on ANY error) ─────────────────────────────
         if not client:
-            print("[AI_INFO] No LLM client configured — using smart fallback.")
-            return self.smart_fallback(text, intent, topic, deal_stage)
+            print("[AI_INFO] No LLM client configured — using fallback.")
+            return self.smart_fallback()
 
         context_str = ""
-        ctx = self.call_context
-        if ctx:
-            context_str = "\n\nCall context:\n"
-            context_str += "\n".join([f"- {k.replace('_', ' ').capitalize()}: {v}" for k, v in ctx.items()])
-            context_str += "\n\nUse this to personalise your suggestions."
+        if self.call_context:
+            context_str = "\nCall context:\n" + "\n".join([f"- {k}: {v}" for k, v in self.call_context.items()])
 
-        stage_guidance = {
-            "discovery":           "Ask diagnostic questions to understand the prospect's world.",
-            "problem_exploration":  "Uncover deeper pain points — ask why, how long, what impact.",
-            "solution_framing":     "Connect the product to the prospect's stated problem.",
-            "objection_handling":   "Reframe concerns, reduce perceived risk, rebuild confidence.",
-            "negotiation":          "Defend value firmly. Anchor on ROI. No premature discounts.",
-            "closing":              "Guide toward a concrete next step. Create momentum.",
-        }.get(deal_stage, "Guide the deal forward.")
+        avoid_strategies = ", ".join(self.last_strategies) if self.last_strategies else "None"
 
-        system_content = f"""You are a high-performance sales closer — not an assistant.
+        system_content = f"""You are "CloserBrain V2" - an elite B2B sales closing engine.
+
 {context_str}
-Persuasion strategy suggested: {selected_strategy}.
-CURRENT DEAL STAGE: {deal_stage.upper().replace('_', ' ')}
-Stage guidance: {stage_guidance}
 
-Rules:
-- Respond with calm authority
-- Be concise and powerful
-- Challenge assumptions slightly
-- Never repeat a previous response
-- Always guide toward the next step
-Tone options: [calm_authority, slightly_challenging, confident_minimal]
+CORE DIRECTIVES:
+- Transform from reactive responder to strategic deal closer.
+- Lead the conversation; do not just answer questions blindly.
+- Never sound desperate. Avoid long explanations.
+- Mix statements and questions. Use confident, guiding tone.
+
+AVAILABLE STRATEGIES (Pick EXACTLY ONE based on intent):
+- ROI_REFRAME (for pricing intent - show value vs cost)
+- COST_OF_INACTION (for hesitation intent - highlight missed opportunity)
+- SOCIAL_PROOF (for trust intent - case study/others success)
+- DIAGNOSTIC_QUESTION (for confusion intent - ask smart question)
+- FUTURE_PACING (for interest intent - paint future outcome)
+- PILOT_CLOSE (for closing/ready bounds - low risk entry)
+- DECISION_CONTROL (for authority - uncover decision process)
+
+RESTRICTIONS:
+- Do NOT use these recently used strategies: [{avoid_strategies}]
+- Keep "response" punchy, confident, and under 2 sentences.
+- DO NOT start with "Our product helps you increase..." or repetitive pleasantries.
+
+OUTPUT STRICT JSON WITH EXACTLY THESE KEYS:
+- "intent": (pricing|trust|timeline|authority|confusion|interest|neutral|hesitation)
+- "stage": (discovery|problem|objection|closing)
+- "strategy": (ONE OF THE 7 STRATEGIES ABOVE)
+- "confidence": Float 0.0-1.0
+- "response": (Your core short confident statement)
+- "next_question": (A direct follow-up question to advance the deal)
+- "coaching_tip": (A brief 1-sentence tip on body language or tone)
 """
 
-        prev_context = list(self.message_buffer[:-1])  # exclude current message
+        prev_context = list(self.message_buffer[:-1])
 
         prompt = f"""
-Conversation so far:
+Conversation Buffer:
 {json.dumps(prev_context)}
 
-LATEST PROSPECT MESSAGE (respond specifically to this):
-"{latest_prospect_msg}"
+LATEST PROSPECT MESSAGE:
+"{text}"
 
-Return ONLY a JSON object with exactly these fields:
-- "intent": detected intent string
-- "stage": "{deal_stage}"
-- "strategy": selected persuasion pattern
-- "tone": selected tone
-- "response": short, powerful line the rep can say right now
-- "next_question": question that moves the deal to the next stage
-- "confidence": float 0.0–1.0
+Output strictly conforming JSON.
 """
 
         for attempt in range(2):
@@ -205,7 +155,7 @@ Return ONLY a JSON object with exactly these fields:
                             {"role": "user", "content": prompt}
                         ],
                         response_format={"type": "json_object"},
-                        temperature=0.3 + (attempt * 0.4),  # raise temp on retry
+                        temperature=0.3 + (attempt * 0.4),
                     ),
                     timeout=self.max_latency
                 )
@@ -215,44 +165,30 @@ Return ONLY a JSON object with exactly these fields:
 
                 suggested_resp = data.get("response", "").strip()
                 if not suggested_resp:
-                    print("[AI_WARN] Empty response from LLM. Falling back.")
-                    return self.smart_fallback(text, intent, topic, deal_stage)
+                    return self.smart_fallback()
 
-                # ── Duplicate guard ───────────────────────────────────────────
-                if suggested_resp == self._last_response and attempt == 0:
-                    print("[AI_DUPLICATE] Same as last response. Retrying with higher temp...")
+                # Anti-Repetition logic
+                if self.is_duplicate(suggested_resp) and attempt == 0:
+                    print(f"[AI_DUPLICATE] Repetition block triggered! Retrying... '{suggested_resp[:30]}'")
                     continue
 
-                if suggestion_manager.is_duplicate(suggested_resp) and attempt == 0:
-                    print(f"[AI_DUPLICATE] History duplicate: '{suggested_resp[:40]}'. Retrying...")
-                    continue
+                self.push_response_history(suggested_resp, data.get("strategy"))
 
-                self._last_response = suggested_resp
-                suggestion_manager.add_suggestion(suggested_resp)
-
-                # Normalise output keys for frontend compatibility
+                # Output Normalization for existing frontend fields
                 data["suggested_response"] = suggested_resp
                 data["next_best_question"] = data.get("next_question", "")
-                data["persuasion_pattern"] = data.get("strategy", selected_strategy)
-                data["type"] = topic
-                data["deal_stage"] = deal_stage
+                data["persuasion_pattern"] = data.get("strategy", "")
+                data["type"] = data.get("intent", "")
+                data["deal_stage"] = data.get("stage", "")
 
-                print(f"[AI_RESPONSE] ✅ Success. Response: {suggested_resp[:60]}...")
+                print(f"[AI_RESPONSE] ✅ {data.get('strategy', 'NONE')} | {suggested_resp[:60]}...")
                 return data
 
             except asyncio.TimeoutError:
-                print(f"[AI_TIMEOUT] LLM timed out after {self.max_latency}s. Using fallback.")
-                return self.smart_fallback(text, intent, topic, deal_stage)
+                print(f"[AI_TIMEOUT] Exceeded {self.max_latency}s SLA limit. Forcing fallback.")
+                return self.smart_fallback()
+            except (json.JSONDecodeError, Exception) as e:
+                print(f"[AI_ERROR] Engine Error: {e}")
+                return self.smart_fallback()
 
-            except json.JSONDecodeError:
-                print("[AI_ERROR] Invalid JSON from LLM. Using fallback.")
-                return self.smart_fallback(text, intent, topic, deal_stage)
-
-            except Exception as e:
-                print(f"[AI_ERROR] LLM error (attempt {attempt + 1}): {e}")
-                # Don't retry on rate-limit — go straight to fallback
-                return self.smart_fallback(text, intent, topic, deal_stage)
-
-        # Both attempts exhausted (only happens with back-to-back duplicates)
-        print("[AI_WARN] Max retries hit. Using fallback.")
-        return self.smart_fallback(text, intent, topic, deal_stage)
+        return self.smart_fallback()
