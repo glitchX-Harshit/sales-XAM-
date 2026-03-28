@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAudioStream } from '../audio/audioStreamClient';
-import CallBriefingForm from './CallBriefingForm';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
     Zap, 
     Mic, 
@@ -18,7 +18,7 @@ import {
     BrainCircuit,
     Activity
 } from 'lucide-react';
-import './Dashboard.css';
+import './LiveCall.css';
 
 /* ─────────────────────────────────────────
    OBJECTIONS & SUGGESTIONS MAPPING
@@ -30,8 +30,10 @@ const OBJECTIONS = [
     { type: 'TIMELINE', label: '📅 Timeline Inquiry', color: '#7c3aed', desc: 'Asking about rollout speed', confidence: 82 },
 ];
 
-const Dashboard = ({ onExit }) => {
+const LiveCall = () => {
     const dashRef = useRef(null);
+    const location = useLocation();
+    const navigate = useNavigate();
     const transcriptEndRef = useRef(null);
     const [callDuration, setCallDuration] = useState(0);
     const [isListening, setIsListening] = useState(false);
@@ -40,9 +42,8 @@ const Dashboard = ({ onExit }) => {
     const [latestObjection, setLatestObjection] = useState(null);
     const [suggestionHistory, setSuggestionHistory] = useState([]);
     const [dealHealthScore, setDealHealthScore] = useState(50);
-    const [callContext, setCallContext] = useState(null);
-    const [contextId, setContextId] = useState(null);
-    const [showBriefing, setShowBriefing] = useState(true);
+    const [callContext, setCallContext] = useState(location.state?.callContext || null);
+    const [contextId, setContextId] = useState(location.state?.contextId || null);
     const [dealStage, setDealStage] = useState('discovery');
     const [coachingTip, setCoachingTip] = useState(null);
     const [showTabTip, setShowTabTip] = useState(false);
@@ -105,10 +106,8 @@ const Dashboard = ({ onExit }) => {
         }
     };
 
-    const handleStartCall = (id, contextData) => {
-        setContextId(id);
-        setCallContext(contextData);
-        setShowBriefing(false);
+    const onExit = () => {
+        navigate('/summary', { state: { dealHealthScore, suggestionHistory, callDuration } });
     };
 
     /* ── Call timer */
@@ -135,10 +134,6 @@ const Dashboard = ({ onExit }) => {
     const waveHeights = Array.from({ length: 40 }, (_, i) =>
         Math.abs(Math.sin((i + wavePhase) * 0.3)) * 0.8 + 0.1
     );
-
-    if (showBriefing) {
-        return <CallBriefingForm onStartCall={handleStartCall} onBack={onExit} />;
-    }
 
     return (
         <div className="db-root" ref={dashRef}>
@@ -290,4 +285,4 @@ const Dashboard = ({ onExit }) => {
     );
 };
 
-export default Dashboard;
+export default LiveCall;

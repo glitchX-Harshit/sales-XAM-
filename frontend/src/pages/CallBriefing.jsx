@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
     ArrowLeft, 
     User, 
@@ -9,9 +10,10 @@ import {
     Briefcase,
     Zap
 } from 'lucide-react';
-import './CallBriefingForm.css';
+import './CallBriefing.css';
 
-const CallBriefingForm = ({ onStartCall, onBack }) => {
+const CallBriefing = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         client_name: '',
         client_industry: '',
@@ -28,16 +30,20 @@ const CallBriefingForm = ({ onStartCall, onBack }) => {
         setError(null);
 
         try {
+            const token = localStorage.getItem('token');
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
             const response = await fetch('http://localhost:8000/call/start', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify(formData)
             });
 
             if (!response.ok) throw new Error('Failed to create call context');
 
             const data = await response.json();
-            onStartCall(data.context_id, formData);
+            navigate('/live-call', { state: { contextId: data.context_id, callContext: formData } });
         } catch (err) {
             setError(err.message);
             setLoading(false);
@@ -52,7 +58,7 @@ const CallBriefingForm = ({ onStartCall, onBack }) => {
             <div className="cb-grid"></div>
 
             {/* Back button */}
-            <button className="cb-back interactive" onClick={onBack}>
+            <button className="cb-back interactive" onClick={() => navigate(-1)}>
                 <ArrowLeft size={16} />
                 <span>Back</span>
             </button>
@@ -146,4 +152,4 @@ const CallBriefingForm = ({ onStartCall, onBack }) => {
     );
 };
 
-export default CallBriefingForm;
+export default CallBriefing;

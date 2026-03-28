@@ -48,6 +48,10 @@ class DeepgramStream:
             if not result or not result.channel or not result.channel.alternatives:
                 return
 
+            # ❌ IGNORE partial speech
+            if not result.is_final:
+                return
+
             alt = result.channel.alternatives[0]
             transcript = alt.transcript
 

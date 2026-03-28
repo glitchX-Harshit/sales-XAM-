@@ -2,6 +2,11 @@ import os
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+from database import engine, Base
+from routers import auth
+
+# Initialize Database tables
+Base.metadata.create_all(bind=engine)
 
 # Load environment variables
 load_dotenv()
@@ -19,6 +24,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(auth.router)
 
 import json
 from pydantic import BaseModel

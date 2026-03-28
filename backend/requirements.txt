@@ -8,3 +8,5 @@ deepgram-sdk
 openai
 pydantic
 pydantic-settings
+passlib[bcrypt]
+PyJWT

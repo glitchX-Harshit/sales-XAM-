@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Features from './components/Features';
@@ -10,68 +13,62 @@ import UseCases from './components/UseCases';
 import Testimonials from './components/Testimonials';
 import Pricing from './components/Pricing';
 import Footer from './components/Footer';
-import Dashboard from './components/Dashboard';
-import Signup from './components/Signup';
-import Login from './components/Login';
+
+import AuthPage from './pages/AuthPage';
+import Dashboard from './pages/Dashboard';
+import CallBriefing from './pages/CallBriefing';
+import LiveCall from './pages/LiveCall';
+import PostCallSummary from './pages/PostCallSummary';
+
+function LandingPage() {
+    const navigate = useNavigate();
+    
+    return (
+        <main>
+            <Navbar 
+                onGetStarted={() => navigate('/dashboard')} 
+                onSignup={() => navigate('/auth', { state: { view: 'signup' } })}
+                onLogin={() => navigate('/auth', { state: { view: 'login' } })}
+            />
+            <Hero onGetStarted={() => navigate('/dashboard')} />
+            <Features />
+            <HowItWorks />
+            <Integrations />
+            <ObjectionHandling />
+            <ResponseSuggestion />
+            <UseCases />
+            <Testimonials />
+            <Pricing />
+            <Footer />
+        </main>
+    );
+}
 
 function App() {
-    const [view, setView] = useState('landing'); // 'landing' | 'dashboard' | 'signup' | 'login'
-
-    const navigateTo = (v) => {
-        setView(v)
-        window.scrollTo(0, 0);
-        if (v === 'landing') {
-            document.body.style.overflow = '';
-        } else {
-            document.body.style.overflow = 'hidden';
-        }
-    };
-
     return (
-        <div className="app-root">
-            {/* DASHBOARD VIEW */}
-            {view === 'dashboard' && (
-                <Dashboard onExit={() => navigateTo('landing')} />
-            )}
-
-            {/* SIGNUP VIEW */}
-            {view === 'signup' && (
-                <Signup 
-                    onBack={() => navigateTo('landing')} 
-                    onGetStarted={() => navigateTo('dashboard')} 
-                    onLogin={() => navigateTo('login')}
-                />
-            )}
-
-            {/* LOGIN VIEW */}
-            {view === 'login' && (
-                <Login 
-                    onBack={() => navigateTo('landing')} 
-                    onGetStarted={() => navigateTo('dashboard')} 
-                    onSignup={() => navigateTo('signup')}
-                />
-            )}
-
-            {/* LANDING VIEW */}
-            <main style={{ display: (view === 'dashboard' || view === 'signup' || view === 'login') ? 'none' : 'block' }}>
-                <Navbar 
-                    onGetStarted={() => navigateTo('dashboard')} 
-                    onSignup={() => navigateTo('signup')}
-                    onLogin={() => navigateTo('login')}
-                />
-
-                <Hero onGetStarted={() => navigateTo('dashboard')} />
-                <Features />
-                <HowItWorks />
-                <Integrations />
-                <ObjectionHandling />
-                <ResponseSuggestion />
-                <UseCases />
-                <Testimonials />
-                <Pricing />
-                <Footer />
-            </main>
-        </div>
+        <AuthProvider>
+            <BrowserRouter>
+                <div className="app-root">
+                    <Routes>
+                        <Route path="/" element={<LandingPage />} />
+                        <Route path="/auth" element={<AuthPage />} />
+                        <Route path="/dashboard" element={
+                            <ProtectedRoute><Dashboard /></ProtectedRoute>
+                        } />
+                        <Route path="/call-brief" element={
+                            <ProtectedRoute><CallBriefing /></ProtectedRoute>
+                        } />
+                        <Route path="/live-call" element={
+                            <ProtectedRoute><LiveCall /></ProtectedRoute>
+                        } />
+                        <Route path="/summary" element={
+                            <ProtectedRoute><PostCallSummary /></ProtectedRoute>
+                        } />
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                </div>
+            </BrowserRouter>
+        </AuthProvider>
     );
 }
 

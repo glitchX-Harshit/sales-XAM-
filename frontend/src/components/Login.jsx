@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ArrowLeft, User, Mail, Lock, CheckCircle, ArrowRight } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import './Signup.css';
 
 const Login = ({ onBack, onSwitchToSignup, onLoginSuccess }) => {
@@ -8,15 +9,27 @@ const Login = ({ onBack, onSwitchToSignup, onLoginSuccess }) => {
         password: ''
     });
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            setLoading(false);
+        setError(null);
+        try {
+            const res = await fetch('http://localhost:8000/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            if (!res.ok) throw new Error('Invalid email or password');
+            const data = await res.json();
+            login(data.access_token, { id: data.user_id, email: data.email });
             onLoginSuccess();
-        }, 1500);
+        } catch (err) {
+            setError(err.message);
+        }
+        setLoading(false);
     };
 
     return (
@@ -68,6 +81,8 @@ const Login = ({ onBack, onSwitchToSignup, onLoginSuccess }) => {
                             onChange={(e) => setFormData({...formData, password: e.target.value})}
                         />
                     </div>
+
+                    {error && <div style={{ color: '#ef4444', marginBottom: '1rem', fontSize: '0.9rem', textAlign: 'center' }}>{error}</div>}
 
                     <button className="su-submit interactive" type="submit" disabled={loading}>
                         {loading ? 'Logging in...' : 'Sign In'}

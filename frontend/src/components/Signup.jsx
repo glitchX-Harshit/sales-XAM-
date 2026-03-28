@@ -1,23 +1,38 @@
 import { useState } from 'react';
 import { ArrowLeft, User, Mail, Lock, CheckCircle, ArrowRight } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import './Signup.css';
 
 const Signup = ({ onBack, onSwitchToLogin, onSignupSuccess }) => {
     const [formData, setFormData] = useState({
-        name: '',
         email: '',
         password: ''
     });
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            setLoading(false);
+        setError(null);
+        try {
+            const res = await fetch('http://localhost:8000/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: formData.email, password: formData.password })
+            });
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.detail || 'Failed to create account');
+            }
+            const data = await res.json();
+            login(data.access_token, { id: data.user_id, email: data.email });
             onSignupSuccess();
-        }, 1500);
+        } catch (err) {
+            setError(err.message);
+        }
+        setLoading(false);
     };
 
     return (
@@ -47,18 +62,6 @@ const Signup = ({ onBack, onSwitchToLogin, onSignupSuccess }) => {
 
                 <form className="su-form" onSubmit={handleSubmit}>
                     <div className="su-field">
-                        <label className="su-label">Full Name</label>
-                        <input 
-                            type="text" 
-                            className="su-input" 
-                            placeholder="John Doe"
-                            required
-                            value={formData.name}
-                            onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        />
-                    </div>
-
-                    <div className="su-field">
                         <label className="su-label">Work Email</label>
                         <input 
                             type="email" 
@@ -81,6 +84,8 @@ const Signup = ({ onBack, onSwitchToLogin, onSignupSuccess }) => {
                             onChange={(e) => setFormData({...formData, password: e.target.value})}
                         />
                     </div>
+
+                    {error && <div style={{ color: '#ef4444', marginBottom: '1rem', fontSize: '0.9rem', textAlign: 'center' }}>{error}</div>}
 
                     <button className="su-submit interactive" type="submit" disabled={loading}>
                         {loading ? 'Creating Account...' : 'Continue'}
