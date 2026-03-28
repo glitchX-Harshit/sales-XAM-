@@ -122,3 +122,6 @@ The backend features a sophisticated AI pipeline that processes live conversatio
 
 **Harshit (glitchX-Harshit)**  
 Project Link: [https://github.com/glitchX-Harshit/sales-XAM-](https://github.com/glitchX-Harshit/sales-XAM-)
+
+
+ux funnel done

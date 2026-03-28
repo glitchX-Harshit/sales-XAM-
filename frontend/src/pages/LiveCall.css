@@ -1,0 +1,376 @@
+/* ================================================================
+   DASHBOARD — Minimal Dark Mode Redesign
+   Aesthetic: Black, Purple, White
+================================================================= */
+
+.db-root {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: var(--color-bg);
+    display: flex;
+    overflow: hidden;
+    color: var(--color-white);
+}
+
+/* ── AMBIENT BACKGROUND ── */
+.db-ambient {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.db-blob {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.05) 0%, transparent 70%);
+    filter: blur(100px);
+}
+
+.db-blob-1 { top: -10%; right: -5%; }
+.db-blob-2 { bottom: -10%; left: -5%; }
+
+.db-grid {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(var(--color-border) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
+    opacity: 0.15;
+}
+
+/* ── SIDEBAR ── */
+.db-sidebar {
+    position: relative;
+    z-index: 10;
+    width: 240px;
+    flex-shrink: 0;
+    background: rgba(10, 10, 10, 0.4);
+    backdrop-filter: blur(40px);
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+}
+
+.db-sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 3rem;
+}
+
+.db-logo-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--color-primary);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.db-logo-text {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.db-logo-dot {
+    color: var(--color-primary);
+}
+
+.db-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.db-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    color: var(--color-text-dim);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+
+.db-nav-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-white);
+}
+
+.db-nav-item.active {
+    background: rgba(124, 58, 237, 0.1);
+    color: var(--color-primary);
+}
+
+.db-sidebar-footer {
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.db-user-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.db-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+.db-user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.db-user-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.db-user-role {
+    font-size: 0.75rem;
+    color: var(--color-text-dim);
+}
+
+/* ── MAIN AREA ── */
+.db-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 5;
+}
+
+/* ── TOPBAR ── */
+.db-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2.5rem;
+    border-bottom: 1px solid var(--color-border);
+    background: rgba(5, 5, 5, 0.4);
+    backdrop-filter: blur(20px);
+}
+
+.db-live-badge {
+    background: rgba(124, 58, 237, 0.1);
+    color: var(--color-primary);
+    padding: 0.4rem 0.8rem;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.db-live-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--color-primary);
+}
+
+.db-call-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.db-call-name {
+    font-weight: 700;
+}
+
+.db-call-duration {
+    color: var(--color-text-dim);
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.db-listen-toggle {
+    background: var(--color-glass);
+    border: 1px solid var(--color-border);
+    color: var(--color-white);
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.db-listen-toggle.on {
+    border-color: var(--color-primary);
+    background: rgba(124, 58, 237, 0.1);
+}
+
+/* ── PANELS ── */
+.db-panels-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 320px 1fr 320px;
+    gap: 1.5rem;
+    padding: 1.5rem 2.5rem;
+    min-height: 0;
+}
+
+.db-panel {
+    background: var(--color-glass);
+    border: 1px solid var(--color-border);
+    border-radius: 24px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.db-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.db-panel-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-dim);
+}
+
+/* ── WAVEFORM ── */
+.db-waveform {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 80px;
+    margin-bottom: 1rem;
+}
+
+.db-wave-bar {
+    width: 4px;
+    background: var(--color-primary);
+    border-radius: 10px;
+    transition: height 0.1s ease;
+}
+
+/* ── OBJECTIONS ── */
+.db-objections-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow-y: auto;
+}
+
+.db-objection-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-border);
+    padding: 1rem;
+    border-radius: 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.db-objection-item.detected {
+    background: rgba(124, 58, 237, 0.05);
+    border-color: var(--color-primary);
+}
+
+/* ── SUGGESTION ── */
+.db-suggestion-content {
+    background: rgba(124, 58, 237, 0.03);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.db-suggestion-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    text-transform: uppercase;
+}
+
+.db-suggestion-text {
+    font-size: 1.25rem;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+/* ── TRANSCRIPT ── */
+.db-transcript-scroll {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.chat-bubble.prospect {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-border);
+    padding: 1rem;
+    border-radius: 16px;
+}
+
+.chat-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.chat-speaker-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+@media (max-width: 1200px) {
+    .db-panels-grid {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+    }
+    
+    .db-root {
+        overflow-y: auto;
+    }
+}

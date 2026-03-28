@@ -1,10 +1,9 @@
 /* ================================================================
-   SIGNUP & LOGIN FORM — Minimal Dark Mode Redesign
+   CALL BRIEFING FORM — Minimal Dark Mode Redesign
    Aesthetic: Black, Purple, White
 ================================================================= */
 
-/* ── OVERLAY ── */
-.su-overlay {
+.cb-overlay {
     position: fixed;
     inset: 0;
     z-index: 2000;
@@ -17,7 +16,7 @@
 }
 
 /* ── AMBIENT BLOBS ── */
-.su-blob {
+.cb-blob {
     position: absolute;
     border-radius: 50%;
     filter: blur(120px);
@@ -25,7 +24,7 @@
     z-index: 0;
 }
 
-.su-blob-1 {
+.cb-blob-1 {
     width: 600px;
     height: 600px;
     background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
@@ -33,7 +32,7 @@
     right: -5%;
 }
 
-.su-blob-2 {
+.cb-blob-2 {
     width: 500px;
     height: 500px;
     background: radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, transparent 70%);
@@ -41,7 +40,7 @@
     left: -5%;
 }
 
-.su-grid {
+.cb-grid {
     position: absolute;
     inset: 0;
     z-index: 0;
@@ -53,7 +52,7 @@
 }
 
 /* ── BACK BUTTON ── */
-.su-back {
+.cb-back {
     position: absolute;
     top: 2rem;
     left: 2rem;
@@ -72,17 +71,17 @@
     transition: all 0.2s ease;
 }
 
-.su-back:hover {
+.cb-back:hover {
     background: var(--color-glass-hover);
     border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* ── CARD ── */
-.su-card {
+.cb-card {
     position: relative;
     z-index: 10;
     width: 100%;
-    max-width: 480px;
+    max-width: 640px;
     background: var(--color-glass);
     backdrop-filter: blur(40px);
     border: 1px solid var(--color-border);
@@ -92,11 +91,11 @@
 }
 
 /* ── HEADER ── */
-.su-head {
+.cb-head {
     margin-bottom: 2.5rem;
 }
 
-.su-logo-mark {
+.cb-logo-mark {
     width: 40px;
     height: 40px;
     background: var(--color-primary);
@@ -107,32 +106,38 @@
     margin-bottom: 1.5rem;
 }
 
-.su-title {
+.cb-title {
     font-size: 2rem;
     font-weight: 800;
     letter-spacing: -0.02em;
     margin-bottom: 0.5rem;
 }
 
-.su-subtitle {
+.cb-subtitle {
     font-size: 0.95rem;
     color: var(--color-text-dim);
 }
 
 /* ── FORM ── */
-.su-form {
+.cb-form {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
-.su-field {
+.cb-grid-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.cb-field {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-.su-label {
+.cb-label {
     font-size: 0.75rem;
     font-weight: 700;
     color: var(--color-text-dim);
@@ -140,7 +145,7 @@
     letter-spacing: 0.05em;
 }
 
-.su-input {
+.cb-input, .cb-textarea {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--color-border);
     border-radius: 12px;
@@ -149,15 +154,21 @@
     color: var(--color-white);
     transition: all 0.2s ease;
     outline: none;
+    font-family: inherit;
 }
 
-.su-input:focus {
+.cb-input:focus, .cb-textarea:focus {
     border-color: var(--color-primary);
     background: rgba(124, 58, 237, 0.05);
 }
 
+.cb-textarea {
+    min-height: 100px;
+    resize: none;
+}
+
 /* ── SUBMIT BUTTON ── */
-.su-submit {
+.cb-submit {
     background: var(--color-primary);
     color: white;
     padding: 1rem;
@@ -170,36 +181,29 @@
     margin-top: 1rem;
 }
 
-.su-submit:hover:not(:disabled) {
+.cb-submit:hover:not(:disabled) {
     background: var(--color-accent);
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3);
 }
 
-.su-submit:disabled {
+.cb-submit:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
-.su-login-prompt {
+.cb-footnote {
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--color-text-dim);
-    margin-top: 2rem;
+    margin-top: 1.5rem;
 }
 
-.su-login-prompt a {
-    color: var(--color-primary);
-    font-weight: 700;
-    text-decoration: none;
-}
-
-.su-login-prompt a:hover {
-    text-decoration: underline;
-}
-
-@media (max-width: 480px) {
-    .su-card {
+@media (max-width: 600px) {
+    .cb-grid-fields {
+        grid-template-columns: 1fr;
+    }
+    .cb-card {
         padding: 2rem;
     }
 }

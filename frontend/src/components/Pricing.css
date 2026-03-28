@@ -1,355 +1,163 @@
-/* ================================================================
-   PRICING — 3-Column Redesign + Scribble Annotations
-================================================================= */
 .pricing-section {
     background: var(--color-bg);
-    padding: 12vh 0;
+    padding: 8rem 0;
     position: relative;
-    overflow: hidden;
+    border-top: 1px solid var(--color-border);
 }
 
-/* ── Scribble overlay ── */
-.pr-scrib-wrap {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-}
-
-.pr-scrib-svg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.pr-scrib-label {
-    position: absolute;
-    font-family: 'Caveat', cursive;
-    font-size: 1rem;
-    font-weight: 700;
-    color: rgba(0, 0, 0, 0.32);
-    pointer-events: none;
-    white-space: nowrap;
-    letter-spacing: 0.01em;
-    opacity: 0;
-}
-
-/* ── Header ── */
 .pr-header {
-    margin-bottom: 5rem;
-    max-width: 600px;
-    position: relative;
-    z-index: 3;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 5rem;
 }
 
 .pr-eyebrow {
     font-size: 0.75rem;
     font-weight: 700;
+    color: var(--color-primary);
     text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: #ff5e00;
-    margin-bottom: 1.2rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
 }
 
 .pr-title {
-    font-size: clamp(2.8rem, 5.5vw, 5rem);
-    font-weight: 800;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    color: var(--color-black);
-    margin-bottom: 1.2rem;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
 }
 
 .pr-italic {
     font-style: italic;
-    color: rgba(0, 0, 0, 0.22);
+    color: var(--color-text-dim);
 }
 
 .pr-desc {
-    font-size: 1rem;
-    color: #999;
-    font-weight: 500;
+    font-size: 1.125rem;
+    color: var(--color-text-dim);
 }
 
-/* ── 3-column cards ── */
 .pr-cards {
     display: grid;
-    grid-template-columns: 1fr 1.2fr 1fr;
-    gap: 1.5rem;
-    align-items: start;
-    position: relative;
-    z-index: 3;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: stretch;
 }
 
-/* ── Shared card ── */
 .pricing-card {
+    background: var(--color-glass);
+    border: 1px solid var(--color-border);
     border-radius: 28px;
-    padding: 2.2rem;
+    padding: 3rem;
     display: flex;
     flex-direction: column;
-    gap: 1.4rem;
-    will-change: transform;
+    gap: 2rem;
+    transition: all 0.3s ease;
 }
 
-/* ── Starter ── */
-.pr-starter {
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.07);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+.pricing-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--color-glass-hover);
 }
 
-/* ── Pro ── */
 .pr-pro {
-    background: #0f0f0f;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.18);
+    background: rgba(124, 58, 237, 0.05);
+    border-color: var(--color-primary);
     position: relative;
-    overflow: hidden;
 }
 
-/* ── Enterprise ── */
-.pr-enterprise {
-    background: rgba(0, 0, 0, 0.03);
-    border: 1px dashed rgba(0, 0, 0, 0.12);
+.pr-pro:hover {
+    border-color: var(--color-accent);
 }
 
-/* Badge */
 .pr-pro-badge {
     position: absolute;
-    top: -1px;
-    right: 2rem;
-    background: #ff5e00;
-    color: #fff;
-    font-size: 0.68rem;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: var(--color-primary);
+    color: white;
+    font-size: 0.7rem;
     font-weight: 800;
-    letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 0.35rem 1rem;
-    border-radius: 0 0 12px 12px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    padding: 0.4rem 0.8rem;
+    border-radius: 100px;
 }
 
-/* Card tag */
 .pr-card-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.72rem;
-    font-weight: 800;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-dim);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: rgba(0, 0, 0, 0.35);
+    letter-spacing: 0.05em;
 }
 
-.pr-card-tag-dark {
-    color: rgba(255, 255, 255, 0.3);
-}
-
-/* Price */
 .pr-price-row {
     display: flex;
     align-items: baseline;
-    gap: 2px;
+    gap: 0.25rem;
 }
 
 .pr-curr {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--color-black);
-}
-
-.pr-pro .pr-curr {
-    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 .pr-num {
-    font-size: clamp(3rem, 5vw, 4rem);
+    font-size: 3.5rem;
     font-weight: 800;
     letter-spacing: -0.04em;
-    line-height: 1;
-    color: var(--color-black);
-}
-
-.pr-pro .pr-num {
-    color: #fff;
-}
-
-.pr-num-custom {
-    font-size: clamp(2rem, 3vw, 2.6rem);
-    color: rgba(0, 0, 0, 0.5);
 }
 
 .pr-per {
-    font-size: 0.85rem;
-    color: #aaa;
-    font-weight: 500;
-    padding-left: 4px;
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
 }
 
-/* Tagline */
 .pr-tagline {
-    font-size: 0.9rem;
-    color: #888;
+    font-size: 1rem;
+    color: var(--color-text-dim);
     line-height: 1.5;
-    margin: 0;
 }
 
-.pr-tagline-dark {
-    color: rgba(255, 255, 255, 0.4);
-}
-
-/* Features */
 .pr-features {
     list-style: none;
-    padding: 0;
-    margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1rem;
     flex: 1;
 }
 
 .pr-features li {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: var(--color-black);
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    color: var(--color-text-dim);
 }
 
 .pr-features li svg {
-    color: #27c93f;
-    flex-shrink: 0;
-}
-
-.pr-features-dark li {
-    color: rgba(255, 255, 255, 0.75);
-}
-
-.pr-features-dark li svg {
-    color: #27c93f;
-}
-
-.pr-feat-locked {
-    color: #ccc !important;
-    font-style: italic;
-}
-
-.pr-lock {
-    display: inline-flex;
-    width: 16px;
-    height: 16px;
-    align-items: center;
-    justify-content: center;
-    font-style: normal;
-    color: #ddd;
-    font-size: 0.9rem;
-}
-
-/* Buttons */
-.pr-btn-outline {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 0.75rem 1.2rem;
-    border-radius: 100px;
-    border: 1.5px solid rgba(0, 0, 0, 0.15);
-    background: transparent;
-    color: var(--color-black);
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-top: auto;
-}
-
-.pr-btn-outline:hover {
-    background: var(--color-black);
-    border-color: var(--color-black);
-    color: #fff;
+    color: var(--color-primary);
 }
 
 .pr-btn-primary {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 100%;
-    padding: 0.8rem 1.2rem;
-    border-radius: 100px;
-    border: none;
-    background: #ff5e00;
-    color: #fff;
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 0 28px rgba(255, 94, 0, 0.4);
 }
 
-.pr-btn-primary:hover {
-    background: #e04e00;
-    box-shadow: 0 0 40px rgba(255, 94, 0, 0.55);
-    transform: translateY(-2px);
-}
-
-.pr-btn-ghost {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.pr-btn-outline {
     width: 100%;
-    padding: 0.75rem 1.2rem;
-    border-radius: 100px;
-    border: 1.5px dashed rgba(0, 0, 0, 0.2);
-    background: transparent;
-    color: rgba(0, 0, 0, 0.5);
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-top: auto;
 }
 
-.pr-btn-ghost:hover {
-    border-color: var(--color-black);
-    color: var(--color-black);
-}
-
-/* Physics box */
-.pr-physics-box {
-    width: 100%;
-    height: 100px;
-    border-radius: 14px;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.pr-physics-canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-/* Footnote */
 .pr-footnote {
-    margin-top: 2.5rem;
-    font-size: 0.88rem;
-    color: #aaa;
-    font-weight: 500;
-    position: relative;
-    z-index: 3;
+    text-align: center;
+    margin-top: 4rem;
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
 }
 
-/* ── Responsive ── */
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
     .pr-cards {
         grid-template-columns: 1fr;
-        max-width: 480px;
+        max-width: 450px;
     }
 }

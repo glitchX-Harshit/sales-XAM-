@@ -1,4 +1,5 @@
 import json
+import asyncio
 from typing import Any, Optional
 from fastapi import WebSocket, WebSocketDisconnect
 from services.transcript_manager import TranscriptManager
@@ -15,6 +16,8 @@ class ConnectionManager:
         self.ai_engines: dict[WebSocket, SalesAIEngine] = {}
         from services.call_context_engine import call_context_engine
         self.call_context_engine = call_context_engine
+        self.final_buffer = ""
+        self.debounce_task = None
 
     async def connect(self, websocket: WebSocket, context_id: str | None = None):
         await websocket.accept()
@@ -60,31 +63,56 @@ class ConnectionManager:
         # ── PROSPECT-ONLY MODE: ignore any speaker label from Deepgram ──────────
         speaker = "prospect"
 
-        print(f"📝 Transcript [prospect]: {text}")
+        self.final_buffer += " " + text
 
-        # Store transcript
-        self.transcript_manager.add_message(speaker, text)
+        # cancel previous debounce
+        if self.debounce_task:
+            self.debounce_task.cancel()
 
-        # Send transcript to frontend
-        await self.send_personal_message(json.dumps({
-            "type": "transcriptUpdate",
-            "speaker": "prospect",
-            "text": text
-        }), websocket)
+        # start new debounce timer
+        self.debounce_task = asyncio.create_task(
+            self.flush_after_delay(websocket)
+        )
 
-        # Run unified Sales AI Engine logic
-        ai_engine = self.ai_engines.get(websocket)
-        if ai_engine:
-            try:
-                analysis = await ai_engine.analyze(speaker, text)
-                if analysis:
-                    await self.send_personal_message(json.dumps({
-                        "type": "aiAnalysis",
-                        "payload": analysis
-                    }), websocket)
-            except Exception as e:
-                print(f"❌ [SalesAI] Unhandled pipeline error: {e}")
-                # Don't drop websocket, just log and continue listening
+    async def flush_after_delay(self, websocket: WebSocket):
+        try:
+            await asyncio.sleep(1.2)  # pause detection
+
+            final_text = self.final_buffer.strip()
+            self.final_buffer = ""
+
+            if not final_text:
+                return
+
+            print(f"📝 Transcript [prospect]: {final_text}")
+
+            # Store transcript
+            self.transcript_manager.add_message("prospect", final_text)
+
+            # send ONE clean transcript
+            await self.send_personal_message(json.dumps({
+                "type": "transcriptUpdate",
+                "speaker": "prospect",
+                "text": final_text
+            }), websocket)
+
+            # trigger AI ONCE
+            ai_engine = self.ai_engines.get(websocket)
+
+            if ai_engine:
+                try:
+                    analysis = await ai_engine.analyze("prospect", final_text)
+                    if analysis:
+                        await self.send_personal_message(json.dumps({
+                            "type": "aiAnalysis",
+                            "payload": analysis
+                        }), websocket)
+                except Exception as e:
+                    print(f"❌ [SalesAI] Unhandled pipeline error: {e}")
+                    # Don't drop websocket, just log and continue listening
+
+        except asyncio.CancelledError:
+            pass
 
     # ==============================
     # AUDIO STREAM HANDLER

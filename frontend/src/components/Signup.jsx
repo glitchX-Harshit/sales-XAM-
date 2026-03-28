@@ -1,154 +1,100 @@
 import { useState } from 'react';
+import { ArrowLeft, User, Mail, Lock, CheckCircle, ArrowRight } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import './Signup.css';
 
-const Signup = ({ onBack, onGetStarted, onLogin }) => {
+const Signup = ({ onBack, onSwitchToLogin, onSignupSuccess }) => {
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
         email: '',
-        company: '',
-        password: '',
+        password: ''
     });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [focused, setFocused] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsSubmitting(true);
-        // Simulate API call
-        setTimeout(() => {
-            setIsSubmitting(false);
-            onGetStarted(); // Navigate to dashboard after signup
-        }, 1500);
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await fetch('http://localhost:8000/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: formData.email, password: formData.password })
+            });
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.detail || 'Failed to create account');
+            }
+            const data = await res.json();
+            login(data.access_token, { id: data.user_id, email: data.email });
+            onSignupSuccess();
+        } catch (err) {
+            setError(err.message);
+        }
+        setLoading(false);
     };
-
-    const FIELDS = [
-        { name: 'firstName', label: 'First Name', placeholder: 'Sarah', icon: '👤', col: 1, type: 'text' },
-        { name: 'lastName', label: 'Last Name', placeholder: 'Chen', icon: '👤', col: 1, type: 'text' },
-        { name: 'email', label: 'Work Email', placeholder: 'sarah@company.com', icon: '✉️', col: 'full', type: 'email' },
-        { name: 'company', label: 'Company Name', placeholder: 'Acme Corp', icon: '🏢', col: 'full', type: 'text' },
-        { name: 'password', label: 'Password', placeholder: '••••••••', icon: '🔒', col: 'full', type: 'password' },
-    ];
-
-    const leftFields = FIELDS.filter((f) => f.col === 1);
-    const fullFields = FIELDS.filter((f) => f.col === 'full');
-
-    const renderField = (f) => (
-        <div key={f.name} className={`su-field ${focused === f.name ? 'su-field-focused' : ''}`}>
-            <label className="su-label" htmlFor={f.name}>
-                <span className="su-label-icon">{f.icon}</span>
-                {f.label}
-            </label>
-            <input
-                id={f.name}
-                type={f.name === 'password' ? (showPassword ? 'text' : 'password') : f.type}
-                name={f.name}
-                value={formData[f.name]}
-                onChange={handleChange}
-                onFocus={() => setFocused(f.name)}
-                onBlur={() => setFocused('')}
-                placeholder={f.placeholder}
-                required
-                className="su-input"
-            />
-            {f.name === 'password' && (
-                <button 
-                    type="button" 
-                    className="su-pwd-toggle interactive" 
-                    onClick={() => setShowPassword(!showPassword)}
-                    tabIndex="-1"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                    {showPassword ? '👁️' : '👁️‍🗨️'}
-                </button>
-            )}
-        </div>
-    );
 
     return (
         <div className="su-overlay">
-            {/* Ambient blobs matching the aesthetic */}
-            <div className="su-blob su-blob-1" />
-            <div className="su-blob su-blob-2" />
-            <div className="su-grid" />
+            {/* Background elements */}
+            <div className="su-blob su-blob-1"></div>
+            <div className="su-blob su-blob-2"></div>
+            <div className="su-grid"></div>
 
-            {/* Back Button */}
+            {/* Back button */}
             <button className="su-back interactive" onClick={onBack}>
-                ← Back to home
+                <ArrowLeft size={16} />
+                <span>Back</span>
             </button>
 
+            {/* Signup card */}
             <div className="su-card">
-                {/* Header */}
                 <div className="su-head">
                     <div className="su-logo-mark">
-                        <span className="su-logo-pulse" />
+                        <CheckCircle size={24} color="#fff" />
                     </div>
                     <div className="su-head-text">
-                        <div className="su-eyebrow">Create Account</div>
-                        <h1 className="su-title">
-                            Join klyro.ai<br />
-                            <span className="su-title-accent">and close more deals</span>
-                        </h1>
-                        <p className="su-subtitle">
-                            Start using the world's most advanced AI sales assistant today. 
-                        </p>
+                        <h2 className="su-title">Get Started<span className="footer-logo-dot">.</span></h2>
+                        <p className="su-subtitle">Create your account and start closing more deals today.</p>
                     </div>
                 </div>
 
-                {/* Divider */}
-                <div className="su-divider" />
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="su-form">
-                    <div className="su-grid-fields">
-                        <div className="su-col">
-                            {leftFields[0] && renderField(leftFields[0])}
-                        </div>
-                        <div className="su-col">
-                            {leftFields[1] && renderField(leftFields[1])}
-                        </div>
+                <form className="su-form" onSubmit={handleSubmit}>
+                    <div className="su-field">
+                        <label className="su-label">Work Email</label>
+                        <input 
+                            type="email" 
+                            className="su-input" 
+                            placeholder="john@company.com"
+                            required
+                            value={formData.email}
+                            onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        />
                     </div>
 
-                    {/* Full-width fields */}
-                    {fullFields.map(renderField)}
+                    <div className="su-field">
+                        <label className="su-label">Password</label>
+                        <input 
+                            type="password" 
+                            className="su-input" 
+                            placeholder="••••••••"
+                            required
+                            value={formData.password}
+                            onChange={(e) => setFormData({...formData, password: e.target.value})}
+                        />
+                    </div>
 
-                    <button type="submit" className="su-submit" disabled={isSubmitting}>
-                        {/* Liquid fill blob */}
-                        <span className="su-btn-blob" aria-hidden="true" />
+                    {error && <div style={{ color: '#ef4444', marginBottom: '1rem', fontSize: '0.9rem', textAlign: 'center' }}>{error}</div>}
 
-                        {isSubmitting ? (
-                            <span className="su-btn-loading">
-                                <span className="su-spinner" />
-                                <span>Creating account…</span>
-                            </span>
-                        ) : (
-                            <span className="su-btn-inner" aria-hidden="false">
-                                {/* Default state */}
-                                <span className="su-btn-default">
-                                    <span className="su-btn-icon">⚡</span>
-                                    <span className="su-btn-label">Create Account</span>
-                                    <span className="su-btn-arrow">→</span>
-                                </span>
-                                {/* Hover state */}
-                                <span className="su-btn-hover">
-                                    <span className="su-btn-icon">✨</span>
-                                    <span className="su-btn-label">Welcome aboard</span>
-                                    <span className="su-btn-arrow">↗</span>
-                                </span>
-                            </span>
-                        )}
+                    <button className="su-submit interactive" type="submit" disabled={loading}>
+                        {loading ? 'Creating Account...' : 'Continue'}
                     </button>
-                    
-                    <p className="su-login-prompt">
-                        Already have an account? <a href="#" className="interactive" onClick={(e) => { e.preventDefault(); onLogin(); }}>Log in</a>
-                    </p>
                 </form>
+
+                <p className="su-login-prompt">
+                    Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); onSwitchToLogin(); }}>Log in</a>
+                </p>
             </div>
         </div>
     );
