@@ -7,280 +7,336 @@ import {
     History, 
     BarChart3, 
     Target, 
-    Settings, 
-    LogOut, 
     Clock, 
-    LayoutGrid, 
     CheckCircle2, 
     TrendingUp, 
-    MessageSquare,
-    AlertCircle,
     BrainCircuit,
-    Activity
+    Activity,
+    ArrowLeft
 } from 'lucide-react';
 import './LiveCall.css';
 
-/* ─────────────────────────────────────────
-   OBJECTIONS & SUGGESTIONS MAPPING
-───────────────────────────────────────── */
-const OBJECTIONS = [
-    { type: 'PRICING', label: '💰 Pricing Objection', color: '#7c3aed', desc: 'Prospect flagged budget concerns', confidence: 94 },
-    { type: 'COMPLEXITY', label: '🧩 Complexity Concern', color: '#7c3aed', desc: 'Previous bad experience with AI tools', confidence: 88 },
-    { type: 'INTEGRATION', label: '🔗 Integration Request', color: '#7c3aed', desc: 'HubSpot required — non-negotiable', confidence: 97 },
-    { type: 'TIMELINE', label: '📅 Timeline Inquiry', color: '#7c3aed', desc: 'Asking about rollout speed', confidence: 82 },
-];
-
 const LiveCall = () => {
-    const dashRef = useRef(null);
     const location = useLocation();
     const navigate = useNavigate();
     const transcriptEndRef = useRef(null);
-    const [callDuration, setCallDuration] = useState(0);
+    
+    // Fallback if no context was passed (e.g. direct URL access)
+    const { callContext } = location.state || { 
+        callContext: {
+            client_name: 'Prospect',
+            product_name: 'Service',
+            call_goal: 'Discovery',
+            client_industry: 'Technology',
+            client_role: 'Decision Maker'
+        }
+    };
+    const contextId = location.state?.contextId || null;
+
     const [isListening, setIsListening] = useState(false);
+    const [callDuration, setCallDuration] = useState(0);
     const [wavePhase, setWavePhase] = useState(0);
     const [transcript, setTranscript] = useState([]);
-    const [latestObjection, setLatestObjection] = useState(null);
     const [suggestionHistory, setSuggestionHistory] = useState([]);
+    const [latestObjection, setLatestObjection] = useState(null);
     const [dealHealthScore, setDealHealthScore] = useState(50);
-    const [callContext, setCallContext] = useState(location.state?.callContext || null);
-    const [contextId, setContextId] = useState(location.state?.contextId || null);
     const [dealStage, setDealStage] = useState('discovery');
     const [coachingTip, setCoachingTip] = useState(null);
-    const [showTabTip, setShowTabTip] = useState(false);
     const [spinStage, setSpinStage] = useState('situation');
-
+    
     // MICROPHONE WEBSOCKET STREAM
     const wsUrl = contextId ? `ws://localhost:8000/ws/audio?context_id=${contextId}` : 'ws://localhost:8000/ws/audio';
     const { startRecording, stopRecording, isRecording } = useAudioStream(wsUrl);
 
-    const handleToggleListen = async () => {
+    // Call Timer
+    useEffect(() => {
+        let interval;
         if (isListening) {
-            stopRecording();
-            setIsListening(false);
-            setShowTabTip(false);
-        } else {
-            setShowTabTip(true);
-            setTimeout(() => setShowTabTip(false), 8000);
-
-            const success = await startRecording({
-                onTranscript: (t) => setTranscript((prev) => [...prev, t]),
-                onAiAnalysis: (analysis) => {
-                    const { spin_stage, objection_type, suggested_response, coaching_tip, next_best_question } = analysis;
-
-                    if (spin_stage) setSpinStage(spin_stage);
-
-                    if (objection_type && objection_type !== 'none') {
-                        setLatestObjection({ type: objection_type });
-                        setTimeout(() => setLatestObjection(null), 8000);
-                    }
-
-                    if (analysis.deal_signal) {
-                        setDealHealthScore(prev => {
-                            let change = 0;
-                            if (analysis.deal_signal === 'positive') change = 10;
-                            else if (analysis.deal_signal === 'neutral') change = 2;
-                            else if (analysis.deal_signal === 'negative') change = -8;
-                            const target = Math.min(100, Math.max(0, prev + change));
-                            return Math.round(prev * 0.4 + target * 0.6);
-                        });
-                    }
-
-                    if (suggested_response) {
-                        const newSuggestion = {
-                            id: Date.now(),
-                            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                            text: suggested_response,
-                            strategy: analysis.strategy_used || coaching_tip || "Guidance",
-                            persuasion: analysis.intent ? `Intent: ${analysis.intent}` : (analysis.persuasion_strategy || "Strategy"),
-                            type: analysis.topic || objection_type || 'none',
-                            nextQuestion: next_best_question
-                        };
-                        setSuggestionHistory(prev => [...prev, newSuggestion].slice(-10));
-                    }
-
-                    if (analysis.deal_stage) setDealStage(analysis.deal_stage);
-                    if (analysis.coaching_tip) setCoachingTip(analysis.coaching_tip);
-                }
-            });
-            if (success) setIsListening(true);
+            interval = setInterval(() => setCallDuration(d => d + 1), 1000);
         }
-    };
+        return () => clearInterval(interval);
+    }, [isListening]);
 
-    const onExit = () => {
-        navigate('/summary', { state: { dealHealthScore, suggestionHistory, callDuration } });
-    };
-
-    /* ── Call timer */
+    // Waveform Animation
     useEffect(() => {
-        const timer = setInterval(() => setCallDuration(d => d + 1), 1000);
-        return () => clearInterval(timer);
-    }, []);
+        let interval;
+        if (isListening) {
+            interval = setInterval(() => setWavePhase(p => p + 1), 100);
+        }
+        return () => clearInterval(interval);
+    }, [isListening]);
 
-    /* ── Wave animation */
-    useEffect(() => {
-        const wave = setInterval(() => setWavePhase(p => p + 1), 100);
-        return () => clearInterval(wave);
-    }, []);
+    const waveHeights = Array.from({ length: 32 }, (_, i) =>
+        isListening ? Math.abs(Math.sin((i + wavePhase) * 0.3)) * 0.8 + 0.1 : 0.1
+    );
 
-    /* ── Auto-scroll transcript */
+    // Auto-scroll transcript
     useEffect(() => {
         if (transcriptEndRef.current) {
             transcriptEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [transcript]);
 
-    const formatTime = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
 
-    const waveHeights = Array.from({ length: 40 }, (_, i) =>
-        Math.abs(Math.sin((i + wavePhase) * 0.3)) * 0.8 + 0.1
-    );
+    const handleStart = async () => {
+        const success = await startRecording({
+            onTranscript: (t) => setTranscript((prev) => [...prev, t]),
+            onAiAnalysis: (analysis) => {
+                const { spin_stage, objection_type, suggested_response, coaching_tip, next_best_question } = analysis;
+
+                if (spin_stage) setSpinStage(spin_stage);
+
+                if (objection_type && objection_type !== 'none') {
+                    setLatestObjection({ type: objection_type });
+                    setTimeout(() => setLatestObjection(null), 8000);
+                }
+
+                if (analysis.deal_signal) {
+                    setDealHealthScore(prev => {
+                        let change = 0;
+                        if (analysis.deal_signal === 'positive') change = 10;
+                        else if (analysis.deal_signal === 'neutral') change = 2;
+                        else if (analysis.deal_signal === 'negative') change = -8;
+                        const target = Math.min(100, Math.max(0, prev + change));
+                        return Math.round(prev * 0.4 + target * 0.6);
+                    });
+                }
+
+                if (suggested_response) {
+                    const newSuggestion = {
+                        id: Date.now(),
+                        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        text: suggested_response,
+                        strategy: analysis.strategy_used || coaching_tip || "Guidance",
+                        persuasion: analysis.intent ? `Intent: ${analysis.intent}` : (analysis.persuasion_strategy || "Strategy"),
+                        type: analysis.topic || objection_type || 'none',
+                        nextQuestion: next_best_question
+                    };
+                    setSuggestionHistory(prev => [...prev, newSuggestion].slice(-10));
+                }
+
+                if (analysis.deal_stage) setDealStage(analysis.deal_stage);
+                if (analysis.coaching_tip) setCoachingTip(analysis.coaching_tip);
+            }
+        });
+        if (success) setIsListening(true);
+    };
+
+    const handleStop = () => {
+        stopRecording();
+        setIsListening(false);
+    };
+
+    const onExit = () => {
+        stopRecording();
+        navigate('/summary', { state: { dealHealthScore, suggestionHistory, callDuration } });
+    };
+    
+    const latestSuggestion = suggestionHistory.length > 0 ? suggestionHistory[suggestionHistory.length - 1] : null;
 
     return (
-        <div className="db-root" ref={dashRef}>
-            {/* ── AMBIENT BACKGROUND */}
-            <div className="db-ambient">
-                <div className="db-blob db-blob-1" />
-                <div className="db-blob db-blob-2" />
-                <div className="db-grid" />
-            </div>
-
+        <div className="db-layout">
             {/* ── SIDEBAR */}
             <aside className="db-sidebar">
-                <div className="db-sidebar-logo">
-                    <span className="db-logo-mark"><Zap size={18} color="#fff" /></span>
-                    <span className="db-logo-text">klyro<span className="db-logo-dot">.</span>ai</span>
+                <div className="db-sidebar-logo" onClick={() => navigate('/')}>
+                    <div className="db-logo-icon" style={{ background: 'var(--color-primary)' }}>
+                        <Zap size={18} color="white" strokeWidth={2.5} />
+                    </div>
+                    <span className="db-logo-text">klyro.ai</span>
                 </div>
 
                 <nav className="db-nav">
-                    <button className="db-nav-item active"><Activity size={18} /> Live Call</button>
+                    <button className="db-nav-item active"><Activity size={18} strokeWidth={2.5} /> Live Call</button>
                     <button className="db-nav-item"><History size={18} /> History</button>
                     <button className="db-nav-item"><BarChart3 size={18} /> Analytics</button>
                     <button className="db-nav-item"><Target size={18} /> Playbooks</button>
-                    <button className="db-nav-item"><Settings size={18} /> Settings</button>
                 </nav>
 
-                <div className="db-sidebar-footer">
-                    <div className="db-user-chip">
-                        <div className="db-user-avatar">JR</div>
-                        <div className="db-user-info">
+                <div className="db-user-section">
+                    <div className="db-user-info">
+                        <div className="db-user-avatar" style={{ background: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}>JR</div>
+                        <div className="db-user-details">
                             <span className="db-user-name">Jake Rivera</span>
                             <span className="db-user-role">Account Executive</span>
                         </div>
                     </div>
-                    <button className="db-nav-item" onClick={onExit}><LogOut size={18} /> Exit</button>
+                    <button className="db-logout-btn interactive" onClick={() => navigate('/dashboard')}>
+                        <ArrowLeft size={14} strokeWidth={2.5} /> Exit Session
+                    </button>
                 </div>
             </aside>
 
             {/* ── MAIN CONTENT */}
-            <div className="db-main">
-                <header className="db-topbar">
-                    <div className="db-call-info">
-                        <div className="db-live-badge">
-                            <span className="db-live-dot" />
-                            {isListening ? 'LIVE' : 'IDLE'}
+            <main className="db-main">
+                {/* Header Strip */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
+                    <div>
+                        <h1 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.05em' }}>
+                            Intelligence Session
+                        </h1>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginTop: '0.6rem', fontSize: '0.875rem', color: 'var(--color-text-dim)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <Clock size={16} /> <span style={{ fontWeight: 600 }}>{formatTime(callDuration)}</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: isListening ? '#10b981' : '#f43f5e' }} />
+                                <span style={{ fontWeight: 700, fontSize: '0.8125rem' }}>{isListening ? 'STREAMING ACTIVE' : 'WAITING TO START'}</span>
+                            </div>
                         </div>
-                        <span className="db-call-name">{callContext ? callContext.client_name : 'New Sales Call'}</span>
-                        <span className="db-call-duration"><Clock size={14} style={{ marginRight: '4px' }} /> {formatTime(callDuration)}</span>
                     </div>
-
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                        <button className={`db-listen-toggle ${isListening ? 'on' : ''}`} onClick={handleToggleListen}>
-                            <Mic size={16} />
-                            {isListening ? 'Listening' : 'Start Listening'}
+                    
+                    {!isListening ? (
+                        <button className="btn btn-primary interactive shadow-sm" onClick={handleStart} style={{ padding: '0 2rem', height: '56px', borderRadius: '12px', fontSize: '1rem' }}>
+                            <Mic size={18} /> Start Monitoring
                         </button>
-                        <button className="btn btn-primary" style={{ padding: '0.5rem 1.5rem' }} onClick={onExit}>End</button>
-                    </div>
-                </header>
+                    ) : (
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <button className="btn btn-outline interactive shadow-sm" onClick={handleStop} style={{ padding: '0 2rem', height: '56px', borderRadius: '12px', borderColor: '#fecaca', color: '#ef4444', fontSize: '1rem' }}>
+                                <Mic size={18} /> Stop Session
+                            </button>
+                            <button className="btn btn-primary interactive shadow-sm" onClick={onExit} style={{ padding: '0 2rem', height: '56px', borderRadius: '12px', fontSize: '1rem' }}>
+                                End Call
+                            </button>
+                        </div>
+                    )}
+                </div>
 
-                <div className="db-panels-grid">
+                <div className="db-content-grid">
                     {/* LEFT PANEL */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                        {/* WAVEFORM */}
-                        <div className="db-panel">
-                            <div className="db-panel-header">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', minHeight: 0 }}>
+                        {/* THE WAVEFORM CARD */}
+                        <div className="card" style={{ padding: '2rem' }}>
+                            <div className="db-panel-header" style={{ marginBottom: '1.75rem' }}>
                                 <span className="db-panel-title">Audio Stream</span>
+                                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-primary)', background: 'rgba(99, 102, 241, 0.08)', padding: '0.3rem 0.75rem', borderRadius: '999px' }}>LIVE</div>
                             </div>
-                            <div className="db-waveform">
+                            <div className="db-waveform" style={{ height: '80px' }}>
                                 {waveHeights.map((h, i) => (
-                                    <div key={i} className="db-wave-bar" style={{ height: `${isListening ? h * 100 : 10}%` }} />
+                                    <div 
+                                        key={i} 
+                                        className="db-wave-bar" 
+                                        style={{ 
+                                            height: `${h * 100}%`, 
+                                            background: isListening ? 'var(--color-primary)' : 'var(--color-border)',
+                                            opacity: isListening ? (i % 2 === 0 ? 1 : 0.6) : 0.3
+                                        }} 
+                                    />
                                 ))}
                             </div>
                         </div>
 
-                        {/* OBJECTIONS */}
-                        <div className="db-panel" style={{ flex: 1 }}>
-                            <div className="db-panel-header">
-                                <span className="db-panel-title">Objection Radar</span>
+                        {/* BRIEFING CARD */}
+                        <div className="card" style={{ padding: '2rem', flex: 1, minHeight: 0 }}>
+                            <div className="db-panel-header" style={{ marginBottom: '1.5rem' }}>
+                                <span className="db-panel-title">Prospect Context</span>
                             </div>
-                            <div className="db-objections-list">
-                                {OBJECTIONS.map((obj) => (
-                                    <div key={obj.type} className={`db-objection-item ${latestObjection?.type === obj.type ? 'detected' : ''}`}>
-                                        {obj.label}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                <div style={{ background: 'var(--color-surface)', padding: '1.25rem', borderRadius: '12px', border: '1px solid var(--color-border)' }}>
+                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Client</span>
+                                    <div style={{ fontSize: '1.125rem', fontWeight: 800, marginTop: '0.25rem' }}>{callContext.client_name}</div>
+                                    <div style={{ fontSize: '0.8125rem', color: 'var(--color-text-dim)', marginTop: '0.2rem' }}>{callContext.client_industry} • {callContext.client_role}</div>
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem' }}>
+                                    <div className="card shadow-sm" style={{ padding: '1rem', background: '#fafafa' }}>
+                                        <div style={{ color: 'var(--color-primary)', marginBottom: '0.5rem' }}><Target size={16} strokeWidth={2.5} /></div>
+                                        <div style={{ fontSize: '0.75rem', fontWeight: 800 }}>Defined Goal</div>
+                                        <div className="entry-text" style={{ fontSize: '0.8125rem', marginTop: '0.25rem' }}>{callContext.call_goal}</div>
                                     </div>
-                                ))}
+                                    <div className="card shadow-sm" style={{ padding: '1rem', background: '#fafafa' }}>
+                                        <div style={{ color: 'var(--color-accent)', marginBottom: '0.5rem' }}><BrainCircuit size={16} strokeWidth={2.5} /></div>
+                                        <div style={{ fontSize: '0.75rem', fontWeight: 800 }}>Product Pitch</div>
+                                        <div className="entry-text" style={{ fontSize: '0.8125rem', marginTop: '0.25rem' }}>{callContext.product_name}</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* MIDDLE PANEL - SUGGESTIONS */}
-                    <div className="db-panel">
-                        <div className="db-panel-header">
-                            <span className="db-panel-title">Suggested Response</span>
-                            <span className="db-live-badge"><BrainCircuit size={12} /> AI AI COACH</span>
+                    {/* MIDDLE PANEL - AI COACH */}
+                    <div className="card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                        <div className="db-panel-header" style={{ marginBottom: '2rem' }}>
+                            <span className="db-panel-title">Suggested Intelligence</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.1)', padding: '0.4rem 0.8rem', borderRadius: '999px' }}>
+                                <div className={isListening ? 'ai-ring' : ''} style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color-primary)' }} />
+                                <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-primary)', letterSpacing: '0.05em' }}>AI ACTIVE</span>
+                            </div>
                         </div>
-                        <div className="db-suggestion-content">
-                            {suggestionHistory.length > 0 ? (
-                                <>
-                                    <span className="db-suggestion-label">{suggestionHistory[suggestionHistory.length-1].strategy}</span>
-                                    <p className="db-suggestion-text">
-                                        "{suggestionHistory[suggestionHistory.length-1].text}"
-                                    </p>
-                                    {suggestionHistory[suggestionHistory.length-1].nextQuestion && (
-                                        <div style={{ color: 'var(--color-primary)', fontSize: '0.9rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <TrendingUp size={16} />
-                                            Follow up: {suggestionHistory[suggestionHistory.length-1].nextQuestion}
+                        
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', padding: '0 1rem', minHeight: 0, overflowY: 'auto' }}>
+                            {!isListening ? (
+                                <div className="animate-fade-in" style={{ color: 'var(--color-text-dim)' }}>
+                                    <div style={{ marginBottom: '1.5rem', opacity: 0.3 }}><Zap size={64} strokeWidth={1.5} /></div>
+                                    <h4 style={{ color: 'var(--color-text)', marginBottom: '0.5rem', fontSize: '1.25rem', fontWeight: 800 }}>Engine Idle</h4>
+                                    <p style={{ fontSize: '0.9375rem', maxWidth: '300px', margin: '0 auto' }}>Strategic suggestions will appear here once audio analysis begins.</p>
+                                </div>
+                            ) : !latestSuggestion ? (
+                                <div className="animate-fade-in" style={{ color: 'var(--color-text-dim)' }}>
+                                    <div style={{ marginBottom: '1.5rem', opacity: 0.3 }}><BrainCircuit size={64} strokeWidth={1.5} /></div>
+                                    <h4 style={{ color: 'var(--color-text)', marginBottom: '0.5rem', fontSize: '1.25rem', fontWeight: 800 }}>Listening for Cues...</h4>
+                                </div>
+                            ) : (
+                                <div className="animate-fade-in" style={{ textAlign: 'left' }}>
+                                    {latestObjection?.type && (
+                                        <div style={{ display: 'inline-block', padding: '0.35rem 0.75rem', background: '#fef2f2', border: '1px solid #fecaca', color: '#ef4444', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 800, marginBottom: '1.5rem', letterSpacing: '0.05em' }}>
+                                            {latestObjection.type.toUpperCase()} DETECTED
                                         </div>
                                     )}
-                                </>
-                            ) : (
-                                <div style={{ textAlign: 'center', color: 'var(--color-text-dim)', marginTop: '4rem' }}>
-                                    <MessageSquare size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
-                                    <p>Listening for cues...</p>
+                                    <div style={{ display: 'inline-block', padding: '0.35rem 0.75rem', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 800, marginBottom: '1.5rem', letterSpacing: '0.05em' }}>
+                                        {latestSuggestion.strategy.toUpperCase()}
+                                    </div>
+                                    <p style={{ fontSize: '1.75rem', fontWeight: 800, lineHeight: 1.3, color: 'var(--color-text)', marginBottom: '2.5rem', letterSpacing: '-0.03em' }}>
+                                        "{latestSuggestion.text}"
+                                    </p>
+                                    {latestSuggestion.nextQuestion && (
+                                        <div style={{ display: 'flex', gap: '1.125rem', padding: '1.5rem', background: 'var(--color-surface)', borderRadius: '16px', border: '1px solid var(--color-border)' }}>
+                                            <TrendingUp size={24} color="var(--color-primary)" strokeWidth={2.5} />
+                                            <div>
+                                                <div style={{ fontSize: '0.875rem', fontWeight: 800 }}>Next Strategic Move</div>
+                                                <div style={{ fontSize: '0.9375rem', color: 'var(--color-text-dim)', marginTop: '0.3rem', lineHeight: 1.4 }}>Ask: "{latestSuggestion.nextQuestion}"</div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    {/* RIGHT PANEL - TRANSCRIPT & HEALTH */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                        {/* HEALTH */}
-                        <div className="db-panel" style={{ height: '200px' }}>
-                             <div className="db-panel-header">
-                                <span className="db-panel-title">Deal Health</span>
+                    {/* RIGHT PANEL - TRANSCRIPT */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', minHeight: 0 }}>
+                        <div className="card" style={{ flex: 1, padding: '2rem', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                            <div className="db-panel-header" style={{ marginBottom: '1.5rem' }}>
+                                <span className="db-panel-title">Live Transcription</span>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-                                <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--color-primary)' }}>{dealHealthScore}%</div>
-                            </div>
-                        </div>
-
-                        {/* TRANSCRIPT */}
-                        <div className="db-panel" style={{ flex: 1 }}>
-                             <div className="db-panel-header">
-                                <span className="db-panel-title">Transcript</span>
-                            </div>
-                            <div className="db-transcript-scroll">
-                                {transcript.map((msg, i) => (
-                                    <div key={i} className="chat-bubble prospect">
-                                        <span className="chat-speaker-label">Prospect</span>
-                                        <p className="chat-text">{msg.text}</p>
-                                    </div>
-                                ))}
-                                <div ref={transcriptEndRef} />
+                            <div className="db-transcript-scroll" style={{ flex: 1, minHeight: 0 }}>
+                               {!isListening ? (
+                                   <div className="animate-fade-in" style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-dim)', fontSize: '0.875rem', fontStyle: 'italic' }}>
+                                       Waiting for stream...
+                                   </div>
+                               ) : transcript.length === 0 ? (
+                                   <div className="animate-fade-in" style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-dim)', fontSize: '0.875rem', fontStyle: 'italic' }}>
+                                       Listening...
+                                   </div>
+                               ) : (
+                                   <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column' }}>
+                                       {transcript.map((msg, i) => (
+                                           <div key={i} className="transcript-entry prospect">
+                                               <div className="entry-tag">Prospect</div>
+                                               <p className="entry-text">{msg.text}</p>
+                                           </div>
+                                       ))}
+                                       <div ref={transcriptEndRef} />
+                                   </div>
+                               )}
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     );
 };

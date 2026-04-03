@@ -22,11 +22,11 @@ import PostCallSummary from './pages/PostCallSummary';
 
 function LandingPage() {
     const navigate = useNavigate();
-    
+
     return (
         <main>
-            <Navbar 
-                onGetStarted={() => navigate('/dashboard')} 
+            <Navbar
+                onGetStarted={() => navigate('/dashboard')}
                 onSignup={() => navigate('/auth', { state: { view: 'signup' } })}
                 onLogin={() => navigate('/auth', { state: { view: 'login' } })}
             />

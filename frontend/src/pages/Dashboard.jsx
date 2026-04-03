@@ -1,92 +1,108 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Zap, LogOut, Phone, History, LayoutDashboard, BarChart2, Settings, ChevronRight } from 'lucide-react';
+import { 
+    LayoutGrid, 
+    Phone, 
+    History, 
+    BarChart3, 
+    Target, 
+    Settings, 
+    LogOut, 
+    Zap,
+    Clock,
+    ChevronRight,
+    TrendingUp,
+    ShieldCheck,
+    MessageSquare
+} from 'lucide-react';
 
 const OverviewTab = ({ user, navigate }) => (
-    <div>
-        <div style={{ textAlign: 'center', marginBottom: '4rem', marginTop: '2rem' }}>
-            <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Welcome back{user?.name ? `, ${user.name}` : ''}!</h1>
-            <p style={{ color: 'var(--color-text-dim)', fontSize: '1.1rem', marginBottom: '2rem' }}>Ready to crush your next sales call?</p>
-            <button 
-                className="interactive" 
-                onClick={() => navigate('/call-brief')}
-                style={{ background: 'var(--color-primary)', color: '#fff', border: 'none', padding: '1rem 2rem', fontSize: '1.1rem', borderRadius: '8px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}
-            >
-                <Phone size={20} /> Start New Call
-            </button>
-        </div>
-
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><History size={20} /> Recent Calls</h2>
-            <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '12px', padding: '3rem', textAlign: 'center', color: 'var(--color-text-dim)' }}>
-                You haven't made any calls yet. Start your first call above!
+    <div className="animate-fade-in">
+        {/* Header Section */}
+        <div style={{ padding: '4rem 0', marginBottom: '3rem' }}>
+            <h1 className="gradient-text" style={{ fontSize: '3.5rem', marginBottom: '1rem', fontWeight: 800, letterSpacing: '-0.05em' }}>
+                Welcome back{user?.name ? `, ${user.name}` : ''}!
+            </h1>
+            <p style={{ color: 'var(--color-text-dim)', fontSize: '1.25rem', marginBottom: '2.5rem', fontWeight: 500, maxWidth: '600px' }}>
+                Your AI-powered deal intelligence is ready. Boost your conversion rates with real-time coaching.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+                <button 
+                    className="btn btn-primary interactive" 
+                    onClick={() => navigate('/call-brief')}
+                    style={{ height: '56px', padding: '0 2.5rem', fontSize: '1rem', borderRadius: '12px' }}
+                >
+                    <Phone size={18} /> Start New Call
+                </button>
+                <button 
+                    className="btn btn-outline interactive" 
+                    onClick={() => {}}
+                    style={{ height: '56px', padding: '0 2rem', fontSize: '1rem', borderRadius: '12px' }}
+                >
+                    View Analytics
+                </button>
             </div>
         </div>
-    </div>
-);
 
-const AnalyticsTab = () => (
-    <div>
-        <h2 style={{ fontSize: '2rem', marginBottom: '2rem' }}>Analytics Dashboard</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
-            {['Total Calls', 'Avg Deal Health', 'Objections Handled', 'Win Rate'].map((metric, i) => (
-                <div key={i} style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '12px', padding: '1.5rem' }}>
-                    <div style={{ color: 'var(--color-text-dim)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>{metric}</div>
-                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{['12', '84%', '34', '18%'][i]}</div>
+        {/* Bento Grid Features */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>
+            <div className="card card-hover" style={{ padding: '2rem' }}>
+                <div style={{ background: 'rgba(99, 102, 241, 0.1)', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                    <ShieldCheck size={24} color="var(--color-primary)" />
                 </div>
-            ))}
+                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem' }}>Deal Health</h3>
+                <p style={{ fontSize: '0.9375rem' }}>Analyze prospect intent and risk factors automatically across your conversations.</p>
+            </div>
+            <div className="card card-hover" style={{ padding: '2rem' }}>
+                <div style={{ background: 'rgba(6, 182, 212, 0.1)', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                    <TrendingUp size={24} color="var(--color-accent)" />
+                </div>
+                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem' }}>Performance</h3>
+                <p style={{ fontSize: '0.9375rem' }}>Track your objections-handled ratio and closing effectiveness in real-time.</p>
+            </div>
+            <div className="card card-hover" style={{ padding: '2rem' }}>
+                <div style={{ background: 'rgba(236, 72, 153, 0.1)', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                    <MessageSquare size={24} color="#ec4899" />
+                </div>
+                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem' }}>AI Coaching</h3>
+                <p style={{ fontSize: '0.9375rem' }}>Get instant suggestions for next-best-questions and value propositions.</p>
+            </div>
         </div>
-        <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '12px', padding: '1.5rem', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-dim)' }}>
-            [Interactive Chart Placeholder]
-        </div>
-    </div>
-);
 
-const HistoryTab = () => (
-    <div>
-        <h2 style={{ fontSize: '2rem', marginBottom: '2rem' }}>Call History</h2>
-        <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '12px', overflow: 'hidden' }}>
-            {['Closing sync with Acme Corp', 'Discovery - TechStart', 'Follow-up w/ Globex'].map((call, i) => (
-                <div key={i} className="interactive" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', borderBottom: i !== 2 ? '1px solid var(--color-border)' : 'none', cursor: 'pointer' }}>
-                    <div>
-                        <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.25rem' }}>{call}</div>
-                        <div style={{ color: 'var(--color-text-dim)', fontSize: '0.9rem' }}>{['Today, 2:30 PM', 'Yesterday, 10:00 AM', 'Oct 12, 4:15 PM'][i]} • {['45 min', '22 min', '15 min'][i]}</div>
-                    </div>
-                    <ChevronRight size={20} color="var(--color-text-dim)" />
-                </div>
-            ))}
+        {/* Recent Activity */}
+        <div style={{ marginTop: '4rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <History size={20} color="var(--color-text-dim)" /> Recent Sessions
+                </h2>
+                <button className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.8125rem' }}>View all history</button>
+            </div>
+            <div className="card" style={{ padding: '6rem 2rem', textAlign: 'center', background: 'var(--color-surface)' }}>
+                <div style={{ marginBottom: '1.5rem', opacity: 0.1 }}><History size={64} /></div>
+                <p style={{ fontWeight: 600, fontSize: '1.125rem', color: 'var(--color-text)' }}>Quiet for now...</p>
+                <p style={{ fontSize: '0.875rem', color: 'var(--color-text-dim)', marginTop: '0.5rem' }}>Your deal intelligence will populate here once you start your first call.</p>
+            </div>
         </div>
     </div>
 );
 
 const SettingsTab = ({ user }) => (
-    <div style={{ maxWidth: '600px' }}>
-        <h2 style={{ fontSize: '2rem', marginBottom: '2rem' }}>Settings</h2>
+    <div className="animate-fade-in" style={{ maxWidth: '700px' }}>
+        <h2 style={{ fontSize: '2rem', marginBottom: '2.5rem', fontWeight: 800 }}>Settings</h2>
         
-        <div style={{ marginBottom: '2rem' }}>
-            <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>Profile</h3>
-            <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '12px', padding: '1.5rem' }}>
-                <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ display: 'block', color: 'var(--color-text-dim)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Email Address</label>
-                    <input type="email" disabled value={user?.email || ''} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--color-border)', background: 'rgba(255,255,255,0.05)', color: '#fff' }} />
-                </div>
-                <div>
-                    <label style={{ display: 'block', color: 'var(--color-text-dim)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Display Name</label>
-                    <input type="text" placeholder="John Doe" style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--color-border)', background: 'rgba(255,255,255,0.05)', color: '#fff' }} />
-                </div>
-            </div>
-        </div>
-
-        <div style={{ marginBottom: '2rem' }}>
-            <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>Integrations</h3>
-            <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '12px', padding: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                        <div style={{ fontWeight: 'bold' }}>Salesforce CRM</div>
-                        <div style={{ color: 'var(--color-text-dim)', fontSize: '0.9rem' }}>Sync call notes automatically</div>
+        <div style={{ marginBottom: '3rem' }}>
+            <h3 style={{ fontSize: '0.75rem', fontWeight: 700, marginBottom: '1.25rem', color: 'var(--color-text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Profile Information</h3>
+            <div className="card" style={{ padding: '2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
+                    <div className="shadow-premium" style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'var(--color-primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', fontWeight: 800 }}>
+                        {user?.email?.charAt(0).toUpperCase() || 'U'}
                     </div>
-                    <button style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer' }}>Connect</button>
+                    <div>
+                        <div style={{ fontWeight: 700, fontSize: '1.125rem' }}>{user?.email?.split('@')[0]}</div>
+                        <div style={{ color: 'var(--color-text-dim)', fontSize: '0.875rem' }}>{user?.email}</div>
+                    </div>
+                    <button className="btn btn-outline" style={{ marginLeft: 'auto' }}>Edit Profile</button>
                 </div>
             </div>
         </div>
@@ -94,9 +110,9 @@ const SettingsTab = ({ user }) => (
 );
 
 const Dashboard = () => {
+    const [activeTab, setActiveTab] = useState('overview');
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState('overview');
 
     const handleLogout = () => {
         logout();
@@ -104,76 +120,251 @@ const Dashboard = () => {
     };
 
     const navItems = [
-        { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-        { id: 'analytics', label: 'Analytics', icon: BarChart2 },
+        { id: 'overview', label: 'Overview', icon: LayoutGrid },
         { id: 'history', label: 'Call History', icon: History },
+        { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+        { id: 'playbooks', label: 'Playbooks', icon: Target },
         { id: 'settings', label: 'Settings', icon: Settings },
     ];
 
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', background: '#000', color: '#fff' }}>
-            {/* Sidebar */}
-            <aside style={{ width: '260px', minWidth: '260px', background: 'var(--color-surface)', borderRight: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ padding: '2rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Zap size={16} color="#fff" />
+        <div className="db-layout">
+            <aside className="db-sidebar">
+                <div className="db-sidebar-logo" onClick={() => navigate('/')}>
+                    <div className="db-logo-icon" style={{ background: 'var(--color-primary)' }}>
+                        <Zap size={18} color="white" />
                     </div>
-                    <span style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>klyro.ai</span>
+                    <span className="db-logo-text">klyro.ai</span>
                 </div>
 
-                <nav style={{ flex: 1, padding: '0 1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    {navItems.map(item => {
+                <nav className="db-nav">
+                    {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = activeTab === item.id;
                         return (
                             <button
                                 key={item.id}
                                 onClick={() => setActiveTab(item.id)}
-                                style={{
-                                    display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', padding: '0.75rem 1rem',
-                                    background: isActive ? 'rgba(255,255,255,0.1)' : 'transparent',
-                                    color: isActive ? '#fff' : 'var(--color-text-dim)',
-                                    border: 'none', borderRadius: '8px', cursor: 'pointer', textAlign: 'left',
-                                    transition: 'all 0.2s ease', fontWeight: isActive ? 600 : 400
-                                }}
-                                onMouseOver={(e) => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.05)' }}
-                                onMouseOut={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent' }}
+                                className={`db-nav-item ${isActive ? 'active' : ''}`}
                             >
-                                <Icon size={18} color={isActive ? 'var(--color-primary)' : 'currentColor'} />
-                                {item.label}
+                                <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+                                <span className="db-nav-label">{item.label}</span>
+                                {isActive && <ChevronRight size={14} style={{ marginLeft: 'auto', opacity: 0.5 }} />}
                             </button>
                         );
                     })}
                 </nav>
 
-                <div style={{ padding: '1.5rem', borderTop: '1px solid var(--color-border)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--color-primary), #4c1d95)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                <div className="db-user-section">
+                    <div className="db-user-info">
+                        <div className="db-user-avatar" style={{ background: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}>
                             {user?.email?.charAt(0).toUpperCase() || 'U'}
                         </div>
-                        <div style={{ overflow: 'hidden' }}>
-                            <div style={{ fontWeight: 600, fontSize: '0.9rem', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{user?.email || 'User'}</div>
-                            <div style={{ color: 'var(--color-text-dim)', fontSize: '0.8rem' }}>Free Plan</div>
+                        <div className="db-user-details">
+                            <span className="db-user-name">{user?.email?.split('@')[0]}</span>
+                            <span className="db-user-role">Sales Pro</span>
                         </div>
                     </div>
-                    <button 
-                        onClick={handleLogout} 
-                        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--color-border)', color: 'var(--color-text-dim)', padding: '0.5rem', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' }}
-                        onMouseOver={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
-                        onMouseOut={(e) => { e.currentTarget.style.color = 'var(--color-text-dim)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
-                    >
-                        <LogOut size={16} /> Logout
+                    <button onClick={handleLogout} className="db-logout-btn interactive">
+                        <LogOut size={14} /> Log out
                     </button>
                 </div>
             </aside>
 
-            {/* Main Content */}
-            <main style={{ flex: 1, padding: '3rem 4rem', overflowY: 'auto' }}>
+            <main className="db-main">
                 {activeTab === 'overview' && <OverviewTab user={user} navigate={navigate} />}
-                {activeTab === 'analytics' && <AnalyticsTab />}
-                {activeTab === 'history' && <HistoryTab />}
                 {activeTab === 'settings' && <SettingsTab user={user} />}
+                {activeTab !== 'overview' && activeTab !== 'settings' && (
+                    <div className="animate-fade-in" style={{ padding: '4rem 0', textAlign: 'center' }}>
+                        <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>{navItems.find(i => i.id === activeTab)?.label}</h2>
+                        <p style={{ color: 'var(--color-text-dim)' }}>This module is currently being optimized for high-performance sales teams.</p>
+                    </div>
+                )}
             </main>
+
+            <style>{`
+                .db-layout {
+                    display: flex;
+                    min-height: 100vh;
+                    background: var(--color-bg);
+                }
+
+                .db-sidebar {
+                    width: 280px;
+                    min-width: 280px;
+                    background: var(--color-bg);
+                    border-right: 1px solid var(--color-border);
+                    display: flex;
+                    flex-direction: column;
+                    position: sticky;
+                    top: 0;
+                    height: 100vh;
+                    z-index: 100;
+                    padding: 2rem 1.5rem;
+                }
+
+                .db-sidebar-logo {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    padding: 0 0.75rem;
+                    margin-bottom: 3rem;
+                    cursor: pointer;
+                }
+
+                .db-logo-icon {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+                }
+
+                .db-logo-text {
+                    font-size: 1.25rem;
+                    font-weight: 800;
+                    letter-spacing: -0.05em;
+                }
+
+                .db-nav {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.25rem;
+                    flex: 1;
+                }
+
+                .db-nav-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    padding: 0.75rem 0.875rem;
+                    border-radius: 10px;
+                    color: var(--color-text-dim);
+                    border: none;
+                    background: transparent;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    text-align: left;
+                    width: 100%;
+                }
+
+                .db-nav-item:hover {
+                    background: var(--color-surface);
+                    color: var(--color-text);
+                }
+
+                .db-nav-item.active {
+                    background: rgba(99, 102, 241, 0.05);
+                    color: var(--color-primary);
+                }
+
+                .db-nav-label {
+                    font-size: 0.9375rem;
+                    font-weight: 500;
+                }
+
+                .db-nav-item.active .db-nav-label {
+                    font-weight: 700;
+                }
+
+                .db-user-section {
+                    margin-top: auto;
+                    padding-top: 2rem;
+                    border-top: 1px solid var(--color-border);
+                }
+
+                .db-user-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    margin-bottom: 1.25rem;
+                    padding: 0 0.5rem;
+                }
+
+                .db-user-avatar {
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: 800;
+                    font-size: 0.875rem;
+                }
+
+                .db-user-details {
+                    display: flex;
+                    flex-direction: column;
+                    min-width: 0;
+                }
+
+                .db-user-name {
+                    font-size: 0.875rem;
+                    font-weight: 700;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .db-user-role {
+                    font-size: 0.75rem;
+                    color: var(--color-text-dim);
+                }
+
+                .db-logout-btn {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.5rem;
+                    width: 100%;
+                    background: var(--color-surface);
+                    border: 1px solid var(--color-border);
+                    color: var(--color-text);
+                    padding: 0.625rem;
+                    border-radius: 10px;
+                    font-size: 0.8125rem;
+                    font-weight: 600;
+                }
+
+                .db-logout-btn:hover {
+                    background: #fee2e2;
+                    color: #bd2130;
+                    border-color: #f5c6cb;
+                }
+
+                .db-main {
+                    flex: 1;
+                    padding: 4rem 6rem;
+                    max-width: 1400px;
+                    background: #ffffff;
+                }
+
+                @media (max-width: 1200px) {
+                    .db-main {
+                        padding: 3rem 4rem;
+                    }
+                }
+
+                @media (max-width: 1024px) {
+                    .db-sidebar {
+                        width: 80px;
+                        min-width: 80px;
+                        padding: 2rem 0.75rem;
+                    }
+                    .db-logo-text, .db-nav-label, .db-user-details, .db-logout-btn span {
+                        display: none;
+                    }
+                    .db-sidebar-logo, .db-nav-item, .db-user-info {
+                        justify-content: center;
+                        padding: 0.75rem;
+                    }
+                    .db-main {
+                        padding: 2rem 3rem;
+                    }
+                }
+            `}</style>
         </div>
     );
 };

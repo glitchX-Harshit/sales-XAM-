@@ -1,9 +1,7 @@
 /* ================================================================
-   SIGNUP & LOGIN FORM — Minimal Dark Mode Redesign
-   Aesthetic: Black, Purple, White
+   SIGNUP & LOGIN — Precision Light Refinement
 ================================================================= */
 
-/* ── OVERLAY ── */
 .su-overlay {
     position: fixed;
     inset: 0;
@@ -11,115 +9,80 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-bg);
-    padding: 1rem;
-    overflow: hidden;
+    background-color: var(--color-surface);
+    padding: 1.5rem;
+    overflow-y: auto;
 }
 
-/* ── AMBIENT BLOBS ── */
-.su-blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-    pointer-events: none;
-    z-index: 0;
-}
-
-.su-blob-1 {
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
-    top: -10%;
-    right: -5%;
-}
-
-.su-blob-2 {
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, transparent 70%);
-    bottom: -10%;
-    left: -5%;
-}
-
-.su-grid {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background-image: linear-gradient(var(--color-border) 1px, transparent 1px),
-                      linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
-    background-size: 60px 60px;
-    mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
-    opacity: 0.2;
-}
-
-/* ── BACK BUTTON ── */
 .su-back {
     position: absolute;
-    top: 2rem;
-    left: 2rem;
+    top: 2.5rem;
+    left: 2.5rem;
     z-index: 20;
-    background: var(--color-glass);
-    backdrop-filter: blur(12px);
+    background: #ffffff;
     border: 1px solid var(--color-border);
-    padding: 0.6rem 1.2rem;
-    border-radius: 100px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--color-white);
+    padding: 0.6rem 1.25rem;
+    border-radius: 12px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-text);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    transition: all 0.2s ease;
+    gap: 0.6rem;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .su-back:hover {
-    background: var(--color-glass-hover);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--color-surface);
+    transform: translateX(-4px);
+    box-shadow: var(--shadow-md);
 }
 
-/* ── CARD ── */
 .su-card {
     position: relative;
     z-index: 10;
     width: 100%;
-    max-width: 480px;
-    background: var(--color-glass);
-    backdrop-filter: blur(40px);
+    max-width: 460px;
+    background: #ffffff;
     border: 1px solid var(--color-border);
-    border-radius: 32px;
-    padding: 3rem;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+    border-radius: 24px;
+    padding: 4rem 3.5rem;
+    box-shadow: var(--shadow-premium);
 }
 
-/* ── HEADER ── */
 .su-head {
-    margin-bottom: 2.5rem;
+    margin-bottom: 3rem;
+    text-align: center;
 }
 
 .su-logo-mark {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     background: var(--color-primary);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1.5rem;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 .su-title {
     font-size: 2rem;
     font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.5rem;
+    letter-spacing: -0.05em;
+    margin-bottom: 0.75rem;
+    color: var(--color-text);
 }
 
 .su-subtitle {
-    font-size: 0.95rem;
+    font-size: 0.9375rem;
     color: var(--color-text-dim);
+    line-height: 1.5;
+    font-weight: 500;
 }
 
-/* ── FORM ── */
 .su-form {
     display: flex;
     flex-direction: column;
@@ -135,57 +98,55 @@
 .su-label {
     font-size: 0.75rem;
     font-weight: 700;
-    color: var(--color-text-dim);
+    color: var(--color-text);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.1em;
+    margin-left: 0.1rem;
 }
 
 .su-input {
-    background: rgba(255, 255, 255, 0.03);
+    background: #ffffff;
     border: 1px solid var(--color-border);
     border-radius: 12px;
-    padding: 0.875rem 1rem;
-    font-size: 1rem;
-    color: var(--color-white);
+    padding: 1rem 1.125rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-text);
     transition: all 0.2s ease;
     outline: none;
 }
 
 .su-input:focus {
     border-color: var(--color-primary);
-    background: rgba(124, 58, 237, 0.05);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
-/* ── SUBMIT BUTTON ── */
 .su-submit {
-    background: var(--color-primary);
-    color: white;
-    padding: 1rem;
+    background: var(--color-text);
+    color: #ffffff;
+    padding: 1.125rem;
     border-radius: 12px;
     font-size: 1rem;
     font-weight: 700;
     border: none;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     margin-top: 1rem;
+    box-shadow: var(--shadow-sm);
 }
 
 .su-submit:hover:not(:disabled) {
-    background: var(--color-accent);
+    background: #18181b;
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3);
-}
-
-.su-submit:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    box-shadow: var(--shadow-md);
 }
 
 .su-login-prompt {
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     color: var(--color-text-dim);
-    margin-top: 2rem;
+    margin-top: 2.5rem;
 }
 
 .su-login-prompt a {
@@ -198,8 +159,13 @@
     text-decoration: underline;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 540px) {
     .su-card {
-        padding: 2rem;
+        padding: 3rem 2rem;
+        border-radius: 20px;
+    }
+    .su-back {
+        top: 1.5rem;
+        left: 1.5rem;
     }
 }
