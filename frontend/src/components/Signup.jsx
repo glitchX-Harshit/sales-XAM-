@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { ArrowLeft, User, Mail, Lock, CheckCircle, ArrowRight } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { ArrowLeft, CheckCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { gsap } from 'gsap';
 import './Signup.css';
 
 const Signup = ({ onBack, onSwitchToLogin, onSignupSuccess }) => {
@@ -11,6 +12,30 @@ const Signup = ({ onBack, onSwitchToLogin, onSignupSuccess }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const { login } = useAuth();
+    const cardRef = useRef(null);
+    const contentRef = useRef(null);
+
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            gsap.from(cardRef.current, {
+                y: 30,
+                opacity: 0,
+                duration: 1,
+                ease: 'power4.out',
+                delay: 0.1
+            });
+            
+            gsap.from('.su-form > *, .su-head > *', {
+                y: 20,
+                opacity: 0,
+                stagger: 0.1,
+                duration: 0.8,
+                ease: 'power3.out',
+                delay: 0.3
+            });
+        });
+        return () => ctx.revert();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -37,27 +62,22 @@ const Signup = ({ onBack, onSwitchToLogin, onSignupSuccess }) => {
 
     return (
         <div className="su-overlay">
-            {/* Background elements */}
             <div className="su-blob su-blob-1"></div>
             <div className="su-blob su-blob-2"></div>
             <div className="su-grid"></div>
 
-            {/* Back button */}
             <button className="su-back interactive" onClick={onBack}>
                 <ArrowLeft size={16} />
                 <span>Back</span>
             </button>
 
-            {/* Signup card */}
-            <div className="su-card">
+            <div className="su-card shadow-premium" ref={cardRef}>
                 <div className="su-head">
                     <div className="su-logo-mark">
-                        <CheckCircle size={24} color="#fff" />
+                        <CheckCircle size={24} color="var(--color-white)" />
                     </div>
-                    <div className="su-head-text">
-                        <h2 className="su-title">Get Started<span className="footer-logo-dot">.</span></h2>
-                        <p className="su-subtitle">Create your account and start closing more deals today.</p>
-                    </div>
+                    <h2 className="su-title">Get started</h2>
+                    <p className="su-subtitle">Join 2,000+ sales professionals closing faster with AI.</p>
                 </div>
 
                 <form className="su-form" onSubmit={handleSubmit}>
@@ -66,7 +86,7 @@ const Signup = ({ onBack, onSwitchToLogin, onSignupSuccess }) => {
                         <input 
                             type="email" 
                             className="su-input" 
-                            placeholder="john@company.com"
+                            placeholder="name@company.com"
                             required
                             value={formData.email}
                             onChange={(e) => setFormData({...formData, email: e.target.value})}
@@ -85,7 +105,7 @@ const Signup = ({ onBack, onSwitchToLogin, onSignupSuccess }) => {
                         />
                     </div>
 
-                    {error && <div style={{ color: '#ef4444', marginBottom: '1rem', fontSize: '0.9rem', textAlign: 'center' }}>{error}</div>}
+                    {error && <div style={{ color: '#ef4444', marginBottom: '1rem', fontSize: '0.8125rem', textAlign: 'center', fontWeight: 600 }}>{error}</div>}
 
                     <button className="su-submit interactive" type="submit" disabled={loading}>
                         {loading ? 'Creating Account...' : 'Continue'}
@@ -93,7 +113,7 @@ const Signup = ({ onBack, onSwitchToLogin, onSignupSuccess }) => {
                 </form>
 
                 <p className="su-login-prompt">
-                    Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); onSwitchToLogin(); }}>Log in</a>
+                    Already using klyro? <a href="#" onClick={(e) => { e.preventDefault(); onSwitchToLogin(); }}>Log in</a>
                 </p>
             </div>
         </div>
@@ -101,3 +121,5 @@ const Signup = ({ onBack, onSwitchToLogin, onSignupSuccess }) => {
 };
 
 export default Signup;
+
+

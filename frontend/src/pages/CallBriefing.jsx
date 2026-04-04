@@ -52,33 +52,28 @@ const CallBriefing = () => {
 
     return (
         <div className="cb-overlay">
-            {/* Background elements */}
-            <div className="cb-blob cb-blob-1"></div>
-            <div className="cb-blob cb-blob-2"></div>
-            <div className="cb-grid"></div>
-
             {/* Back button */}
             <button className="cb-back interactive" onClick={() => navigate(-1)}>
-                <ArrowLeft size={16} />
-                <span>Back</span>
+                <ArrowLeft size={16} strokeWidth={2.5} />
+                <span>Back to Dashboard</span>
             </button>
 
             {/* Card */}
-            <div className="cb-card">
+            <div className="cb-card animate-fade-in">
                 <div className="cb-head">
                     <div className="cb-logo-mark">
-                        <Zap size={20} color="#fff" />
+                        <Zap size={24} color="#fff" strokeWidth={2.5} />
                     </div>
                     <div className="cb-head-text">
-                        <h2 className="cb-title">Call Briefing<span className="footer-logo-dot">.</span></h2>
-                        <p className="cb-subtitle">Enter call details to prime the AI closing engine.</p>
+                        <h2 className="cb-title">Call Intelligence Briefing</h2>
+                        <p className="cb-subtitle">Prepare the AI with deal context for maximum closing potential.</p>
                     </div>
                 </div>
 
                 <form className="cb-form" onSubmit={handleSubmit}>
                     <div className="cb-grid-fields">
                         <div className="cb-field">
-                            <label className="cb-label"><User size={12} /> Prospect Name</label>
+                            <label className="cb-label"><User size={14} color="var(--color-primary)" /> Prospect Name</label>
                             <input 
                                 type="text" 
                                 className="cb-input" 
@@ -89,18 +84,18 @@ const CallBriefing = () => {
                             />
                         </div>
                         <div className="cb-field">
-                            <label className="cb-label"><Building size={12} /> Industry</label>
+                            <label className="cb-label"><Building size={14} color="var(--color-primary)" /> Company / Industry</label>
                             <input 
                                 type="text" 
                                 className="cb-input" 
-                                placeholder="SaaS / Fintech"
+                                placeholder="Fintech Inc."
                                 required
                                 value={formData.client_industry}
                                 onChange={(e) => setFormData({...formData, client_industry: e.target.value})}
                             />
                         </div>
                         <div className="cb-field">
-                            <label className="cb-label"><User size={12} /> Role / Title</label>
+                            <label className="cb-label"><Briefcase size={14} color="var(--color-primary)" /> Title / Role</label>
                             <input 
                                 type="text" 
                                 className="cb-input" 
@@ -113,11 +108,11 @@ const CallBriefing = () => {
                     </div>
 
                     <div className="cb-field">
-                        <label className="cb-label"><Briefcase size={12} /> Your Product</label>
+                        <label className="cb-label"><Zap size={14} color="var(--color-primary)" /> Your Product or Service</label>
                         <input 
                             type="text" 
                             className="cb-input" 
-                            placeholder="Enterprise CRM"
+                            placeholder="Enterprise Sales Acceleration Platform"
                             required
                             value={formData.product_name}
                             onChange={(e) => setFormData({...formData, product_name: e.target.value})}
@@ -125,10 +120,10 @@ const CallBriefing = () => {
                     </div>
 
                     <div className="cb-field">
-                        <label className="cb-label"><Target size={12} /> Call Goal</label>
+                        <label className="cb-label"><Target size={14} color="var(--color-primary)" /> Strategic Call Goal</label>
                         <textarea 
                             className="cb-textarea" 
-                            placeholder="Close the Q3 pilot contract..."
+                            placeholder="Identify pain points regarding lead velocity and handle pricing objections for the Q3 pilot..."
                             required
                             value={formData.call_goal}
                             onChange={(e) => setFormData({...formData, call_goal: e.target.value})}
@@ -138,14 +133,14 @@ const CallBriefing = () => {
                     {error && <div className="cb-error">{error}</div>}
 
                     <button className="cb-submit interactive" type="submit" disabled={loading}>
-                        <Sparkles size={16} style={{ marginRight: '8px' }} />
-                        {loading ? 'Priming AI Engine...' : 'Start Assisted Call'}
+                        <Sparkles size={18} />
+                        {loading ? 'Initializing Engine...' : 'Launch Intelligence Session'}
                     </button>
                     
-                    <p className="cb-footnote">
-                        <CheckCircle2 size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
-                        AI suggestions will optimize for your goal and product.
-                    </p>
+                    <div className="cb-footnote">
+                        <CheckCircle2 size={14} color="#10b981" />
+                        <span>AI will optimize suggestions for this specific target and goal.</span>
+                    </div>
                 </form>
             </div>
         </div>

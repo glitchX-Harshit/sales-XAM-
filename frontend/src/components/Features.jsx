@@ -1,64 +1,96 @@
-import { Ear, Zap, Shield, Layers } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { Ear, Zap, Shield, Layers, ArrowRight } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './Features.css';
 
+gsap.registerPlugin(ScrollTrigger);
+
 const STATS = [
-    { value: 4, suffix: '×', label: 'Faster objection detection than manual monitoring' },
-    { value: 94, suffix: '%', label: 'Coverage across the most common sales objections' },
-    { value: 22, suffix: '%', label: 'Average increase in close rates for active users' },
+    { value: 4, suffix: '×', label: 'Faster detect' },
+    { value: 94, suffix: '%', label: 'Coverage' },
+    { value: 22, suffix: '%', label: 'Close rate' },
 ];
 
 const Features = () => {
+    const sectionRef = useRef(null);
+    const gridRef = useRef(null);
+
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            gsap.from('.feat-header > *', {
+                y: 30,
+                opacity: 0,
+                stagger: 0.1,
+                scrollTrigger: {
+                    trigger: '.feat-header',
+                    start: 'top 80%',
+                }
+            });
+
+            gsap.from('.feat-card', {
+                y: 50,
+                opacity: 0,
+                stagger: 0.15,
+                duration: 1,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '.feat-bento',
+                    start: 'top 75%',
+                }
+            });
+        }, sectionRef);
+
+        return () => ctx.revert();
+    }, []);
+
     return (
-        <section className="features-section" id="features">
+        <section className="features-section" id="features" ref={sectionRef}>
             <div className="container">
-                {/* Header */}
                 <div className="feat-header">
-                    <div className="feat-header-eyebrow">Capabilities</div>
-                    <h2 className="feat-header-title">
-                        <div className="feat-header-line">Listen. <em>Detect.</em> Close.</div>
+                    <span className="feat-eyebrow">The Engine</span>
+                    <h2 className="feat-title">
+                        Everything you need <br />
+                        <span className="hero-gradient-text">to close faster.</span>
                     </h2>
                 </div>
 
-                {/* Stats row */}
-                <div className="feat-stats-row">
-                    {STATS.map((s, i) => (
-                        <div className="feat-stat-card" key={i}>
-                            <div className="feat-stat-number">
-                                <span className="stat-counter">{s.value}</span>
-                                <span className="stat-suf">{s.suffix}</span>
-                            </div>
-                            <p className="feat-stat-label">{s.label}</p>
+                <div className="feat-bento" ref={gridRef}>
+                    <div className="feat-card span-2 interactive group">
+                        <div className="feat-content">
+                            <div className="feat-icon-ring"><Ear size={20} /></div>
+                            <h3>Real-time Intent Detection</h3>
+                            <p>Our proprietary engine listens for subtle acoustic cues and semantic shifts to detect objections before they're even fully voiced.</p>
                         </div>
-                    ))}
-                </div>
-
-                {/* Bento grid */}
-                <div className="feat-bento">
-                    <div className="feat-card span-2 interactive">
-                        <div className="feat-icon-wrap"><Ear size={24} color="#7c3aed" /></div>
-                        <h3>Detect Objections <em>In-Real-Time.</em></h3>
-                        <p>klyro.ai monitors tonality, keyword velocity, and hesitation patterns to surface objections the instant a prospect starts hedging. No more catching yourself off-guard.</p>
+                        <div className="feat-card-footer">
+                            <span className="feat-link">Explore Detection <ArrowRight size={14} /></span>
+                        </div>
                     </div>
 
-                    <div className="feat-card interactive">
-                        <div className="feat-icon-wrap"><Zap size={24} color="#7c3aed" /></div>
-                        <h3>Instant Calm</h3>
-                        <p>Reduce cognitive load and stay fully present — never scramble for words again. Our suggestions are there when you need them.</p>
+                    <div className="feat-card interactive group">
+                        <div className="feat-icon-ring"><Zap size={20} /></div>
+                        <h3>Zero Scramble</h3>
+                        <p>Stay calm under pressure. Suggestions appear instantly, giving you the perfect script for any curveball.</p>
                     </div>
 
-                    <div className="feat-card interactive">
-                        <div className="feat-icon-wrap"><Shield size={24} color="#7c3aed" /></div>
-                        <h3>Battle-Tested Scripts</h3>
-                        <p>10,000+ winning responses curated from the world's top-performing sales calls. Instant access to the best response for any situation.</p>
+                    <div className="feat-card interactive group">
+                        <div className="feat-icon-ring"><Shield size={20} /></div>
+                        <h3>Winning Playbook</h3>
+                        <p>Curated from millions of top-performing calls to ensure you always have the best rebuttal.</p>
                     </div>
 
-                    <div className="feat-card span-2 interactive">
-                        <div className="feat-icon-wrap"><Layers size={24} color="#7c3aed" /></div>
-                        <h3>Works Where You Work.</h3>
-                        <p>Native integration with Zoom, Google Meet, Teams, Salesforce, and every major CRM. No browser extensions, no plugins. Just speak.</p>
-                        <div className="feat-apps-row">
-                            {['Zoom', 'Meet', 'Teams', 'Slack', 'Salesforce', 'HubSpot'].map(app => (
-                                <div className="feat-app-badge" key={app}>{app}</div>
+                    <div className="feat-card span-2 interactive group">
+                        <div className="feat-content">
+                            <div className="feat-icon-ring"><Layers size={20} /></div>
+                            <h3>Seamless Integration</h3>
+                            <p>Connect with your favorite tools in seconds. No complex setup, no browser extensions. It just works where you do.</p>
+                        </div>
+                        <div className="feat-apps-minimal">
+                            {['Zoom', 'Meet', 'Teams', 'CRM'].map(app => (
+                                <div className="feat-app-dot" key={app}>
+                                    <span className="dot"></span>
+                                    {app}
+                                </div>
                             ))}
                         </div>
                     </div>
@@ -69,3 +101,4 @@ const Features = () => {
 };
 
 export default Features;
+

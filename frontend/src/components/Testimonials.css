@@ -1,25 +1,32 @@
 .tl-section {
-    background: var(--color-bg);
-    padding: 8rem 0;
-    border-top: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+    padding: 10rem 0;
+    position: relative;
 }
 
 .tl-header {
-    margin-bottom: 4.5rem;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 6rem;
 }
 
 .tl-eyebrow {
     font-size: 0.75rem;
     font-weight: 700;
     color: var(--color-primary);
+    background: rgba(99, 102, 241, 0.08);
+    padding: 0.5rem 1.25rem;
+    border-radius: 999px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .tl-title {
     font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
     line-height: 1.1;
+    letter-spacing: -0.04em;
 }
 
 .tl-title em {
@@ -30,8 +37,9 @@
 .tl-subtitle {
     font-size: 1.125rem;
     color: var(--color-text-dim);
-    margin-top: 1.5rem;
+    margin: 1.5rem auto 0;
     max-width: 600px;
+    font-weight: 500;
 }
 
 /* Masonry Grid */
@@ -42,20 +50,20 @@
 }
 
 .tl-card {
-    background: var(--color-glass);
+    background: #ffffff;
     border: 1px solid var(--color-border);
-    border-radius: 20px;
-    padding: 2rem;
+    border-radius: 32px;
+    padding: 2.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    transition: all 0.3s ease;
+    gap: 2rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tl-card:hover {
-    background: var(--color-glass-hover);
-    border-color: var(--color-primary);
-    transform: translateY(-4px);
+    transform: translateY(-8px);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.06);
+    border-color: rgba(0,0,0,0.1);
 }
 
 .tl-card-header {
@@ -65,47 +73,52 @@
 }
 
 .tl-avatar {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    background: var(--color-primary);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    color: white;
+    font-weight: 800;
+    color: var(--color-text);
 }
 
 .tl-name {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 700;
-    color: var(--color-white);
+    color: var(--color-text);
 }
 
 .tl-handle {
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     color: var(--color-text-dim);
+    font-weight: 500;
 }
 
 .tl-text {
     font-size: 1rem;
     line-height: 1.6;
     color: var(--color-text-dim);
+    font-weight: 500;
 }
 
 .tl-pull-quote {
     font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--color-white);
-    font-style: italic;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.4;
+    letter-spacing: -0.02em;
 }
 
 .tl-card-footer {
-    padding-top: 1rem;
+    padding-top: 1.5rem;
     border-top: 1px solid var(--color-border);
     font-size: 0.75rem;
     color: var(--color-text-dim);
     text-transform: uppercase;
+    font-weight: 700;
     letter-spacing: 0.05em;
 }
 
@@ -116,7 +129,23 @@
 }
 
 @media (max-width: 768px) {
+    .tl-section {
+        padding: 6rem 0;
+    }
+
+    .tl-header {
+        margin-bottom: 4rem;
+    }
+
+    .tl-title {
+        font-size: clamp(2rem, 8vw, 2.5rem);
+    }
+
     .tl-masonry {
         grid-template-columns: 1fr;
+    }
+
+    .tl-card {
+        padding: 2rem 1.25rem;
     }
 }

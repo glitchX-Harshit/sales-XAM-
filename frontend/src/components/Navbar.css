@@ -5,14 +5,15 @@
     right: 0;
     z-index: 1000;
     padding: 1.5rem 0;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nb-scrolled {
-    padding: 1rem 0;
-    background: rgba(5, 5, 5, 0.8);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--color-border);
+    padding: 0.75rem 0;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .nb-inner {
@@ -27,33 +28,35 @@
 .nb-logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.625rem;
     font-size: 1.25rem;
     font-weight: 800;
-    color: var(--color-white);
+    color: var(--color-text);
     text-decoration: none;
+    letter-spacing: -0.03em;
 }
 
 .nb-logo-mark {
-    width: 24px;
-    height: 24px;
-    background: var(--color-primary);
-    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    background: var(--color-text);
+    border-radius: 8px;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.nb-logo:hover .nb-logo-mark {
+    transform: rotate(-10deg) scale(1.05);
 }
 
 .nb-logo-pulse {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     background: #fff;
-    border-radius: 50%;
-}
-
-.nb-logo-text {
-    letter-spacing: -0.02em;
+    border-radius: 2px;
 }
 
 .nb-logo-dot {
@@ -62,51 +65,56 @@
 
 .nb-logo-ai {
     color: var(--color-text-dim);
+    font-weight: 500;
 }
 
 .nb-links-pill {
     display: flex;
     align-items: center;
-    gap: 2rem;
-    background: var(--color-glass);
-    padding: 0.5rem 1.5rem;
-    border-radius: 100px;
-    border: 1px solid var(--color-border);
+    gap: 0.5rem;
+    background: rgba(0, 0, 0, 0.03);
+    padding: 0.375rem;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .nb-link {
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--color-text-dim);
-    transition: color 0.2s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    transition: all 0.2s ease;
 }
 
 .nb-link:hover {
-    color: var(--color-white);
+    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .nb-actions {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.25rem;
 }
 
 .nb-signin {
     font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--color-text-dim);
     transition: color 0.2s ease;
 }
 
 .nb-signin:hover {
-    color: var(--color-white);
+    color: var(--color-text);
 }
 
 .nb-cta {
-    background: var(--color-primary);
+    background: var(--color-text);
     color: white;
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
+    padding: 0.625rem 1.25rem;
+    border-radius: 999px;
     font-size: 0.875rem;
     font-weight: 600;
     border: none;
@@ -114,15 +122,25 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .nb-cta:hover {
-    background: var(--color-primary-hover);
-    transform: translateY(-1px);
+    background: #222;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }
 
-@media (max-width: 768px) {
+.nb-cta svg {
+    transition: transform 0.3s ease;
+}
+
+.nb-cta:hover svg {
+    transform: translateX(3px);
+}
+
+@media (max-width: 900px) {
     .nb-links-pill {
         display: none;
     }
