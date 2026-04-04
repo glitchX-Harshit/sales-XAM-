@@ -7,10 +7,11 @@
     inset: 0;
     z-index: 2000;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     background-color: var(--color-surface);
-    padding: 1.5rem;
+    padding: 2rem 1rem;
     overflow-y: auto;
 }
 
@@ -46,13 +47,13 @@
     max-width: 460px;
     background: #ffffff;
     border: 1px solid var(--color-border);
-    border-radius: 24px;
-    padding: 4rem 3.5rem;
+    border-radius: 20px;
+    padding: 3rem 2.5rem;
     box-shadow: var(--shadow-premium);
 }
 
 .su-head {
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     text-align: center;
 }
 
@@ -86,7 +87,7 @@
 .su-form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
 }
 
 .su-field {
@@ -114,6 +115,31 @@
     color: var(--color-text);
     transition: all 0.2s ease;
     outline: none;
+    width: 100%;
+}
+
+.su-password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.su-password-toggle {
+    position: absolute;
+    right: 1rem;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--color-text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.su-password-toggle:hover {
+    color: var(--color-primary);
 }
 
 .su-input:focus {
@@ -132,8 +158,12 @@
     border: none;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 1rem;
+    margin-top: 0.75rem;
     box-shadow: var(--shadow-sm);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .su-submit:hover:not(:disabled) {

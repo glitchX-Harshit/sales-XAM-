@@ -3,7 +3,10 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from database import engine, Base
-from routers import auth
+from routers import auth, calls
+from routers.auth import get_current_user
+from models import User
+from fastapi import Depends
 
 # Initialize Database tables
 Base.metadata.create_all(bind=engine)
@@ -26,6 +29,7 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
+app.include_router(calls.router)
 
 import json
 from pydantic import BaseModel
@@ -49,8 +53,9 @@ async def health_check():
     return {"status": "healthy"}
 
 @app.post("/call/start")
-async def start_call(request: CallStartRequest):
+async def start_call(request: CallStartRequest, current_user: User = Depends(get_current_user)):
     context_id = call_context_engine.create_context(
+        user_id=current_user.id,
         client_name=request.client_name,
         client_industry=request.client_industry,
         client_role=request.client_role,

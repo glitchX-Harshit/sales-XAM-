@@ -16,6 +16,7 @@ import {
     ShieldCheck,
     MessageSquare
 } from 'lucide-react';
+import HistoryView from '../components/HistoryView';
 
 const OverviewTab = ({ user, navigate }) => (
     <div className="animate-fade-in">
@@ -173,8 +174,9 @@ const Dashboard = () => {
 
             <main className="db-main">
                 {activeTab === 'overview' && <OverviewTab user={user} navigate={navigate} />}
+                {activeTab === 'history' && <HistoryView />}
                 {activeTab === 'settings' && <SettingsTab user={user} />}
-                {activeTab !== 'overview' && activeTab !== 'settings' && (
+                {activeTab !== 'overview' && activeTab !== 'history' && activeTab !== 'settings' && (
                     <div className="animate-fade-in" style={{ padding: '4rem 0', textAlign: 'center' }}>
                         <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>{navItems.find(i => i.id === activeTab)?.label}</h2>
                         <p style={{ color: 'var(--color-text-dim)' }}>This module is currently being optimized for high-performance sales teams.</p>
