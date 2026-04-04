@@ -4,9 +4,10 @@ class CallContextEngine:
     def __init__(self):
         self.sessions = {}
 
-    def create_context(self, client_name: str, client_industry: str, client_role: str, product_name: str, call_goal: str) -> str:
+    def create_context(self, user_id: int, client_name: str, client_industry: str, client_role: str, product_name: str, call_goal: str) -> str:
         context_id = str(uuid.uuid4())
         self.sessions[context_id] = {
+            "user_id": user_id,
             "client_name": client_name,
             "client_industry": client_industry,
             "client_role": client_role,

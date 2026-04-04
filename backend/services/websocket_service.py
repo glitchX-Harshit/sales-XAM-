@@ -5,6 +5,8 @@ from fastapi import WebSocket, WebSocketDisconnect
 from services.transcript_manager import TranscriptManager
 from services.sales_ai_engine import SalesAIEngine
 from services.deepgram_stream import DeepgramStream
+from database import SessionLocal
+from models import CallLog
 
 
 class ConnectionManager:
@@ -18,6 +20,7 @@ class ConnectionManager:
         self.call_context_engine = call_context_engine
         self.final_buffer = ""
         self.debounce_task = None
+        self.session_data: dict[WebSocket, dict] = {} # context_id -> {transcripts, insights, user_id}
 
     async def connect(self, websocket: WebSocket, context_id: str | None = None):
         await websocket.accept()
@@ -28,6 +31,15 @@ class ConnectionManager:
             call_context = self.call_context_engine.get_context(context_id)
             
         self.ai_engines[websocket] = SalesAIEngine(call_context=call_context)
+        
+        if context_id and call_context:
+            self.session_data[websocket] = {
+                "context_id": context_id,
+                "user_id": call_context.get("user_id"),
+                "transcripts": [],
+                "insights": []
+            }
+            
         print(f"🔌 Client connected. Active WebSockets: {len(self.active_connections)}")
 
     def disconnect(self, websocket: WebSocket):
@@ -38,6 +50,11 @@ class ConnectionManager:
             del self.ai_engines[websocket]
 
         print("❌ Client disconnected.")
+
+        # Save session data to DB before cleanup if context exists
+        if websocket in self.session_data:
+            self.save_session_to_db(websocket)
+            del self.session_data[websocket]
 
         # Note: Deepgram session is closed in handle_audio_stream's finally block (async)
         self.deepgram_sessions.pop(websocket, None)
@@ -87,7 +104,12 @@ class ConnectionManager:
             print(f"📝 Transcript [prospect]: {final_text}")
 
             # Store transcript
-            self.transcript_manager.add_message("prospect", final_text)
+            if websocket in self.session_data:
+                self.session_data[websocket]["transcripts"].append({
+                    "speaker": "prospect",
+                    "text": final_text,
+                    "timestamp": datetime.utcnow().isoformat()
+                })
 
             # send ONE clean transcript
             await self.send_personal_message(json.dumps({
@@ -103,6 +125,11 @@ class ConnectionManager:
                 try:
                     analysis = await ai_engine.analyze("prospect", final_text)
                     if analysis:
+                        if websocket in self.session_data:
+                            self.session_data[websocket]["insights"].append({
+                                "payload": analysis,
+                                "timestamp": datetime.utcnow().isoformat()
+                            })
                         await self.send_personal_message(json.dumps({
                             "type": "aiAnalysis",
                             "payload": analysis
@@ -174,4 +201,26 @@ class ConnectionManager:
             self.disconnect(websocket)
 
 
+    def save_session_to_db(self, websocket: WebSocket):
+        data = self.session_data.get(websocket)
+        if not data or not data.get("user_id"):
+            return
+
+        db = SessionLocal()
+        try:
+            new_log = CallLog(
+                user_id=data["user_id"],
+                transcript=json.dumps(data["transcripts"]),
+                ai_suggestions=json.dumps(data["insights"]),
+                timestamp=datetime.utcnow()
+            )
+            db.add(new_log)
+            db.commit()
+            print(f"💾 Call log saved to DB for user {data['user_id']}")
+        except Exception as e:
+            print(f"❌ Failed to save call log: {e}")
+        finally:
+            db.close()
+
+from datetime import datetime
 websocket_manager = ConnectionManager()
